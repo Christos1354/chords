@@ -3,7 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Συγχορδίες</title>
+<title>Συγχορδίες · Chords</title>
+<script>/* 13-10-2026: γλώσσα επισκέπτη / visitor's language (ΕΛ-EN) */
+window.KLANG=(function(){try{var v=localStorage.getItem('ak-lang');if(v==='el'||v==='en')return v;}catch(e){}return /^el/i.test(navigator.language||'el')?'el':'en';})();
+window.LG=function(el,en){return window.KLANG==='en'?en:el;};
+document.documentElement.lang=window.KLANG;
+if(window.KLANG==='en')document.title='Chords';</script>
 <meta name="theme-color" content="#7a2e8e">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
@@ -186,10 +191,11 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </head>
 <body>
 <header>
-  <h1>🎸 Συγχορδίες <small>Βάλε ένα τραγούδι — σου βγάζω τις συγχορδίες για την κιθάρα · <b>Έκδοση 7/10/2026 12:30</b></small></h1>
-  <button class="hbtn" id="fsDown" title="Μικρότερα γράμματα">A−</button>
-  <button class="hbtn" id="fsUp" title="Μεγαλύτερα γράμματα">A+</button>
-  <button class="hbtn" id="homeBtn">🏠 Αρχή</button>
+  <h1 data-en="🎸 Chords <small>Give me a song — I find the guitar chords for you · <b>Version 13/10/2026 12:00</b></small>">🎸 Συγχορδίες <small>Βάλε ένα τραγούδι — σου βγάζω τις συγχορδίες για την κιθάρα · <b>Έκδοση 13/10/2026 12:00</b></small></h1>
+  <button class="hbtn" id="fsDown" title="Μικρότερα γράμματα" data-en-title="Smaller letters">A−</button>
+  <button class="hbtn" id="fsUp" title="Μεγαλύτερα γράμματα" data-en-title="Bigger letters">A+</button>
+  <button class="hbtn" id="homeBtn" data-en="🏠 Home">🏠 Αρχή</button>
+  <button class="hbtn" id="langBtn" title="Ελληνικά / English">EN</button>
 </header>
 <main>
 
@@ -197,31 +203,31 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <section id="home">
   <div class="card">
     <div class="row" style="justify-content:space-between">
-      <div><b>Πόσες συγχορδίες να σου δείχνω;</b><div class="muted" style="font-size:.85rem">Μπορείς να το αλλάξεις και μετά, αμέσως, χωρίς να ξανακούσω το τραγούδι</div></div>
+      <div data-en="&lt;b&gt;How many chords should I show you?&lt;/b&gt;&lt;div class=&quot;muted&quot; style=&quot;font-size:.85rem&quot;&gt;You can change it later, instantly, without me listening to the song again&lt;/div&gt;"><b>Πόσες συγχορδίες να σου δείχνω;</b><div class="muted" style="font-size:.85rem">Μπορείς να το αλλάξεις και μετά, αμέσως, χωρίς να ξανακούσω το τραγούδι</div></div>
       <div class="seg" id="modeSeg">
-        <button data-m="basic">Λίγες (οι βασικές)</button>
-        <button data-m="simple">Απλές</button>
-        <button data-m="full">Όλες (7, maj7, sus…)</button>
+        <button data-m="basic" data-en="Few (the basic ones)">Λίγες (οι βασικές)</button>
+        <button data-m="simple" data-en="Simple">Απλές</button>
+        <button data-m="full" data-en="All (7, maj7, sus…)">Όλες (7, maj7, sus…)</button>
       </div>
     </div>
   </div>
   <div class="sources">
-    <button class="src s-yt" id="goTab"><span class="ic">▶️</span><b>Από το YouTube</b><span id="ytSub">Παίζεις το τραγούδι σε άλλη καρτέλα του Chrome κι εγώ το ακούω</span></button>
-    <button class="src s-file" id="goFile"><span class="ic">📁</span><b>Από αρχείο</b><span>Τραγούδι από τον υπολογιστή ή το κινητό σου (mp3, m4a, wav, και βίντεο) — το πιο ακριβές</span></button>
-    <button class="src s-mic" id="goMic"><span class="ic">🎤</span><b>Από το μικρόφωνο</b><span>Για ό,τι ακούς από ραδιόφωνο, τηλέφωνο ή άλλη συσκευή</span></button>
+    <button class="src s-yt" id="goTab"><span class="ic">▶️</span><b data-en="From YouTube">Από το YouTube</b><span id="ytSub" data-en="You play the song in another Chrome tab and I listen">Παίζεις το τραγούδι σε άλλη καρτέλα του Chrome κι εγώ το ακούω</span></button>
+    <button class="src s-file" id="goFile"><span class="ic">📁</span><b data-en="From a file">Από αρχείο</b><span data-en="A song from your computer or phone (mp3, m4a, wav, and video) — the most accurate">Τραγούδι από τον υπολογιστή ή το κινητό σου (mp3, m4a, wav, και βίντεο) — το πιο ακριβές</span></button>
+    <button class="src s-mic" id="goMic"><span class="ic">🎤</span><b data-en="From the microphone">Από το μικρόφωνο</b><span data-en="For anything you hear from a radio, phone or other device">Για ό,τι ακούς από ραδιόφωνο, τηλέφωνο ή άλλη συσκευή</span></button>
   </div>
   <input type="file" id="fileIn" accept="audio/*,video/*,.mp3,.m4a,.wav,.aac,.ogg,.flac,.mp4" class="hidden">
   <div id="homeErr"></div>
   <div class="card" id="histCard">
-    <h2>📚 Τα τραγούδια μου</h2>
+    <h2 data-en="📚 My songs">📚 Τα τραγούδια μου</h2>
     <div class="list" id="histList"></div>
   </div>
   <div class="card hidden" id="trashCard">
     <details id="trashDet">
-      <summary style="cursor:pointer;font-size:1.15rem;font-weight:700">🗑 Κάδος — σβησμένα τραγούδια (<span id="trashN">0</span>)</summary>
-      <p class="muted" style="font-size:.85rem;margin:8px 0">Αν έσβησες κάτι κατά λάθος, πάτα «↩ Επαναφορά» και γυρίζει στα τραγούδια σου, μαζί με τους στίχους και τις νότες του.</p>
+      <summary style="cursor:pointer;font-size:1.15rem;font-weight:700"><span data-en="🗑 Bin — deleted songs">🗑 Κάδος — σβησμένα τραγούδια</span> (<span id="trashN">0</span>)</summary>
+      <p class="muted" style="font-size:.85rem;margin:8px 0" data-en="If you deleted something by mistake, press «↩ Restore» and it goes back to your songs, with its lyrics and notes.">Αν έσβησες κάτι κατά λάθος, πάτα «↩ Επαναφορά» και γυρίζει στα τραγούδια σου, μαζί με τους στίχους και τις νότες του.</p>
       <div class="list" id="trashList"></div>
-      <button class="mid" id="trashEmpty" style="margin-top:8px">Άδειασε τον κάδο για πάντα</button>
+      <button class="mid" id="trashEmpty" style="margin-top:8px" data-en="Empty the bin for good">Άδειασε τον κάδο για πάντα</button>
     </details>
   </div>
   <div id="toast" class="toast hidden"></div>
@@ -230,45 +236,45 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <!-- LISTEN INSTRUCTIONS + LIVE -->
 <section id="listen" class="hidden">
   <div class="card" id="tabHelp">
-    <h2>▶️ Άκου από το YouTube</h2>
+    <h2 data-en="▶️ Listen from YouTube">▶️ Άκου από το YouTube</h2>
     <ol class="steps">
-      <li>Άνοιξε το τραγούδι στο <b>YouTube σε άλλη καρτέλα</b> του Chrome (μην το βάλεις ακόμα να παίζει).</li>
-      <li>Γύρνα εδώ και πάτα το πράσινο κουμπί <b>«Ξεκίνα να ακούς»</b>.</li>
-      <li>Θα βγει ένα παράθυρο του Chrome. Διάλεξε <b>«Καρτέλα Chrome»</b> και μετά την καρτέλα του YouTube.</li>
-      <li>Βεβαιώσου ότι είναι <b>ανοιχτός ο διακόπτης για τον ήχο της καρτέλας</b> (κάτω αριστερά στο παράθυρο) και πάτα <b>«Κοινή χρήση»</b>.</li>
-      <li>Πήγαινε στο YouTube και βάλε το τραγούδι να παίζει <b>από την αρχή</b>. Μετά γύρνα εδώ να βλέπεις τις συγχορδίες.</li>
+      <li data-en="Open the song on &lt;b&gt;YouTube in another tab&lt;/b&gt; of Chrome (don’t start playing it yet).">Άνοιξε το τραγούδι στο <b>YouTube σε άλλη καρτέλα</b> του Chrome (μην το βάλεις ακόμα να παίζει).</li>
+      <li data-en="Come back here and press the green button &lt;b&gt;«Start listening»&lt;/b&gt;.">Γύρνα εδώ και πάτα το πράσινο κουμπί <b>«Ξεκίνα να ακούς»</b>.</li>
+      <li data-en="A Chrome window will appear. Choose &lt;b&gt;«Chrome Tab»&lt;/b&gt; and then the YouTube tab.">Θα βγει ένα παράθυρο του Chrome. Διάλεξε <b>«Καρτέλα Chrome»</b> και μετά την καρτέλα του YouTube.</li>
+      <li data-en="Make sure the &lt;b&gt;switch for the tab’s audio is on&lt;/b&gt; (bottom left of the window) and press &lt;b&gt;«Share»&lt;/b&gt;.">Βεβαιώσου ότι είναι <b>ανοιχτός ο διακόπτης για τον ήχο της καρτέλας</b> (κάτω αριστερά στο παράθυρο) και πάτα <b>«Κοινή χρήση»</b>.</li>
+      <li data-en="Go to YouTube and play the song &lt;b&gt;from the beginning&lt;/b&gt;. Then come back here to watch the chords.">Πήγαινε στο YouTube και βάλε το τραγούδι να παίζει <b>από την αρχή</b>. Μετά γύρνα εδώ να βλέπεις τις συγχορδίες.</li>
     </ol>
-    <button class="big green" id="startTab">🎧 Ξεκίνα να ακούς</button>
+    <button class="big green" id="startTab" data-en="🎧 Start listening">🎧 Ξεκίνα να ακούς</button>
   </div>
   <div class="card" id="micHelp">
-    <h2>🎤 Άκου από το μικρόφωνο</h2>
+    <h2 data-en="🎤 Listen from the microphone">🎤 Άκου από το μικρόφωνο</h2>
     <ol class="steps">
-      <li>Πάτα <b>«Ξεκίνα να ακούς»</b> και επίτρεψε τη χρήση του μικροφώνου όταν σε ρωτήσει.</li>
-      <li>Βάλε το τραγούδι να παίζει κοντά στον υπολογιστή ή στο κινητό, σε καλή ένταση. Στο κινητό μην κλειδώσεις την οθόνη όσο ακούω.</li>
+      <li data-en="Press &lt;b&gt;«Start listening»&lt;/b&gt; and allow the microphone when asked.">Πάτα <b>«Ξεκίνα να ακούς»</b> και επίτρεψε τη χρήση του μικροφώνου όταν σε ρωτήσει.</li>
+      <li data-en="Play the song near the computer or phone, at a good volume. On a phone, don’t lock the screen while I listen.">Βάλε το τραγούδι να παίζει κοντά στον υπολογιστή ή στο κινητό, σε καλή ένταση. Στο κινητό μην κλειδώσεις την οθόνη όσο ακούω.</li>
     </ol>
-    <button class="big green" id="startMic">🎧 Ξεκίνα να ακούς</button>
+    <button class="big green" id="startMic" data-en="🎧 Start listening">🎧 Ξεκίνα να ακούς</button>
   </div>
   <div id="listenErr"></div>
   <div id="live" class="hidden">
     <div class="card">
       <div class="row" style="justify-content:space-between">
-        <div class="info"><span class="rec"></span><b id="liveTime">0:00</b> ακούω…</div>
-        <div class="row"><span class="muted" style="font-size:.9rem">Ένταση:</span><div class="meter"><div id="meter"></div></div></div>
-        <button class="big red" id="stopBtn">⏹ Σταμάτα</button>
+        <div class="info"><span class="rec"></span><b id="liveTime">0:00</b> <span data-en="listening…">ακούω…</span></div>
+        <div class="row"><span class="muted" style="font-size:.9rem" data-en="Volume:">Ένταση:</span><div class="meter"><div id="meter"></div></div></div>
+        <button class="big red" id="stopBtn" data-en="⏹ Stop">⏹ Σταμάτα</button>
       </div>
-      <div id="silentWarn" class="warn hidden">Δεν ακούω τίποτα ακόμα. Έβαλες το τραγούδι να παίζει; Αν είσαι στο YouTube, μήπως δεν άνοιξες τον διακόπτη για τον ήχο της καρτέλας; Αν χρειαστεί, πάτα «Σταμάτα» και ξαναδοκίμασε.</div>
+      <div id="silentWarn" class="warn hidden" data-en="I don’t hear anything yet. Is the song playing? If you are on YouTube, did you turn on the switch for the tab’s audio? If needed, press «Stop» and try again.">Δεν ακούω τίποτα ακόμα. Έβαλες το τραγούδι να παίζει; Αν είσαι στο YouTube, μήπως δεν άνοιξες τον διακόπτη για τον ήχο της καρτέλας; Αν χρειαστεί, πάτα «Σταμάτα» και ξαναδοκίμασε.</div>
     </div>
     <div class="card now">
       <div>
-        <div class="nowchord" id="liveChord"><div class="nm">…</div><div class="gr">Περιμένω μουσική</div></div>
-        <div class="info" style="margin-top:12px">Τονικότητα (μέχρι τώρα): <b id="liveKey">—</b></div>
+        <div class="nowchord" id="liveChord"><div class="nm">…</div><div class="gr" data-en="Waiting for music">Περιμένω μουσική</div></div>
+        <div class="info" style="margin-top:12px"><span data-en="Key (so far):">Τονικότητα (μέχρι τώρα):</span> <b id="liveKey">—</b></div>
       </div>
       <div class="diagwrap" id="liveDiag"></div>
     </div>
     <div class="card">
-      <h2>Οι τελευταίες συγχορδίες</h2>
+      <h2 data-en="The latest chords">Οι τελευταίες συγχορδίες</h2>
       <div class="hist" id="liveHist"></div>
-      <p class="muted" style="font-size:.9rem;margin:14px 0 0">Όταν πατήσεις «Σταμάτα», θα ξανακούσω όλο το κομμάτι πιο προσεκτικά και θα σου δώσω όλες τις συγχορδίες στη σειρά, με δυνατότητα να το ξανακούσεις.</p>
+      <p class="muted" style="font-size:.9rem;margin:14px 0 0" data-en="When you press «Stop», I will listen to the whole piece again more carefully and give you all the chords in order, so you can play it back.">Όταν πατήσεις «Σταμάτα», θα ξανακούσω όλο το κομμάτι πιο προσεκτικά και θα σου δώσω όλες τις συγχορδίες στη σειρά, με δυνατότητα να το ξανακούσεις.</p>
     </div>
   </div>
 </section>
@@ -277,7 +283,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <section id="working" class="hidden">
   <div class="card" style="text-align:center;padding:50px 24px">
     <div style="font-size:3.5rem">🎼</div>
-    <h2 id="workMsg">Ακούω προσεκτικά το τραγούδι…</h2>
+    <h2 id="workMsg" data-en="Listening carefully to the song…">Ακούω προσεκτικά το τραγούδι…</h2>
     <div class="bar"><div id="workBar"></div></div>
     <div class="muted" id="workPct">0%</div>
   </div>
@@ -288,15 +294,15 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <div class="card tight">
     <div class="row" style="justify-content:space-between">
       <div style="flex:1;min-width:260px">
-        <h2 id="resTitle" style="margin:0">Τραγούδι</h2>
-        <div class="info" style="margin-top:4px">Τονικότητα: <b id="resKey">—</b> <span id="resBpm" class="muted" style="font-size:.85rem"></span></div>
+        <h2 id="resTitle" style="margin:0" data-en="Song">Τραγούδι</h2>
+        <div class="info" style="margin-top:4px"><span data-en="Key:">Τονικότητα:</span> <b id="resKey">—</b> <span id="resBpm" class="muted" style="font-size:.85rem"></span></div>
         <div id="resNote" class="muted" style="font-size:.78rem"></div>
       </div>
       <div class="row noprint">
-        <button class="mid" id="renameBtn" title="Δώσε όνομα στο τραγούδι">✏️ Όνομα</button>
-        <button class="mid" id="printBtn">🖨 Εκτύπωση</button>
-        <button class="mid" id="saveBtn">💾 Αποθήκευση</button>
-        <button class="mid" id="newBtn">↩ Νέο</button>
+        <button class="mid" id="renameBtn" title="Δώσε όνομα στο τραγούδι" data-en-title="Give the song a name" data-en="✏️ Name">✏️ Όνομα</button>
+        <button class="mid" id="printBtn" data-en="🖨 Print">🖨 Εκτύπωση</button>
+        <button class="mid" id="saveBtn" data-en="💾 Save">💾 Αποθήκευση</button>
+        <button class="mid" id="newBtn" data-en="↩ New">↩ Νέο</button>
       </div>
     </div>
   </div>
@@ -306,34 +312,34 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <button class="play" id="playBtn">▶</button>
       <input type="range" id="seek" min="0" max="1000" value="0">
       <div class="time" id="timeLbl">0:00 / 0:00</div>
-      <div class="seg" id="speedSeg" title="Ταχύτητα"><button data-s="1" class="on">100%</button><button data-s="0.85">85%</button><button data-s="0.7">70%</button><button data-s="0.5">50%</button></div>
+      <div class="seg" id="speedSeg" title="Ταχύτητα" data-en-title="Speed"><button data-s="1" class="on">100%</button><button data-s="0.85">85%</button><button data-s="0.7">70%</button><button data-s="0.5">50%</button></div>
     </div>
-    <div id="noAudio" class="muted hidden" style="font-size:.85rem">Ο ήχος δεν κρατιέται στα «Τραγούδια μου» — βλέπεις μόνο συγχορδίες και στίχους. Για να παίξεις μαζί, ξαναβάλε το τραγούδι.</div>
+    <div id="noAudio" class="muted hidden" style="font-size:.85rem" data-en="The sound is not kept in «My songs» — you only see chords and lyrics. To play along, load the song again.">Ο ήχος δεν κρατιέται στα «Τραγούδια μου» — βλέπεις μόνο συγχορδίες και στίχους. Για να παίξεις μαζί, ξαναβάλε το τραγούδι.</div>
     <div class="row" style="margin-top:10px">
-      <div class="ctl"><span class="lbl">Καποτάστο</span><button class="pm" id="capoM">−</button><span class="v" id="capoV">0</span><button class="pm" id="capoP">+</button></div>
-      <button class="mid" id="capoBest">🪄 Εύκολο καποτάστο</button>
-      <div class="ctl"><span class="lbl">Τόνος</span><button class="pm" id="trM">−</button><span class="v" id="trV">0</span><button class="pm" id="trP">+</button></div>
-      <div class="seg" id="modeSeg2"><button data-m="basic">Λίγες</button><button data-m="simple">Απλές</button><button data-m="full">Όλες</button></div>
+      <div class="ctl"><span class="lbl" data-en="Capo">Καποτάστο</span><button class="pm" id="capoM">−</button><span class="v" id="capoV">0</span><button class="pm" id="capoP">+</button></div>
+      <button class="mid" id="capoBest" data-en="🪄 Easy capo">🪄 Εύκολο καποτάστο</button>
+      <div class="ctl"><span class="lbl" data-en="Key shift">Τόνος</span><button class="pm" id="trM">−</button><span class="v" id="trV">0</span><button class="pm" id="trP">+</button></div>
+      <div class="seg" id="modeSeg2"><button data-m="basic" data-en="Few">Λίγες</button><button data-m="simple" data-en="Simple">Απλές</button><button data-m="full" data-en="All">Όλες</button></div>
     </div>
     <div id="capoMsg" style="margin-top:8px;font-size:.95rem"></div>
   </div>
 
   <div class="work">
     <div class="leftcol noprint">
-      <div class="nowchord" id="nowChord"><div class="nm">—</div><div class="gr">Πάτα ▶ για να παίξεις μαζί</div></div>
+      <div class="nowchord" id="nowChord"><div class="nm">—</div><div class="gr" data-en="Press ▶ to play along">Πάτα ▶ για να παίξεις μαζί</div></div>
       <div class="nextbox" id="nextBox"></div>
       <div class="diagwrap" id="nowDiag"></div>
     </div>
     <div class="rightcol">
       <div class="tabs noprint" id="tabs">
-        <button data-t="lyr" class="on">📝 Στίχοι</button>
-        <button data-t="sheet">🎵 Συγχορδίες</button>
-        <button data-t="diags">✋ Δάχτυλα</button>
-        <button data-t="mel">🎼 Νότες σόλο</button>
+        <button data-t="lyr" class="on" data-en="📝 Lyrics">📝 Στίχοι</button>
+        <button data-t="sheet" data-en="🎵 Chords">🎵 Συγχορδίες</button>
+        <button data-t="diags" data-en="✋ Fingers">✋ Δάχτυλα</button>
+        <button data-t="mel" data-en="🎼 Solo notes">🎼 Νότες σόλο</button>
       </div>
       <div class="panel" id="p-lyr"><div id="lyrBox"></div></div>
       <div class="panel hidden" id="p-sheet">
-        <p class="muted noprint" style="font-size:.8rem;margin:0 0 10px">Πάτα μια συγχορδία για να πας σε εκείνο το σημείο.</p>
+        <p class="muted noprint" style="font-size:.8rem;margin:0 0 10px" data-en="Press a chord to jump to that point.">Πάτα μια συγχορδία για να πας σε εκείνο το σημείο.</p>
         <div class="sheet" id="sheet"></div>
       </div>
       <div class="panel hidden" id="p-diags"><div class="diags" id="diags"></div></div>
@@ -1108,12 +1114,16 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     if (!ch) return '—';
     return (flats ? FLAT : SHARP)[ch.root] + TYPES[ch.type].suf;
   }
+  var EN_TYPE = { maj: 'major', min: 'minor', '7': '7', maj7: 'maj7', m7: 'minor 7', dim: 'diminished', aug: 'augmented', sus4: 'sus4', sus2: 'sus2' };
+  function isEn() { return typeof window !== 'undefined' && window.KLANG === 'en'; }
   function chordNameGreek(ch, flats) {
-    if (!ch) return 'χωρίς συγχορδία';
+    if (!ch) return isEn() ? 'no chord' : 'χωρίς συγχορδία';
+    if (isEn()) return (flats ? FLAT : SHARP)[ch.root] + ' ' + EN_TYPE[ch.type];
     var nm = (flats ? GR_FLAT : GR_SHARP)[ch.root], t = TYPES[ch.type];
     return nm + ' ' + t.gr;
   }
   function keyName(key, flats) {
+    if (isEn()) return (flats ? FLAT : SHARP)[key.tonic] + (key.mode === 'maj' ? ' major' : ' minor') + ' (' + (flats ? FLAT : SHARP)[key.tonic] + (key.mode === 'min' ? 'm' : '') + ')';
     var nm = (flats ? GR_FLAT : GR_SHARP)[key.tonic];
     return nm + (key.mode === 'maj' ? ' ματζόρε' : ' μινόρε') + ' (' + (flats ? FLAT : SHARP)[key.tonic] + (key.mode === 'min' ? 'm' : '') + ')';
   }
@@ -1134,9 +1144,17 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 <script>
 (function(){
 'use strict';
+var LG = window.LG;
+/* 13-10-2026: στατικά κείμενα στη γλώσσα του επισκέπτη / static texts in the visitor's language */
+if(window.KLANG==='en'){
+  document.querySelectorAll('[data-en]').forEach(function(e){ e.innerHTML=e.getAttribute('data-en'); });
+  document.querySelectorAll('[data-en-title]').forEach(function(e){ e.title=e.getAttribute('data-en-title'); });
+}
+(function(){ var b=document.getElementById('langBtn'); if(!b) return; b.textContent = window.KLANG==='en' ? 'ΕΛ' : 'EN';
+  b.onclick=function(){ try{ localStorage.setItem('ak-lang', window.KLANG==='en'?'el':'en'); }catch(e){} location.reload(); }; })();
 var CE = window.ChordEngine;
 var $ = function(s){ return document.querySelector(s); };
-function show(id){ ['home','listen','working','results'].forEach(function(s){ $('#'+s).classList.toggle('hidden', s!==id); }); window.scrollTo(0,0); }
+function show(id){ ['home','listen','working','results'].forEach(function(s){ $('#'+s).classList.toggle('hidden', s!==id); }); var lb=$('#langBtn'); if(lb) lb.classList.toggle('hidden', id!=='home'); window.scrollTo(0,0); }
 function fmt(t){ t=Math.max(0,t||0); var m=Math.floor(t/60), s=Math.floor(t%60); return m+':'+(s<10?'0':'')+s; }
 function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function store(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -1231,12 +1249,12 @@ function sounding(ch){ return CE.transpose(ch, state.trans); }            // wha
 function nameP(ch){ return CE.chordName(played(ch), flatsFor(state.trans-state.capo)); }
 
 // ---------- mode switch ----------
-var LEVEL_NAME={basic:'Λίγες, βασικές συγχορδίες', simple:'Απλές συγχορδίες', full:'Όλες οι συγχορδίες'};
+var LEVEL_NAME={basic:LG('Λίγες, βασικές συγχορδίες','Few, basic chords'), simple:LG('Απλές συγχορδίες','Simple chords'), full:LG('Όλες οι συγχορδίες','All chords')};
 function paintMode(){
   document.querySelectorAll('#modeSeg button, #modeSeg2 button').forEach(function(b){
     b.classList.toggle('on', b.dataset.m===state.level);
     var miss = state.res && !$('#results').classList.contains('hidden') && !(state.res.levels && state.res.levels[b.dataset.m]);
-    if(b.parentNode.id==='modeSeg2'){ b.disabled=!!miss; b.style.opacity=miss?.4:1; b.title=miss?'Αυτό το παλιό τραγούδι έχει μόνο ένα είδος. Ξαναβάλε το τραγούδι για να τα έχεις όλα.':''; }
+    if(b.parentNode.id==='modeSeg2'){ b.disabled=!!miss; b.style.opacity=miss?.4:1; b.title=miss?LG('Αυτό το παλιό τραγούδι έχει μόνο ένα είδος. Ξαναβάλε το τραγούδι για να τα έχεις όλα.','This older song has only one kind. Load the song again to have them all.'):''; }
   });
 }
 function applyLevel(){
@@ -1269,7 +1287,7 @@ function renderHist(){
       openResult(it, null, true);
     };
     var row=document.createElement('div'); row.className='hrow';
-    var d=document.createElement('button'); d.className='delbtn'; d.textContent='🗑'; d.title='Σβήσε αυτό το τραγούδι';
+    var d=document.createElement('button'); d.className='delbtn'; d.textContent='🗑'; d.title=LG('Σβήσε αυτό το τραγούδι','Delete this song');
     d.onclick=function(){ deleteSong(it.title); };
     row.appendChild(b); row.appendChild(d); el.appendChild(row);
   });
@@ -1283,7 +1301,7 @@ function deleteSong(title){
   tr.unshift(gone); if(tr.length>30) tr.length=30;
   store('ak-hist',h); store('ak-trash',tr); store('ak-lyr',L);
   renderHist();
-  showToast('Το «'+title+'» πήγε στον κάδο.', function(){ restoreSong(gone.deleted); });
+  showToast(LG('Το «'+title+'» πήγε στον κάδο.','«'+title+'» went to the bin.'), function(){ restoreSong(gone.deleted); });
 }
 function restoreSong(stamp){
   var tr=load('ak-trash',[]), h=load('ak-hist',[]), L=load('ak-lyr',{}), it=null;
@@ -1303,18 +1321,18 @@ function renderTrash(){
   tr.forEach(function(it){
     var row=document.createElement('div'); row.className='hrow';
     var info=document.createElement('button'); info.style.cursor='default'; info.style.opacity='.75';
-    info.innerHTML='🎵 <b>'+esc(it.title)+'</b> <span class="muted" style="font-size:.8rem">— σβήστηκε '+new Date(it.deleted).toLocaleDateString('el-GR')+'</span>';
-    var r=document.createElement('button'); r.className='resbtn'; r.textContent='↩ Επαναφορά';
+    info.innerHTML='🎵 <b>'+esc(it.title)+'</b> <span class="muted" style="font-size:.8rem">— '+LG('σβήστηκε','deleted')+' '+new Date(it.deleted).toLocaleDateString(LG('el-GR','en-GB'))+'</span>';
+    var r=document.createElement('button'); r.className='resbtn'; r.textContent=LG('↩ Επαναφορά','↩ Restore');
     r.onclick=function(){ restoreSong(it.deleted); };
     row.appendChild(info); row.appendChild(r); el.appendChild(row);
   });
 }
 $('#trashEmpty').onclick=function(){
-  if(confirm('Να σβηστούν για πάντα όλα τα τραγούδια του κάδου; Αυτό δεν γυρίζει πίσω.')){ store('ak-trash',[]); renderTrash(); }
+  if(confirm(LG('Να σβηστούν για πάντα όλα τα τραγούδια του κάδου; Αυτό δεν γυρίζει πίσω.','Delete all songs in the bin for good? This cannot be undone.'))){ store('ak-trash',[]); renderTrash(); }
 };
 var toastTimer=null;
 function showToast(msg, undo){
-  var t=$('#toast'); t.innerHTML='<span>'+esc(msg)+'</span>'+(undo?'<button id="toastUndo">↩ Αναίρεση</button>':'');
+  var t=$('#toast'); t.innerHTML='<span>'+esc(msg)+'</span>'+(undo?'<button id="toastUndo">'+LG('↩ Αναίρεση','↩ Undo')+'</button>':'');
   t.classList.remove('hidden');
   if(undo) $('#toastUndo').onclick=undo;
   clearTimeout(toastTimer); toastTimer=setTimeout(hideToast, 9000);
@@ -1342,10 +1360,10 @@ $('#goFile').onclick=function(){ errBox('#homeErr',''); $('#fileIn').value=''; $
 $('#fileIn').onchange=function(){
   var file=this.files[0]; if(!file) return;
   var ctx; try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
-  show('working'); setProgress(0,'Ανοίγω το τραγούδι…');
+  show('working'); setProgress(0,LG('Ανοίγω το τραγούδι…','Opening the song…'));
   readBuf(file).then(function(buf){ return decodeAny(ctx, buf); }).then(function(ab){
     try{ ctx.close(); }catch(e){}
-    setProgress(0.02,'Ετοιμάζω τον ήχο…');
+    setProgress(0.02,LG('Ετοιμάζω τον ήχο…','Preparing the sound…'));
     return toMono22k(ab);
   }).then(function(sig){
     if(state.audioURL) URL.revokeObjectURL(state.audioURL);
@@ -1353,7 +1371,7 @@ $('#fileIn').onchange=function(){
     runAnalysis(sig, 22050, file.name.replace(/\.[^.]+$/,''), false);
   }).catch(function(e){
     show('home');
-    errBox('#homeErr','Δεν μπόρεσα να ανοίξω αυτό το αρχείο. Δοκίμασε ένα mp3, m4a ή wav. ('+esc(e&&e.message||e)+')');
+    errBox('#homeErr',LG('Δεν μπόρεσα να ανοίξω αυτό το αρχείο. Δοκίμασε ένα mp3, m4a ή wav. (','I could not open this file. Try an mp3, m4a or wav. (')+esc(e&&e.message||e)+')');
   });
 };
 // --- audio file helpers that also work on older phones ---
@@ -1392,13 +1410,13 @@ function manualResample(ab, sr){
 }
 function setProgress(fr,msg){ $('#workBar').style.width=Math.round(fr*100)+'%'; $('#workPct').textContent=Math.round(fr*100)+'%'; if(msg) $('#workMsg').textContent=msg; }
 function runAnalysis(signal, sr, title, keepAudio){
-  show('working'); setProgress(0,'Ακούω προσεκτικά το τραγούδι…');
+  show('working'); setProgress(0,LG('Ακούω προσεκτικά το τραγούδι…','Listening carefully to the song…'));
   state.signal=signal; state.sr=sr; state.title=title;
-  CE.analyzeSong(signal, {sr:sr, level:state.level, onProgress:function(p){ setProgress(0.03+0.97*p, p>0.85?'Βρίσκω πότε αλλάζουν οι συγχορδίες…':null); }})
+  CE.analyzeSong(signal, {sr:sr, level:state.level, onProgress:function(p){ setProgress(0.03+0.97*p, p>0.85?LG('Βρίσκω πότε αλλάζουν οι συγχορδίες…','Finding when the chords change…'):null); }})
   .then(function(res){
     saveHist(res, title); renderHist();
     openResult(res, state.audioURL, false);
-  }).catch(function(e){ show('home'); errBox('#homeErr','Κάτι πήγε στραβά στην ανάλυση: '+esc(e&&e.message||e)); });
+  }).catch(function(e){ show('home'); errBox('#homeErr',LG('Κάτι πήγε στραβά στην ανάλυση: ','Something went wrong in the analysis: ')+esc(e&&e.message||e)); });
 }
 
 // ---------- results ----------
@@ -1409,7 +1427,7 @@ function openResult(res, url, fromHist){
   if(!fromHist) res.title=state.title;
   applyLevel(); melView.from=null; melView.to=null; melBusy=false;
   $('#resTitle').textContent='🎵 '+res.title;
-  $('#resBpm').textContent = res.bpm ? '· Ρυθμός περίπου '+Math.round(res.bpm)+' χτύποι το λεπτό' : '';
+  $('#resBpm').textContent = res.bpm ? LG('· Ρυθμός περίπου '+Math.round(res.bpm)+' χτύποι το λεπτό','· Tempo about '+Math.round(res.bpm)+' beats per minute') : '';
   updateNote();
   audio.pause();
   if(url && !fromHist){ audio.src=url; $('#player').classList.remove('hidden'); $('#noAudio').classList.add('hidden'); }
@@ -1421,7 +1439,7 @@ function openResult(res, url, fromHist){
 }
 function updateNote(){
   var res=state.res;
-  $('#resNote').textContent = LEVEL_NAME[res.level||'simple'] + (Math.abs(res.tuning)>15 ? ' · Κουρδισμένο λίγο '+(res.tuning>0?'ψηλά':'χαμηλά') : '');
+  $('#resNote').textContent = LEVEL_NAME[res.level||'simple'] + (Math.abs(res.tuning)>15 ? LG(' · Κουρδισμένο λίγο '+(res.tuning>0?'ψηλά':'χαμηλά'),' · Tuned slightly '+(res.tuning>0?'high':'low')) : '');
 }
 function renderAll(){
   var res=state.res; if(!res) return;
@@ -1464,12 +1482,12 @@ function updateNow(force){
   var p=s?played(s.chord):null;
   box.style.background=colorOf(p); box.style.color=inkOf(p);
   if(s && s.chord){
-    var snd = state.capo ? '<div class="snd">Με καποτάστο στο '+state.capo+'ο τάστο · ακούγεται '+esc(CE.chordName(sounding(s.chord), flatsFor(state.trans)))+'</div>' : '';
+    var snd = state.capo ? '<div class="snd">'+LG('Με καποτάστο στο '+state.capo+'ο τάστο · ακούγεται ','With capo on fret '+state.capo+' · sounds as ')+esc(CE.chordName(sounding(s.chord), flatsFor(state.trans)))+'</div>' : '';
     box.innerHTML='<div class="nm">'+esc(nameP(s.chord))+'</div><div class="gr">'+esc(CE.chordNameGreek(p, flatsFor(state.trans-state.capo)))+'</div>'+snd;
     $('#nowDiag').innerHTML=diagramSVG(p,190);
-  } else { box.innerHTML='<div class="nm">—</div><div class="gr">'+(audio.src?(t<0.5?'Πάτα ▶ για να παίξεις μαζί':'Χωρίς συγχορδία εδώ'):'')+'</div>'; $('#nowDiag').innerHTML=''; }
+  } else { box.innerHTML='<div class="nm">—</div><div class="gr">'+(audio.src?(t<0.5?LG('Πάτα ▶ για να παίξεις μαζί','Press ▶ to play along'):LG('Χωρίς συγχορδία εδώ','No chord here')):'')+'</div>'; $('#nowDiag').innerHTML=''; }
   var nx=null; for(var j=i+1;j<sg.length;j++) if(sg[j].chord){ nx=sg[j]; break; }
-  $('#nextBox').innerHTML = nx && audio.src ? 'Επόμενη: '+chip(played(nx.chord), nameP(nx.chord))+' <span id="cd"></span>' : '';
+  $('#nextBox').innerHTML = nx && audio.src ? LG('Επόμενη: ','Next: ')+chip(played(nx.chord), nameP(nx.chord))+' <span id="cd"></span>' : '';
   document.querySelectorAll('.tile.cur').forEach(function(e){ e.classList.remove('cur'); });
   var tl=document.querySelector('.tile[data-i="'+i+'"]'); if(tl && audio.src && !audio.paused){ tl.classList.add('cur'); var r=tl.getBoundingClientRect(); if(r.top<0||r.bottom>innerHeight){} }
   if(tl && audio.src) tl.classList.add('cur');
@@ -1481,7 +1499,7 @@ function tick(){
     $('#seek').value=Math.round(1000*audio.currentTime/d);
     $('#timeLbl').textContent=fmt(audio.currentTime)+' / '+fmt(d);
     var i=segAt(audio.currentTime), sg=state.res.segments, cd=$('#cd');
-    if(cd && i>=0){ var left=sg[i].end-audio.currentTime; cd.textContent= left<4 ? '(σε '+Math.ceil(left/ (audio.playbackRate||1))+'″)' : ''; }
+    if(cd && i>=0){ var left=sg[i].end-audio.currentTime; cd.textContent= left<4 ? '('+LG('σε ','in ')+Math.ceil(left/ (audio.playbackRate||1))+'″)' : ''; }
   }
   requestAnimationFrame(tick);
 }
@@ -1507,22 +1525,22 @@ $('#capoBest').onclick=function(){
   state.capo=best; renderAll();
   var easyT=0; state.res.segments.forEach(function(s){ if(!s.chord) return; var p=CE.transpose(s.chord, state.trans-best); if(EASY[p.root+':'+p.type]) easyT+=s.end-s.start; });
   var pct=tot?Math.round(100*easyT/tot):0;
-  $('#capoMsg').innerHTML = best===0 ? '👍 Δεν χρειάζεσαι καποτάστο — παίζεται με τις πιο εύκολες θέσεις ('+pct+'% εύκολες συγχορδίες).' : '🪄 Βάλε το καποτάστο στο <b>'+best+'ο τάστο</b> — έτσι το '+pct+'% του τραγουδιού παίζεται με ανοιχτές, εύκολες συγχορδίες.';
+  $('#capoMsg').innerHTML = best===0 ? LG('👍 Δεν χρειάζεσαι καποτάστο — παίζεται με τις πιο εύκολες θέσεις ('+pct+'% εύκολες συγχορδίες).','👍 You don’t need a capo — it plays with the easiest shapes ('+pct+'% easy chords).') : LG('🪄 Βάλε το καποτάστο στο <b>'+best+'ο τάστο</b> — έτσι το '+pct+'% του τραγουδιού παίζεται με ανοιχτές, εύκολες συγχορδίες.','🪄 Put the capo on <b>fret '+best+'</b> — then '+pct+'% of the song plays with open, easy chords.');
 };
 $('#printBtn').onclick=function(){ window.print(); };
 $('#saveBtn').onclick=function(){
   var r=state.res, lines=[];
-  lines.push('Τραγούδι: '+r.title);
-  lines.push('Τονικότητα: '+$('#resKey').textContent);
-  if(state.capo) lines.push('Καποτάστο: '+state.capo+'ο τάστο');
-  if(state.trans) lines.push('Αλλαγή τόνου: '+(state.trans>0?'+':'')+state.trans);
+  lines.push(LG('Τραγούδι: ','Song: ')+r.title);
+  lines.push(LG('Τονικότητα: ','Key: ')+$('#resKey').textContent);
+  if(state.capo) lines.push(LG('Καποτάστο: '+state.capo+'ο τάστο','Capo: fret '+state.capo));
+  if(state.trans) lines.push(LG('Αλλαγή τόνου: ','Key shift: ')+(state.trans>0?'+':'')+state.trans);
   lines.push('');
   var seq=[]; r.segments.forEach(function(s){ if(s.chord){ lines.push(fmt(s.start)+'   '+nameP(s.chord)); seq.push(nameP(s.chord)); } });
-  lines.push(''); lines.push('Σε μια γραμμή: '+seq.join(' | '));
-  if(state.res.melody){ lines.push(''); lines.push('— Νότες (σόλο / μελωδία) —'); var ln=[]; guitarNotes().forEach(function(n){ ln.push(noteNameGr(n.m, flatsFor(state.trans))+(n.tab?'('+['1η','2η','3η','4η','5η','6η'][n.tab.si]+' χορδή, '+n.tab.f+')':'')); }); for(var q=0;q<ln.length;q+=8) lines.push(ln.slice(q,q+8).join('  ')); }
-  var lt=lyricsText(); if(lt){ lines.push(''); lines.push('— Στίχοι με συγχορδίες —'); lines.push(''); lines.push(lt); }
+  lines.push(''); lines.push(LG('Σε μια γραμμή: ','In one line: ')+seq.join(' | '));
+  if(state.res.melody){ lines.push(''); lines.push(LG('— Νότες (σόλο / μελωδία) —','— Notes (solo / melody) —')); var ln=[]; guitarNotes().forEach(function(n){ ln.push(noteNameGr(n.m, flatsFor(state.trans))+(n.tab?'('+LG(['1η','2η','3η','4η','5η','6η'][n.tab.si]+' χορδή, ',['1st','2nd','3rd','4th','5th','6th'][n.tab.si]+' string, ')+n.tab.f+')':'')); }); for(var q=0;q<ln.length;q+=8) lines.push(ln.slice(q,q+8).join('  ')); }
+  var lt=lyricsText(); if(lt){ lines.push(''); lines.push(LG('— Στίχοι με συγχορδίες —','— Lyrics with chords —')); lines.push(''); lines.push(lt); }
   var blob=new Blob(['﻿'+lines.join('\n')],{type:'text/plain;charset=utf-8'}), a=document.createElement('a');
-  a.href=URL.createObjectURL(blob); a.download=r.title+' - συγχορδίες.txt'; a.click();
+  a.href=URL.createObjectURL(blob); a.download=r.title+LG(' - συγχορδίες.txt',' - chords.txt'); a.click();
 };
 $('#newBtn').onclick=function(){ audio.pause(); show('home'); };
 $('#homeBtn').onclick=function(){ if(live) stopLive(false); audio.pause(); show('home'); };
@@ -1535,7 +1553,7 @@ document.querySelectorAll('#tabs button').forEach(function(b){ b.onclick=functio
 
 // ---------- rename ----------
 $('#renameBtn').onclick=function(){
-  var r=state.res, old=r.title, nw=prompt('Όνομα τραγουδιού:', old);
+  var r=state.res, old=r.title, nw=prompt(LG('Όνομα τραγουδιού:','Song name:'), old);
   if(!nw || !(nw=nw.trim()) || nw===old) return;
   r.title=nw; state.title=nw; $('#resTitle').textContent='🎵 '+nw;
   var h=load('ak-hist',[]); h.forEach(function(x){ if(x.title===old) x.title=nw; }); store('ak-hist',h);
@@ -1593,24 +1611,24 @@ function renderLyrics(){
   var box=$('#lyrBox'), ly=getLyr();
   if(lyrMode==='sync') return;
   if(lyrMode==='edit' || !ly){
-    box.innerHTML='<div class="info" style="font-size:.95rem;margin-bottom:10px">'+(ly?'Διόρθωσε τους στίχους:':'<b>Βάλε τους στίχους του τραγουδιού</b> και θα σου δείξω τις συγχορδίες πάνω από τα λόγια.')+'</div>'+
-      (ly?'':'<ol class="steps" style="font-size:.85rem"><li>Άνοιξε σε άλλη καρτέλα μια σελίδα με τους στίχους (γράψε στο Google: <i>όνομα τραγουδιού στίχοι</i>).</li><li>Διάλεξέ τους με το ποντίκι και πάτα <b>Cmd + C</b> (αντιγραφή). <span class="muted">Στο κινητό: κράτα πατημένο το δάχτυλο πάνω στο κείμενο, τράβα τα σημάδια να πιάσουν όλους τους στίχους και πάτα «Αντιγραφή».</span></li><li>Έλα εδώ, πάτα μέσα στο κουτί και μετά <b>Cmd + V</b> (επικόλληση). <span class="muted">Στο κινητό: κράτα πατημένο μέσα στο κουτί και πάτα «Επικόλληση».</span></li></ol>')+
-      '<textarea id="lyrText" placeholder="Επικόλλησε εδώ τους στίχους…">'+esc(ly?ly.text:'')+'</textarea>'+
-      '<div class="row" style="margin-top:10px"><button class="big green" id="lyrSave">✔ Κράτα τους στίχους</button>'+(ly?'<button class="mid" id="lyrCancel">Άκυρο</button><button class="mid" id="lyrDel">🗑 Σβήσε τους στίχους</button>':'')+'</div>';
+    box.innerHTML='<div class="info" style="font-size:.95rem;margin-bottom:10px">'+(ly?LG('Διόρθωσε τους στίχους:','Correct the lyrics:'):LG('<b>Βάλε τους στίχους του τραγουδιού</b> και θα σου δείξω τις συγχορδίες πάνω από τα λόγια.','<b>Add the song’s lyrics</b> and I will show you the chords above the words.'))+'</div>'+
+      (ly?'':LG('<ol class="steps" style="font-size:.85rem"><li>Άνοιξε σε άλλη καρτέλα μια σελίδα με τους στίχους (γράψε στο Google: <i>όνομα τραγουδιού στίχοι</i>).</li><li>Διάλεξέ τους με το ποντίκι και πάτα <b>Cmd + C</b> (αντιγραφή). <span class="muted">Στο κινητό: κράτα πατημένο το δάχτυλο πάνω στο κείμενο, τράβα τα σημάδια να πιάσουν όλους τους στίχους και πάτα «Αντιγραφή».</span></li><li>Έλα εδώ, πάτα μέσα στο κουτί και μετά <b>Cmd + V</b> (επικόλληση). <span class="muted">Στο κινητό: κράτα πατημένο μέσα στο κουτί και πάτα «Επικόλληση».</span></li></ol>','<ol class="steps" style="font-size:.85rem"><li>Open a page with the lyrics in another tab (search Google for: <i>song name lyrics</i>).</li><li>Select them with the mouse and press <b>Cmd + C</b> (copy). <span class="muted">On a phone: press and hold on the text, drag the handles to cover all the lyrics and tap «Copy».</span></li><li>Come here, tap inside the box and then <b>Cmd + V</b> (paste). <span class="muted">On a phone: press and hold inside the box and tap «Paste».</span></li></ol>'))+
+      '<textarea id="lyrText" placeholder="'+LG('Επικόλλησε εδώ τους στίχους…','Paste the lyrics here…')+'">'+esc(ly?ly.text:'')+'</textarea>'+
+      '<div class="row" style="margin-top:10px"><button class="big green" id="lyrSave">'+LG('✔ Κράτα τους στίχους','✔ Keep the lyrics')+'</button>'+(ly?'<button class="mid" id="lyrCancel">'+LG('Άκυρο','Cancel')+'</button><button class="mid" id="lyrDel">'+LG('🗑 Σβήσε τους στίχους','🗑 Delete the lyrics')+'</button>':'')+'</div>';
     $('#lyrSave').onclick=function(){
       var t=$('#lyrText').value.replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();
       if(!t){ putLyr(null); lyrMode='view'; renderLyrics(); return; }
       var old=getLyr(); var keep=old && old.text===t ? old.times : null;
       putLyr({text:t, times:keep}); lyrMode='view'; renderLyrics(); lastLine=-2;
     };
-    if(ly){ $('#lyrCancel').onclick=function(){ lyrMode='view'; renderLyrics(); }; $('#lyrDel').onclick=function(){ if(confirm('Να σβήσω τους στίχους αυτού του τραγουδιού;')){ putLyr(null); lyrMode='view'; renderLyrics(); } }; }
+    if(ly){ $('#lyrCancel').onclick=function(){ lyrMode='view'; renderLyrics(); }; $('#lyrDel').onclick=function(){ if(confirm(LG('Να σβήσω τους στίχους αυτού του τραγουδιού;','Delete the lyrics of this song?'))){ putLyr(null); lyrMode='view'; renderLyrics(); } }; }
     return;
   }
   var rows=buildRows(ly), synced=!!(ly.times && ly.times.length), html='';
   var fl=flatsFor(state.trans-state.capo);
   if(!synced){
-    html+='<div class="warn" style="font-size:.95rem">Οι στίχοι είναι έτοιμοι. Τώρα πρέπει να μου δείξεις <b>πότε τραγουδιέται κάθε γραμμή</b>, για να βάλω τις συγχορδίες στη σωστή θέση. Παίρνει όσο κρατάει το τραγούδι.'+
-      (audio.src?'<div style="margin-top:10px"><button class="big orange" id="syncGo">⏱ Ξεκίνα τον συγχρονισμό</button></div>':'<div style="margin-top:8px"><b>Χρειάζομαι τον ήχο:</b> ξαναβάλε το τραγούδι (από αρχείο ή YouTube) με το ίδιο όνομα.</div>')+'</div>';
+    html+='<div class="warn" style="font-size:.95rem">'+LG('Οι στίχοι είναι έτοιμοι. Τώρα πρέπει να μου δείξεις <b>πότε τραγουδιέται κάθε γραμμή</b>, για να βάλω τις συγχορδίες στη σωστή θέση. Παίρνει όσο κρατάει το τραγούδι.','The lyrics are ready. Now show me <b>when each line is sung</b>, so I can put the chords in the right place. It takes as long as the song.')+
+      (audio.src?'<div style="margin-top:10px"><button class="big orange" id="syncGo">'+LG('⏱ Ξεκίνα τον συγχρονισμό','⏱ Start syncing')+'</button></div>':'<div style="margin-top:8px">'+LG('<b>Χρειάζομαι τον ήχο:</b> ξαναβάλε το τραγούδι (από αρχείο ή YouTube) με το ίδιο όνομα.','<b>I need the sound:</b> load the song again (from a file or YouTube) with the same name.')+'</div>')+'</div>';
   }
   html+='<div class="lyrics">';
   rows.forEach(function(r,i){
@@ -1626,8 +1644,8 @@ function renderLyrics(){
       return '<span class="ck">'+lab+'<span>'+esc(p.txt)+'</span></span>';
     }).join('')+'</div>';
   });
-  html+='</div><div class="row noprint" style="margin-top:14px">'+(synced&&audio.src?'<button class="mid" id="syncGo">⏱ Ξανά συγχρονισμός</button>':'')+'<button class="mid" id="lyrEdit">✏️ Αλλαγή στίχων</button></div>';
-  if(synced) html='<p class="muted noprint" style="font-size:.8rem;margin:0 0 8px">Πάτα σε μια γραμμή για να πας εκεί στο τραγούδι.</p>'+html;
+  html+='</div><div class="row noprint" style="margin-top:14px">'+(synced&&audio.src?'<button class="mid" id="syncGo">'+LG('⏱ Ξανά συγχρονισμός','⏱ Sync again')+'</button>':'')+'<button class="mid" id="lyrEdit">'+LG('✏️ Αλλαγή στίχων','✏️ Edit lyrics')+'</button></div>';
+  if(synced) html='<p class="muted noprint" style="font-size:.8rem;margin:0 0 8px">'+LG('Πάτα σε μια γραμμή για να πας εκεί στο τραγούδι.','Tap a line to go there in the song.')+'</p>'+html;
   box.innerHTML=html;
   $('#lyrEdit').onclick=function(){ lyrMode='edit'; renderLyrics(); };
   var sg=$('#syncGo'); if(sg) sg.onclick=startSync;
@@ -1654,15 +1672,15 @@ function startSync(){
 function drawSync(){
   var k=sync.times.length, L=sync.lines;
   $('#lyrBox').innerHTML='<div class="syncbox">'+
-    '<div class="info">Γραμμή <b>'+Math.min(k+1,L.length)+'</b> από '+L.length+'</div>'+
+    '<div class="info">'+LG('Γραμμή','Line')+' <b>'+Math.min(k+1,L.length)+'</b> '+LG('από','of')+' '+L.length+'</div>'+
     '<div class="pv">'+(k>0?'✔ '+esc(L[k-1]):'&nbsp;')+'</div>'+
-    '<div class="ln">'+(k<L.length?'«'+esc(L[k])+'»':'Τέλος!')+'</div>'+
-    '<div class="pv">'+(k+1<L.length?'μετά: '+esc(L[k+1]):'&nbsp;')+'</div>'+
-    '<button class="tapbtn" id="tapNow">👉 ΤΩΡΑ</button>'+
-    '<div class="muted" style="font-size:.9rem">Πάτα <b>«ΤΩΡΑ»</b> (ή το πλήκτρο <b>Enter</b>) τη στιγμή που αρχίζει να τραγουδιέται η γραμμή.</div>'+
-    '<div class="row" style="justify-content:center;margin-top:14px"><button class="big green" id="tapDone">✔ Τέλος — δείξε μου τις συγχορδίες</button></div>'+
-    '<div class="row" style="justify-content:center;margin-top:10px"><button class="mid" id="tapBack">↶ Λάθος, μία πίσω</button><button class="mid" id="tapStop">✕ Άκυρο</button></div>'+
-    '<div class="muted" style="font-size:.85rem;margin-top:10px">Αν το τραγούδι τελειώσει πριν τις γραμμές, δεν πειράζει: πάτα «Τέλος» ή απλά άφησέ το να τελειώσει.</div></div>';
+    '<div class="ln">'+(k<L.length?'«'+esc(L[k])+'»':LG('Τέλος!','The end!'))+'</div>'+
+    '<div class="pv">'+(k+1<L.length?LG('μετά: ','next: ')+esc(L[k+1]):'&nbsp;')+'</div>'+
+    '<button class="tapbtn" id="tapNow">'+LG('👉 ΤΩΡΑ','👉 NOW')+'</button>'+
+    '<div class="muted" style="font-size:.9rem">'+LG('Πάτα <b>«ΤΩΡΑ»</b> (ή το πλήκτρο <b>Enter</b>) τη στιγμή που αρχίζει να τραγουδιέται η γραμμή.','Press <b>«NOW»</b> (or the <b>Enter</b> key) the moment the line starts being sung.')+'</div>'+
+    '<div class="row" style="justify-content:center;margin-top:14px"><button class="big green" id="tapDone">'+LG('✔ Τέλος — δείξε μου τις συγχορδίες','✔ Done — show me the chords')+'</button></div>'+
+    '<div class="row" style="justify-content:center;margin-top:10px"><button class="mid" id="tapBack">'+LG('↶ Λάθος, μία πίσω','↶ Oops, one back')+'</button><button class="mid" id="tapStop">'+LG('✕ Άκυρο','✕ Cancel')+'</button></div>'+
+    '<div class="muted" style="font-size:.85rem;margin-top:10px">'+LG('Αν το τραγούδι τελειώσει πριν τις γραμμές, δεν πειράζει: πάτα «Τέλος» ή απλά άφησέ το να τελειώσει.','If the song ends before the lines do, no problem: press «Done» or just let it finish.')+'</div></div>';
   $('#tapNow').onclick=syncTap; $('#tapBack').onclick=syncBack; $('#tapDone').onclick=syncFinish;
   $('#tapStop').onclick=function(){ sync=null; lyrMode='view'; audio.pause(); $('#playBtn').textContent='▶'; renderLyrics(); };
 }
@@ -1681,8 +1699,8 @@ function syncFinish(){
   setTab('lyr'); renderLyrics(); lastLine=-2; followLyrics(true);
   var box=$('#lyrBox');
   box.insertAdjacentHTML('afterbegin', T.length
-    ? '<div class="warn" style="background:#d3f9d8;border-color:#2b8a3e">✔ Έτοιμο! Οι συγχορδίες μπήκαν πάνω από τα λόγια'+(T.length<ly.text.split('\n').filter(function(x){return x.trim();}).length?' (στις γραμμές που πρόλαβες να πατήσεις)':'')+'. Πάτα ▶ για να παίξεις μαζί.</div>'
-    : '<div class="warn">Δεν πάτησες «ΤΩΡΑ» σε καμία γραμμή, οπότε δεν άλλαξε κάτι.</div>');
+    ? '<div class="warn" style="background:#d3f9d8;border-color:#2b8a3e">'+LG('✔ Έτοιμο! Οι συγχορδίες μπήκαν πάνω από τα λόγια','✔ Ready! The chords are above the words')+(T.length<ly.text.split('\n').filter(function(x){return x.trim();}).length?LG(' (στις γραμμές που πρόλαβες να πατήσεις)',' (on the lines you managed to mark)'):'')+LG('. Πάτα ▶ για να παίξεις μαζί.','. Press ▶ to play along.')+'</div>'
+    : '<div class="warn">'+LG('Δεν πάτησες «ΤΩΡΑ» σε καμία γραμμή, οπότε δεν άλλαξε κάτι.','You did not press «NOW» on any line, so nothing changed.')+'</div>');
   $('#p-lyr').scrollTop=0;
 }
 function syncBack(){
@@ -1709,7 +1727,7 @@ function lyricsText(){
 // ---------- solo notes (melody) ----------
 var melView={from:null,to:null}, melBusy=false, lastNote=-2, melCache=null;
 var STEP_COL=NOTE_COL;
-var STEP_GR=['Ντο','Ρε','Μι','Φα','Σολ','Λα','Σι'];
+var STEP_GR=LG(['Ντο','Ρε','Μι','Φα','Σολ','Λα','Σι'],['C','D','E','F','G','A','B']);
 var SH_STEP=[0,0,1,1,2,3,3,4,4,5,5,6], SH_ACC=[0,1,0,1,0,0,1,0,1,0,1,0];
 var FL_STEP=[0,1,1,2,2,3,4,4,5,5,6,6], FL_ACC=[0,-1,0,-1,0,0,-1,0,-1,0,-1,0];
 function spell(m, flats){ var pc=((m%12)+12)%12, oct=Math.floor(m/12)-1; return {step:(flats?FL_STEP:SH_STEP)[pc], acc:(flats?FL_ACC:SH_ACC)[pc], oct:oct}; }
@@ -1725,7 +1743,7 @@ function ensureMelody(){
     melBusy=false; r.melody={notes:m.notes.map(function(n){ return {s:+n.s.toFixed(3), e:+n.e.toFixed(3), m:n.m, c:+n.c.toFixed(2)}; })};
     var h=load('ak-hist',[]); h.forEach(function(x){ if(x.title===r.title) x.melody=r.melody; }); store('ak-hist',h); renderHist();
     if(state.res===r) renderMelody();
-  }).catch(function(e){ melBusy=false; $('#melBox').innerHTML='<div class="err">Δεν μπόρεσα να βγάλω τις νότες: '+esc(e&&e.message||e)+'</div>'; });
+  }).catch(function(e){ melBusy=false; $('#melBox').innerHTML='<div class="err">'+LG('Δεν μπόρεσα να βγάλω τις νότες: ','I could not find the notes: ')+esc(e&&e.message||e)+'</div>'; });
 }
 // choose the octave that fits the guitar best (sounding E2=40 … E5=76 ≈ 12th fret on the high string)
 function guitarNotes(){
@@ -1768,11 +1786,11 @@ function guitarNotes(){
 }
 // note lengths, as written on the staff (in beats of the song's rhythm)
 var DURS=[
-  {k:'w', dot:false, b:4,   nm:'Ολόκληρο', txt:'4 χρόνοι'},
-  {k:'h', dot:true,  b:3,   nm:'Μισό με τελεία', txt:'3 χρόνοι'},
-  {k:'h', dot:false, b:2,   nm:'Μισό', txt:'2 χρόνοι'},
-  {k:'q', dot:false, b:1,   nm:'Τέταρτο', txt:'1 χρόνος'},
-  {k:'e', dot:false, b:0.5, nm:'Όγδοο', txt:'μισός χρόνος'}
+  {k:'w', dot:false, b:4,   nm:LG('Ολόκληρο','Whole'), txt:LG('4 χρόνοι','4 beats')},
+  {k:'h', dot:true,  b:3,   nm:LG('Μισό με τελεία','Dotted half'), txt:LG('3 χρόνοι','3 beats')},
+  {k:'h', dot:false, b:2,   nm:LG('Μισό','Half'), txt:LG('2 χρόνοι','2 beats')},
+  {k:'q', dot:false, b:1,   nm:LG('Τέταρτο','Quarter'), txt:LG('1 χρόνος','1 beat')},
+  {k:'e', dot:false, b:0.5, nm:LG('Όγδοο','Eighth'), txt:LG('μισός χρόνος','half a beat')}
 ];
 function durOf(beats){ var best=DURS[0], bd=1e9; DURS.forEach(function(d){ var e=Math.abs(Math.log(Math.max(beats,0.2)/d.b)); if(e<bd){ bd=e; best=d; } }); return best; }
 function noteGlyph(x, y, col, k, dot, up){
@@ -1796,8 +1814,8 @@ function noteGlyph(x, y, col, k, dot, up){
 function renderMelody(){
   var box=$('#melBox'), r=state.res; if(!box || !r) return;
   if(!r.melody){
-    if(!state.signal){ box.innerHTML='<div class="warn">Για να βγάλω τις νότες χρειάζομαι τον ήχο. Ξαναβάλε το τραγούδι (από αρχείο ή YouTube) και άνοιξε πάλι αυτή την καρτέλα.</div>'; return; }
-    box.innerHTML='<div style="text-align:center;padding:30px 10px"><div style="font-size:2.6rem">🎼</div><h2>Ακούω τη μελωδία νότα-νότα…</h2><div class="bar"><div id="melProg"></div></div><div class="muted" style="font-size:.85rem">Βρίσκω το όργανο ή τη φωνή που ακούγεται πιο δυνατά: το σόλο της κιθάρας ή του μπουζουκιού, ή τη φωνή του τραγουδιστή.</div></div>';
+    if(!state.signal){ box.innerHTML='<div class="warn">'+LG('Για να βγάλω τις νότες χρειάζομαι τον ήχο. Ξαναβάλε το τραγούδι (από αρχείο ή YouTube) και άνοιξε πάλι αυτή την καρτέλα.','To find the notes I need the sound. Load the song again (from a file or YouTube) and open this tab again.')+'</div>'; return; }
+    box.innerHTML='<div style="text-align:center;padding:30px 10px"><div style="font-size:2.6rem">🎼</div><h2>'+LG('Ακούω τη μελωδία νότα-νότα…','Listening to the melody note by note…')+'</h2><div class="bar"><div id="melProg"></div></div><div class="muted" style="font-size:.85rem">'+LG('Βρίσκω το όργανο ή τη φωνή που ακούγεται πιο δυνατά: το σόλο της κιθάρας ή του μπουζουκιού, ή τη φωνή του τραγουδιστή.','I find the instrument or voice that sounds loudest: the guitar or bouzouki solo, or the singer’s voice.')+'</div></div>';
     ensureMelody(); return;
   }
   var all=guitarNotes(), fl=flatsFor(state.trans);
@@ -1805,17 +1823,17 @@ function renderMelody(){
   var notes=all.filter(function(n){ return (from===null||n.e>from) && (to===null||n.s<to); });
   melCache=notes;
   var html='<div class="mbar noprint">'+
-    '<button class="mid" id="melFrom">📍 Αρχή του σόλο εδώ</button>'+
-    '<button class="mid" id="melTo">📍 Τέλος του σόλο εδώ</button>'+
-    (from!==null||to!==null?'<button class="mid" id="melAll">↺ Όλο το τραγούδι</button>':'')+
-    '<span class="muted" style="font-size:.85rem">'+(from!==null||to!==null?'Δείχνω από <b>'+fmt(from||0)+'</b> έως <b>'+fmt(to===null?r.duration:to)+'</b>':'Δείχνω όλο το τραγούδι')+'</span></div>'+
-    '<details class="noprint" style="margin-bottom:8px;font-size:.85rem"><summary style="cursor:pointer;font-weight:700">❓ Πώς διαβάζεται</summary>'+
-    '<p style="margin:6px 0">Κάθε <b>χρωματιστό σημάδι</b> είναι μια νότα. Όσο πιο <b>ψηλά</b> στις 5 γραμμές, τόσο πιο ψιλή η νότα. Το <b>σχήμα</b> της δείχνει <b>πόσους χρόνους κρατάει</b>, όπως στο πεντάγραμμο (δες τα σημάδια πιο κάτω). Οι αχνές κάθετες γραμμές είναι οι χτύποι του ρυθμού. Από κάτω γράφει το <b>όνομα</b> (Ντο, Ρε, Μι…) και πιο κάτω στις 6 γραμμές της κιθάρας το <b>τάστο</b>: η πάνω γραμμή είναι η λεπτή χορδή (Μι), η κάτω η χοντρή. 0 = ανοιχτή χορδή.</p>'+
-    '<p style="margin:6px 0">Πάτα πάνω σε μια νότα για να την <b>ακούσεις</b>. Πάτα στη σειρά για να πάει το τραγούδι εκεί. Βάλε ταχύτητα 50% για να τη μάθεις αργά.</p>'+
-    '<p style="margin:6px 0" class="muted">Όταν δεν παίζει σόλο, γράφει τη μελωδία της φωνής, που κι αυτή παίζεται στην κιθάρα. Τα αχνά σημάδια είναι νότες για τις οποίες δεν είμαι σίγουρος.</p></details>'+
+    '<button class="mid" id="melFrom">'+LG('📍 Αρχή του σόλο εδώ','📍 Solo starts here')+'</button>'+
+    '<button class="mid" id="melTo">'+LG('📍 Τέλος του σόλο εδώ','📍 Solo ends here')+'</button>'+
+    (from!==null||to!==null?'<button class="mid" id="melAll">'+LG('↺ Όλο το τραγούδι','↺ Whole song')+'</button>':'')+
+    '<span class="muted" style="font-size:.85rem">'+(from!==null||to!==null?LG('Δείχνω από','Showing from')+' <b>'+fmt(from||0)+'</b> '+LG('έως','to')+' <b>'+fmt(to===null?r.duration:to)+'</b>':LG('Δείχνω όλο το τραγούδι','Showing the whole song'))+'</span></div>'+
+    '<details class="noprint" style="margin-bottom:8px;font-size:.85rem"><summary style="cursor:pointer;font-weight:700">'+LG('❓ Πώς διαβάζεται','❓ How to read it')+'</summary>'+
+    '<p style="margin:6px 0">'+LG('Κάθε <b>χρωματιστό σημάδι</b> είναι μια νότα. Όσο πιο <b>ψηλά</b> στις 5 γραμμές, τόσο πιο ψιλή η νότα. Το <b>σχήμα</b> της δείχνει <b>πόσους χρόνους κρατάει</b>, όπως στο πεντάγραμμο (δες τα σημάδια πιο κάτω). Οι αχνές κάθετες γραμμές είναι οι χτύποι του ρυθμού. Από κάτω γράφει το <b>όνομα</b> (Ντο, Ρε, Μι…) και πιο κάτω στις 6 γραμμές της κιθάρας το <b>τάστο</b>: η πάνω γραμμή είναι η λεπτή χορδή (Μι), η κάτω η χοντρή. 0 = ανοιχτή χορδή.','Each <b>coloured mark</b> is a note. The <b>higher</b> on the 5 lines, the higher the note. Its <b>shape</b> shows <b>how many beats it lasts</b>, as on the staff (see the marks below). The faint vertical lines are the beats of the rhythm. Below is the <b>name</b> (C, D, E…) and further down, on the 6 guitar lines, the <b>fret</b>: the top line is the thin string (E), the bottom the thick one. 0 = open string.')+'</p>'+
+    '<p style="margin:6px 0">'+LG('Πάτα πάνω σε μια νότα για να την <b>ακούσεις</b>. Πάτα στη σειρά για να πάει το τραγούδι εκεί. Βάλε ταχύτητα 50% για να τη μάθεις αργά.','Tap a note to <b>hear</b> it. Tap the row to move the song there. Set speed to 50% to learn it slowly.')+'</p>'+
+    '<p style="margin:6px 0" class="muted">'+LG('Όταν δεν παίζει σόλο, γράφει τη μελωδία της φωνής, που κι αυτή παίζεται στην κιθάρα. Τα αχνά σημάδια είναι νότες για τις οποίες δεν είμαι σίγουρος.','When there is no solo, it writes the vocal melody, which can also be played on guitar. Faint marks are notes I am not sure about.')+'</p></details>'+
     '<div class="legend">'+STEP_GR.map(function(g,i){ return '<span style="background:'+STEP_COL[i]+';color:'+NOTE_INK[i]+'">'+g+'</span>'; }).join('')+'</div>'+
     '<div class="durleg">'+DURS.map(function(d){ return '<span><svg viewBox="0 0 44 60" width="34" height="46">'+noteGlyph(18, d.k==='w'?32:44, '#555', d.k, d.dot, true)+'</svg><span><b>'+d.nm+'</b><br>'+d.txt+'</span></span>'; }).join('')+'</div>';
-  if(!notes.length){ box.innerHTML=html+'<div class="warn">Δεν βρήκα νότες σε αυτό το κομμάτι.</div>'; bindMel(); return; }
+  if(!notes.length){ box.innerHTML=html+'<div class="warn">'+LG('Δεν βρήκα νότες σε αυτό το κομμάτι.','I found no notes in this piece.')+'</div>'; bindMel(); return; }
   // rows of two bars (8 beats)
   var spb = r.bpm ? 60/r.bpm : 0.5, rowDur = Math.max(2.4, Math.min(4.2, 4*spb));
   var t0 = from!==null ? from : Math.max(0, Math.floor(notes[0].s/rowDur)*rowDur);
@@ -1854,7 +1872,7 @@ function renderMelody(){
     svg+='</svg>';
     html+='<div class="melrow" data-a="'+a+'"><span class="tm">'+fmt(a)+'</span>'+svg+'</div>';
   });
-  if(state.capo) html='<div class="info" style="font-size:.9rem;margin-bottom:6px">Τα τάστα είναι μετρημένα <b>από το καποτάστο</b> (καποτάστο στο '+state.capo+'ο).</div>'+html;
+  if(state.capo) html='<div class="info" style="font-size:.9rem;margin-bottom:6px">'+LG('Τα τάστα είναι μετρημένα <b>από το καποτάστο</b> (καποτάστο στο '+state.capo+'ο).','Frets are counted <b>from the capo</b> (capo on fret '+state.capo+').')+'</div>'+html;
   box.innerHTML=html; bindMel(); lastNote=-2; followMelody(true);
 }
 function bindMel(){
@@ -1896,11 +1914,11 @@ function followMelody(force){
 // ---------- live listening ----------
 var live=null;
 var CAN_TAB = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) && !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && !(navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-if(!CAN_TAB) $('#ytSub').textContent='Στο κινητό: πάτα να δεις πώς γίνεται';
+if(!CAN_TAB) $('#ytSub').textContent=LG('Στο κινητό: πάτα να δεις πώς γίνεται','On a phone: tap to see how');
 $('#goTab').onclick=function(){
   if(!CAN_TAB){
     errBox('#homeErr','');
-    $('#homeErr').innerHTML='<div class="warn"><b>Στο κινητό δεν μπορώ να ακούσω απευθείας το YouTube</b> (δεν το επιτρέπει το τηλέφωνο). Δύο εύκολοι τρόποι:<ol class="steps" style="margin:10px 0 0;font-size:1rem"><li>Παίξε το τραγούδι σε <b>άλλη συσκευή</b> (υπολογιστή, τηλεόραση, ηχείο) και εδώ πάτα το πράσινο <b>«Από το μικρόφωνο»</b>. Κράτα το κινητό κοντά στο ηχείο.</li><li>Αν έχεις το τραγούδι <b>αποθηκευμένο</b> στο κινητό (στα Αρχεία), πάτα το μπλε <b>«Από αρχείο»</b>. Βγάζει τα πιο ακριβή αποτελέσματα.</li></ol></div>';
+    $('#homeErr').innerHTML=LG('<div class="warn"><b>Στο κινητό δεν μπορώ να ακούσω απευθείας το YouTube</b> (δεν το επιτρέπει το τηλέφωνο). Δύο εύκολοι τρόποι:<ol class="steps" style="margin:10px 0 0;font-size:1rem"><li>Παίξε το τραγούδι σε <b>άλλη συσκευή</b> (υπολογιστή, τηλεόραση, ηχείο) και εδώ πάτα το πράσινο <b>«Από το μικρόφωνο»</b>. Κράτα το κινητό κοντά στο ηχείο.</li><li>Αν έχεις το τραγούδι <b>αποθηκευμένο</b> στο κινητό (στα Αρχεία), πάτα το μπλε <b>«Από αρχείο»</b>. Βγάζει τα πιο ακριβή αποτελέσματα.</li></ol></div>','<div class="warn"><b>On a phone I cannot listen to YouTube directly</b> (the phone does not allow it). Two easy ways:<ol class="steps" style="margin:10px 0 0;font-size:1rem"><li>Play the song on <b>another device</b> (computer, TV, speaker) and here press the green <b>«From the microphone»</b>. Keep the phone near the speaker.</li><li>If you have the song <b>saved</b> on the phone (in Files), press the blue <b>«From a file»</b>. It gives the most accurate results.</li></ol></div>');
     $('#homeErr').scrollIntoView({behavior:'smooth', block:'center'});
     return;
   }
@@ -1921,7 +1939,7 @@ function startLive(kind){
   var ctx=new (window.AudioContext||window.webkitAudioContext)();   // created inside the click
   var md=navigator.mediaDevices;
   if(!md || (kind==='tab' && !md.getDisplayMedia) || (kind==='mic' && !md.getUserMedia)){
-    errBox('#listenErr', kind==='mic' ? 'Δεν μπορώ να ανοίξω το μικρόφωνο σε αυτόν τον φυλλομετρητή. Στο iPhone άνοιξέ με από το Safari, στο Android από το Chrome.' : 'Αυτός ο φυλλομετρητής δεν το υποστηρίζει. Χρησιμοποίησε το Google Chrome στον υπολογιστή.'); try{ ctx.close(); }catch(e){} return;
+    errBox('#listenErr', kind==='mic' ? LG('Δεν μπορώ να ανοίξω το μικρόφωνο σε αυτόν τον φυλλομετρητή. Στο iPhone άνοιξέ με από το Safari, στο Android από το Chrome.','I cannot open the microphone in this browser. On iPhone open me in Safari, on Android in Chrome.') : LG('Αυτός ο φυλλομετρητής δεν το υποστηρίζει. Χρησιμοποίησε το Google Chrome στον υπολογιστή.','This browser does not support it. Use Google Chrome on a computer.')); try{ ctx.close(); }catch(e){} return;
   }
   var ac={echoCancellation:false,noiseSuppression:false,autoGainControl:false};
   var p = kind==='tab'
@@ -1930,7 +1948,7 @@ function startLive(kind){
   p.then(function(stream){
     if(!stream.getAudioTracks().length){
       stream.getTracks().forEach(function(t){ t.stop(); });
-      errBox('#listenErr','Δεν ήρθε ήχος από την καρτέλα. Ξαναπάτα «Ξεκίνα να ακούς», διάλεξε <b>«Καρτέλα Chrome»</b> και <b>άνοιξε τον διακόπτη για τον ήχο της καρτέλας</b> πριν πατήσεις «Κοινή χρήση».');
+      errBox('#listenErr',LG('Δεν ήρθε ήχος από την καρτέλα. Ξαναπάτα «Ξεκίνα να ακούς», διάλεξε <b>«Καρτέλα Chrome»</b> και <b>άνοιξε τον διακόπτη για τον ήχο της καρτέλας</b> πριν πατήσεις «Κοινή χρήση».','No sound came from the tab. Press «Start listening» again, choose <b>«Chrome Tab»</b> and <b>turn on the switch for the tab’s audio</b> before pressing «Share».'));
       ctx.close(); return;
     }
     ctx.resume();
@@ -1953,7 +1971,7 @@ function startLive(kind){
     stream.getTracks().forEach(function(t){ t.onended=function(){ if(live) stopLive(true); }; });
     $('#tabHelp').classList.add('hidden'); $('#micHelp').classList.add('hidden'); $('#live').classList.remove('hidden');
     $('#liveHist').innerHTML=''; $('#liveKey').textContent='—';
-    $('#liveChord').style.background=colorOf(null); $('#liveChord').style.color='#fff'; $('#liveChord').innerHTML='<div class="nm">…</div><div class="gr">Περιμένω μουσική</div>'; $('#liveDiag').innerHTML='';
+    $('#liveChord').style.background=colorOf(null); $('#liveChord').style.color='#fff'; $('#liveChord').innerHTML='<div class="nm">…</div><div class="gr">'+LG('Περιμένω μουσική','Waiting for music')+'</div>'; $('#liveDiag').innerHTML='';
     live.timer=setInterval(function(){
       if(!live) return; var sec=(Date.now()-live.t0)/1000; $('#liveTime').textContent=fmt(sec);
       $('#silentWarn').classList.toggle('hidden', live.heard || sec<6);
@@ -1962,8 +1980,8 @@ function startLive(kind){
   }).catch(function(e){
     try{ ctx.close(); }catch(x){}
     var n=e&&e.name;
-    if(n==='NotAllowedError') errBox('#listenErr', kind==='mic' ? 'Ο Chrome δεν έδωσε άδεια για το μικρόφωνο. Πάτα το εικονίδιο 🔒 πάνω αριστερά στη γραμμή διευθύνσεων και επίτρεψε το «Μικρόφωνο». Σε Mac μπορεί να χρειαστεί και: Ρυθμίσεις Συστήματος → Ασφάλεια & Απόρρητο → Μικρόφωνο → Google Chrome. Στο κινητό: Ρυθμίσεις → Safari (ή Chrome) → Μικρόφωνο → Επιτρέπεται, και ξαναπάτα «Ξεκίνα να ακούς».' : 'Ακυρώθηκε η επιλογή καρτέλας. Πάτα ξανά «Ξεκίνα να ακούς» όταν είσαι έτοιμος.');
-    else errBox('#listenErr','Δεν μπόρεσα να ξεκινήσω να ακούω ('+esc(e&&e.message||e)+').');
+    if(n==='NotAllowedError') errBox('#listenErr', kind==='mic' ? LG('Ο Chrome δεν έδωσε άδεια για το μικρόφωνο. Πάτα το εικονίδιο 🔒 πάνω αριστερά στη γραμμή διευθύνσεων και επίτρεψε το «Μικρόφωνο». Σε Mac μπορεί να χρειαστεί και: Ρυθμίσεις Συστήματος → Ασφάλεια & Απόρρητο → Μικρόφωνο → Google Chrome. Στο κινητό: Ρυθμίσεις → Safari (ή Chrome) → Μικρόφωνο → Επιτρέπεται, και ξαναπάτα «Ξεκίνα να ακούς».','The browser did not allow the microphone. Click the 🔒 icon at the top left of the address bar and allow «Microphone». On a Mac you may also need: System Settings → Privacy & Security → Microphone → Google Chrome. On a phone: Settings → Safari (or Chrome) → Microphone → Allow, then press «Start listening» again.') : LG('Ακυρώθηκε η επιλογή καρτέλας. Πάτα ξανά «Ξεκίνα να ακούς» όταν είσαι έτοιμος.','Tab selection was cancelled. Press «Start listening» again when you are ready.'));
+    else errBox('#listenErr',LG('Δεν μπόρεσα να ξεκινήσω να ακούω (','I could not start listening (')+esc(e&&e.message||e)+').');
   });
 }
 function showLive(r){
@@ -1987,7 +2005,7 @@ function stopLive(analyze){
   L.stream.getTracks().forEach(function(t){ t.onended=null; t.stop(); });
   try{ L.ctx.close(); }catch(e){}
   if(!analyze) return;
-  if(L.len < L.sr*5 || !L.heard){ show('home'); errBox('#homeErr', L.heard ? 'Η ηχογράφηση ήταν πολύ μικρή (κάτω από 5 δευτερόλεπτα).' : 'Δεν άκουσα ήχο. Αν ήταν από το YouTube, θυμήσου να ανοίξεις τον διακόπτη για τον ήχο της καρτέλας.'); return; }
+  if(L.len < L.sr*5 || !L.heard){ show('home'); errBox('#homeErr', L.heard ? LG('Η ηχογράφηση ήταν πολύ μικρή (κάτω από 5 δευτερόλεπτα).','The recording was too short (under 5 seconds).') : LG('Δεν άκουσα ήχο. Αν ήταν από το YouTube, θυμήσου να ανοίξεις τον διακόπτη για τον ήχο της καρτέλας.','I heard no sound. If it was from YouTube, remember to turn on the switch for the tab’s audio.')); return; }
   var sig=new Float32Array(L.len), o=0; L.chunks.forEach(function(c){ sig.set(c,o); o+=c.length; });
   // trim leading silence
   var st=0, thr=0.003; while(st<sig.length-L.sr && Math.abs(sig[st])<thr) st++;
@@ -1995,7 +2013,7 @@ function stopLive(analyze){
   if(state.audioURL) URL.revokeObjectURL(state.audioURL);
   state.audioURL=URL.createObjectURL(wavBlob(sig, L.sr));
   var d=new Date();
-  runAnalysis(sig, L.sr, (L.kind==='tab'?'Από YouTube':'Από μικρόφωνο')+' — '+d.toLocaleDateString('el-GR')+' '+d.toLocaleTimeString('el-GR',{hour:'2-digit',minute:'2-digit'}), false);
+  runAnalysis(sig, L.sr, (L.kind==='tab'?LG('Από YouTube','From YouTube'):LG('Από μικρόφωνο','From microphone'))+' — '+d.toLocaleDateString(LG('el-GR','en-GB'))+' '+d.toLocaleTimeString(LG('el-GR','en-GB'),{hour:'2-digit',minute:'2-digit'}), false);
 }
 function wavBlob(sig, sr){
   var n=sig.length, buf=new ArrayBuffer(44+n*2), v=new DataView(buf);
@@ -2039,5 +2057,7 @@ if('caches' in window && location.protocol.indexOf('http')===0){
 }
 })();
 </script>
+<!-- Υπογραφή / Signature: Christos S Magides — 13-10-2026 -->
+<script src="https://cdn.jsdelivr.net/gh/Christos1354/ypografi@main/ypografi.js" defer></script>
 </body>
 </html>
