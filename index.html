@@ -1,0 +1,2955 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Συγχορδίες · Chords</title>
+<script>/* 13-10-2026: γλώσσα επισκέπτη / visitor's language (ΕΛ-EN) */
+window.KLANG=(function(){try{var v=localStorage.getItem('ak-lang');if(v==='el'||v==='en')return v;}catch(e){}return /^el/i.test(navigator.language||'el')?'el':'en';})();
+window.LG=function(el,en){return window.KLANG==='en'?en:el;};
+document.documentElement.lang=window.KLANG;
+if(window.KLANG==='en')document.title='Chords';</script>
+<meta name="theme-color" content="#7a2e8e">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{
+  --fs: 22px;
+  --bg:#fbf6ec; --card:#ffffff; --ink:#221a14; --soft:#6b5d52; --line:#e6dccb;
+  --accent:#7a2e8e; --accent2:#d9480f; --ok:#2b8a3e; --stop:#c92a2a;
+}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.35}
+button{font:inherit;cursor:pointer;border:none;border-radius:18px}
+header{background:linear-gradient(120deg,#7a2e8e,#d9480f);color:#fff;padding:18px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+header h1{margin:0;font-size:2rem;flex:1;min-width:240px}
+header h1 small{display:block;font-size:.75rem;font-weight:400;opacity:.92}
+.hbtn{background:rgba(255,255,255,.2);color:#fff;padding:10px 16px;font-size:.9rem;border:2px solid rgba(255,255,255,.5)}
+.hbtn:hover{background:rgba(255,255,255,.32)}
+main{max-width:1150px;margin:0 auto;padding:22px 18px 80px}
+.hidden{display:none!important}
+.row{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+.card{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:22px;margin:0 0 20px}
+h2{font-size:1.4rem;margin:0 0 14px}
+.muted{color:var(--soft)}
+/* mode switch */
+.seg{display:inline-flex;background:#efe5d4;border-radius:18px;padding:5px;gap:5px}
+.seg button{background:transparent;padding:12px 18px;font-size:.95rem;color:var(--ink)}
+.seg button.on{background:var(--accent);color:#fff;font-weight:700}
+/* big source buttons */
+.sources{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin:10px 0 24px}
+.src{padding:26px 22px;text-align:left;color:#fff;display:flex;flex-direction:column;gap:8px;min-height:190px;box-shadow:0 6px 0 rgba(0,0,0,.18)}
+.src:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.src .ic{font-size:2.6rem;line-height:1}
+.src b{font-size:1.45rem}
+.src span{font-size:.9rem;opacity:.95}
+.s-yt{background:#c92a2a}.s-file{background:#1864ab}.s-mic{background:#2b8a3e}
+/* steps */
+ol.steps{padding-left:1.4em;margin:0 0 18px}
+ol.steps li{margin:0 0 12px;font-size:1.05rem}
+.big{font-size:1.25rem;padding:18px 30px;color:#fff;background:var(--accent);font-weight:700}
+.big.green{background:var(--ok)}.big.red{background:var(--stop)}.big.orange{background:var(--accent2)}.big.gray{background:#868e96}
+.mid{font-size:1rem;padding:12px 20px;background:#efe5d4;color:var(--ink);font-weight:600}
+.mid:hover{background:#e6d8c0}
+/* progress */
+.bar{height:34px;background:#efe5d4;border-radius:17px;overflow:hidden;margin:18px 0}
+.bar div{height:100%;width:0;background:linear-gradient(90deg,#7a2e8e,#d9480f);transition:width .2s}
+/* now panel */
+.now{display:grid;grid-template-columns:1fr auto;gap:20px;align-items:center}
+.nowchord{border-radius:26px;color:#fff;padding:22px 28px;min-height:210px;display:flex;flex-direction:column;justify-content:center;transition:background .3s}
+.nowchord .nm{font-size:5.2rem;font-weight:800;line-height:1}
+.nowchord .gr{font-size:1.4rem;margin-top:8px;opacity:.95}
+.nowchord .snd{font-size:1rem;margin-top:6px;opacity:.9}
+.nextbox{font-size:1.1rem;margin-top:12px;color:var(--soft)}
+.nextbox b{font-size:1.6rem;color:var(--ink)}
+.diagwrap{background:#fff;border:2px solid var(--line);border-radius:20px;padding:8px}
+/* sheet */
+.sheet{display:flex;flex-wrap:wrap;gap:10px}
+.tile{color:#fff;border-radius:16px;padding:10px 14px;min-width:96px;text-align:center;cursor:pointer;border:4px solid transparent;transition:transform .15s}
+.tile .n{font-size:1.5rem;font-weight:800}
+.tile .t{font-size:.72rem;opacity:.9}
+.tile.cur{border-color:#111;transform:scale(1.1);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.tile.none{background:#ced4da!important;color:#495057}
+.diags{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.diag{background:#fff;border:2px solid var(--line);border-radius:18px;text-align:center;padding:8px 4px}
+.diag .n{font-size:1.4rem;font-weight:800}
+/* player */
+.player{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.play{width:92px;height:92px;border-radius:50%;background:var(--accent);color:#fff;font-size:2.4rem;display:flex;align-items:center;justify-content:center}
+input[type=range]{flex:1;min-width:220px;height:40px;accent-color:#7a2e8e}
+.time{font-size:1.1rem;font-variant-numeric:tabular-nums;min-width:140px}
+.ctl{display:flex;align-items:center;gap:8px;background:#f6efe2;border-radius:18px;padding:8px 12px}
+.ctl .lbl{font-size:.9rem;font-weight:600;margin-right:4px}
+.ctl .v{font-size:1.2rem;font-weight:800;min-width:2.2em;text-align:center}
+.pm{width:52px;height:52px;background:var(--accent);color:#fff;font-size:1.6rem;font-weight:800;border-radius:14px}
+.info{font-size:1.1rem}
+.info b{font-size:1.25rem}
+.hist{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.meter{height:18px;background:#efe5d4;border-radius:9px;overflow:hidden;width:220px}
+.meter div{height:100%;width:0;background:var(--ok)}
+.warn{background:#fff3bf;border:2px solid #f59f00;border-radius:16px;padding:14px 18px;font-size:1rem;margin:12px 0}
+.err{background:#ffe3e3;border:2px solid #c92a2a;border-radius:16px;padding:14px 18px;font-size:1.05rem;margin:12px 0}
+.list button{display:block;width:100%;text-align:left;background:#f6efe2;margin:0 0 8px;padding:14px 18px;font-size:1rem}
+.list button:hover{background:#ecdfc8}
+.rec{display:inline-block;width:18px;height:18px;border-radius:50%;background:#c92a2a;animation:bl 1s infinite;vertical-align:middle;margin-right:6px}
+@keyframes bl{50%{opacity:.25}}
+.card.tight{padding:14px 18px;margin-bottom:12px}
+.mid{padding:10px 14px;font-size:.85rem}
+.play{width:70px;height:70px;font-size:1.8rem}
+.work{display:grid;grid-template-columns:minmax(260px,34%) 1fr;gap:14px;align-items:start}
+.leftcol{position:sticky;top:10px;background:var(--card);border:2px solid var(--line);border-radius:24px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.leftcol .nowchord{width:100%;min-height:150px;padding:14px 18px}
+.leftcol .nowchord .nm{font-size:3.8rem}
+.leftcol .nowchord .gr{font-size:1.1rem}
+.leftcol .diagwrap{border:none;padding:0}
+.leftcol .nextbox{margin:0;align-self:flex-start}
+.rightcol{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:12px 16px;min-width:0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tabs button{background:#efe5d4;padding:10px 16px;font-size:.9rem;font-weight:600;color:var(--ink)}
+.tabs button.on{background:var(--accent);color:#fff}
+.panel{max-height:calc(100vh - 150px);overflow-y:auto;padding-right:4px}
+.lyrics{font-size:1.15rem}
+.lline{padding:6px 10px;border-radius:12px;margin:0 0 2px;line-height:1.2}
+.lline.cur{background:#fff3bf;box-shadow:inset 5px 0 0 #f59f00}
+.lline.blank{height:.8em}
+.ck{display:inline-flex;flex-direction:column;vertical-align:bottom}
+.ck>b{font-size:.95em;font-weight:800;min-height:1.35em;padding-right:.35em;white-space:nowrap}
+.chip{display:inline-block;border-radius:9px;padding:0 .35em;line-height:1.3;font-weight:800;border:1.5px solid rgba(0,0,0,.25)}
+.ck .chip{font-size:.92em}
+.instr .chip{margin-right:.45em;margin-bottom:4px}
+.nextbox .chip{font-size:1.5rem}
+.diag .n .chip{font-size:1.3rem}
+.ck span{white-space:pre}
+.instr{font-size:1rem;padding:4px 10px;color:var(--soft)}
+.instr{line-height:1.7}
+textarea{width:100%;min-height:260px;font:inherit;font-size:1rem;padding:12px;border:2px solid var(--line);border-radius:14px}
+.syncbox{text-align:center;padding:10px}
+.syncbox .ln{font-size:1.6rem;font-weight:700;margin:14px 0;min-height:2.2em}
+.syncbox .pv{font-size:1rem;color:var(--soft)}
+.tapbtn{font-size:1.8rem;padding:26px 50px;background:var(--accent2);color:#fff;font-weight:800;margin:10px}
+.melrow{position:relative;border-bottom:1px dashed var(--line);padding:4px 0 2px;cursor:pointer}
+.melrow svg{display:block;width:100%;height:auto}
+.melrow .tm{position:absolute;left:4px;top:2px;font-size:.7rem;color:var(--soft)}
+.mbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.legend{display:flex;gap:6px;flex-wrap:wrap;font-size:.8rem;margin:4px 0 10px}
+.legend span{padding:3px 10px;border-radius:10px;color:#fff;font-weight:800;border:1.5px solid rgba(0,0,0,.25)}
+.durleg{display:flex;gap:8px 16px;flex-wrap:wrap;font-size:.78rem;margin:0 0 10px;align-items:center}
+.durleg>span{display:flex;align-items:center;gap:4px;background:#f6efe2;border-radius:12px;padding:2px 10px 2px 2px;line-height:1.15}
+.hrow{display:flex;gap:8px;align-items:stretch;margin:0 0 8px}
+.hrow>button:first-child{flex:1;margin:0!important}
+.delbtn{background:#ffe3e3!important;color:#c92a2a;font-size:1.3rem;padding:0 18px!important;width:auto!important;margin:0!important;border:2px solid #ffc9c9!important}
+.delbtn:hover{background:#ffc9c9!important}
+.resbtn{background:#d3f9d8!important;color:#2b8a3e;font-weight:700;font-size:.95rem;padding:0 16px!important;width:auto!important;margin:0!important;white-space:nowrap}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#222;color:#fff;padding:16px 22px;border-radius:18px;font-size:1.05rem;display:flex;gap:16px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.35);z-index:50}
+.toast button{background:#ffd43b;color:#222;font-weight:800;padding:10px 18px;font-size:1rem}
+
+.ytcard h2{margin-bottom:10px}
+.ytrow{display:flex;gap:10px;flex-wrap:wrap}
+.ytrow input{flex:1;min-width:240px;font:inherit;font-size:1.05rem;padding:16px 18px;border:3px solid #c92a2a;border-radius:16px;background:#fff}
+.ytrow input:focus{outline:none;border-color:#7a2e8e}
+.ytgo{width:100%;margin-top:14px;font-size:1.45rem;padding:22px}
+.ytwrap{position:relative;width:100%;max-width:640px;margin:0 auto;aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden}
+.ytwrap iframe,.ytwrap #ytPlayer{position:absolute;inset:0;width:100%;height:100%}
+.aibar{height:22px;background:#efe5d4;border-radius:11px;overflow:hidden;margin:14px 0}
+.aibar div{height:100%;width:0;background:linear-gradient(90deg,#7a2e8e,#d9480f);transition:width .2s}
+.credits{font-size:.72rem;color:var(--soft);margin:18px 4px 0;line-height:1.4}
+@media (max-width:900px){ .work{grid-template-columns:1fr} .leftcol{position:static} .panel{max-height:none} }
+@media print{ .work{display:block} .panel{display:block!important;max-height:none;overflow:visible} .lline.cur{background:none;box-shadow:none} }
+@media (max-width:700px){ .now{grid-template-columns:1fr} .nowchord .nm{font-size:4rem} }
+/* phones */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+.seg{flex-wrap:wrap}
+.toast{max-width:calc(100% - 24px)}
+@media (max-width:600px){
+  header{padding:12px 14px;gap:8px}
+  header h1{font-size:1.5rem;min-width:0;flex-basis:100%}
+  .hbtn{padding:8px 12px}
+  main{padding:12px 8px 60px}
+  .card{padding:14px;border-radius:18px}
+  .card.tight{padding:12px}
+  .sources{grid-template-columns:1fr;gap:12px}
+  .src{min-height:0;padding:18px 16px}
+  .src .ic{font-size:2rem}
+  .big{padding:16px 20px;font-size:1.15rem;width:100%}
+  .player{gap:10px}
+  .play{width:64px;height:64px}
+  input[type=range]{min-width:0;flex:1 1 160px}
+  .time{min-width:0}
+  .seg button{padding:10px 12px}
+  .ctl{padding:6px 8px}
+  .pm{width:46px;height:46px}
+  .rightcol{padding:10px}
+  .leftcol .nowchord .nm{font-size:3.2rem}
+  .tile{min-width:76px;padding:8px 10px}
+  .tile .n{font-size:1.25rem}
+  .diags{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+  .lyrics{font-size:1.05rem}
+  .lline{padding:6px 4px}
+  .tapbtn{padding:22px 30px;width:100%;margin:10px 0}
+  .syncbox .ln{font-size:1.3rem}
+  .meter{width:120px}
+  .row{gap:10px}
+  .melrow .tm{font-size:.65rem}
+}
+@media print{
+  header,.noprint,.player,.now,#home,#listen,#working{display:none!important}
+  body{background:#fff} .card{border:1px solid #999;break-inside:avoid}
+  .tile{color:#000!important;background:#fff!important;border:2px solid #000!important}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1 data-en="🎸 Chords <small>Give me a song — I find the guitar chords for you · <b>Version 26/10/2026 08:00</b></small>">🎸 Συγχορδίες <small>Βάλε ένα τραγούδι — σου βγάζω τις συγχορδίες για την κιθάρα · <b>Έκδοση 26/10/2026 08:00</b></small></h1>
+  <button class="hbtn" id="fsDown" title="Μικρότερα γράμματα" data-en-title="Smaller letters">A−</button>
+  <button class="hbtn" id="fsUp" title="Μεγαλύτερα γράμματα" data-en-title="Bigger letters">A+</button>
+  <button class="hbtn" id="homeBtn" data-en="🏠 Home">🏠 Αρχή</button>
+  <button class="hbtn" id="langBtn" title="Ελληνικά / English">EN</button>
+</header>
+<main>
+
+<!-- HOME -->
+<section id="home">
+  <div class="card">
+    <div class="row" style="justify-content:space-between">
+      <div data-en="&lt;b&gt;How many chords should I show you?&lt;/b&gt;&lt;div class=&quot;muted&quot; style=&quot;font-size:.85rem&quot;&gt;You can change it later, instantly, without me listening to the song again&lt;/div&gt;"><b>Πόσες συγχορδίες να σου δείχνω;</b><div class="muted" style="font-size:.85rem">Μπορείς να το αλλάξεις και μετά, αμέσως, χωρίς να ξανακούσω το τραγούδι</div></div>
+      <div class="seg" id="modeSeg">
+        <button data-m="basic" data-en="Few (the basic ones)">Λίγες (οι βασικές)</button>
+        <button data-m="simple" data-en="Simple">Απλές</button>
+        <button data-m="full" data-en="All (7, maj7, sus…)">Όλες (7, maj7, sus…)</button>
+      </div>
+    </div>
+  </div>
+  <div class="card ytcard">
+    <h2 data-en="▶️ A song from YouTube">▶️ Τραγούδι από το YouTube</h2>
+    <div class="ytrow">
+      <input id="ytUrl" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="Επικόλλησε εδώ τον σύνδεσμο (link) του τραγουδιού" data-en-ph="Paste the song’s YouTube link here">
+      <button class="mid" id="ytPaste" data-en="📋 Paste">📋 Επικόλληση</button>
+    </div>
+    <button class="big green ytgo" id="ytGo" data-en="🎸 Find the chords">🎸 Βγάλε τις συγχορδίες</button>
+    <div class="muted" style="font-size:.85rem;margin-top:10px" data-en="How to get the link: on YouTube press «Share» → «Copy», or copy the address at the top of Chrome. Then press «📋 Paste».">Πώς παίρνω τον σύνδεσμο: στο YouTube πάτα «Κοινοποίηση» → «Αντιγραφή», ή αντέγραψε τη διεύθυνση πάνω-πάνω στον Chrome. Μετά πάτα «📋 Επικόλληση».</div>
+  </div>
+  <div class="sources">
+    <button class="src s-file" id="goFile"><span class="ic">📁</span><b data-en="From a file">Από αρχείο</b><span data-en="A song from your computer or phone (mp3, m4a, wav, and video) — the most accurate">Τραγούδι από τον υπολογιστή ή το κινητό σου (mp3, m4a, wav, και βίντεο) — το πιο ακριβές</span></button>
+    <button class="src s-mic" id="goMic"><span class="ic">🎤</span><b data-en="From the microphone">Από το μικρόφωνο</b><span data-en="For anything you hear from a radio, phone or other device">Για ό,τι ακούς από ραδιόφωνο, τηλέφωνο ή άλλη συσκευή</span></button>
+  </div>
+  <input type="file" id="fileIn" accept="audio/*,video/*,.mp3,.m4a,.wav,.aac,.ogg,.flac,.mp4" class="hidden">
+  <div id="homeErr"></div>
+  <div class="card" id="histCard">
+    <h2 data-en="📚 My songs">📚 Τα τραγούδια μου</h2>
+    <div class="list" id="histList"></div>
+  </div>
+  <div class="card hidden" id="trashCard">
+    <details id="trashDet">
+      <summary style="cursor:pointer;font-size:1.15rem;font-weight:700"><span data-en="🗑 Bin — deleted songs">🗑 Κάδος — σβησμένα τραγούδια</span> (<span id="trashN">0</span>)</summary>
+      <p class="muted" style="font-size:.85rem;margin:8px 0" data-en="If you deleted something by mistake, press «↩ Restore» and it goes back to your songs, with its lyrics and notes.">Αν έσβησες κάτι κατά λάθος, πάτα «↩ Επαναφορά» και γυρίζει στα τραγούδια σου, μαζί με τους στίχους και τις νότες του.</p>
+      <div class="list" id="trashList"></div>
+      <button class="mid" id="trashEmpty" style="margin-top:8px" data-en="Empty the bin for good">Άδειασε τον κάδο για πάντα</button>
+    </details>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+  <p class="credits" data-en="The chords are found by artificial intelligence: the BTC model (Park et al., 2019) and the Spleeter voice separation (Deezer). Everything runs on your own computer — the song is not sent anywhere.">Τις συγχορδίες τις βρίσκει τεχνητή νοημοσύνη: το μοντέλο BTC (Park κ.ά., 2019) και ο διαχωρισμός φωνής Spleeter (Deezer). Όλα γίνονται μέσα στον δικό σου υπολογιστή — το τραγούδι δεν στέλνεται πουθενά.</p>
+</section>
+
+<!-- LISTEN INSTRUCTIONS + LIVE -->
+<section id="listen" class="hidden">
+  <div class="card hidden" id="ytBox">
+    <div id="ytAsk" class="warn" style="font-size:1.05rem" data-en="&lt;b&gt;Chrome will now ask you&lt;/b&gt; whether I may hear this tab. Press the blue button &lt;b&gt;«Allow»&lt;/b&gt; (make sure &lt;b&gt;«Also share tab audio»&lt;/b&gt; is ticked). The song then starts by itself from the beginning.">👉 <b>Τώρα ο Chrome θα σε ρωτήσει</b> αν μου επιτρέπεις να ακούσω αυτή την καρτέλα. Πάτα το μπλε κουμπί <b>«Να επιτρέπεται»</b> (Allow) — να είναι τσεκαρισμένο το <b>«Κοινή χρήση ήχου καρτέλας»</b>. Μετά το τραγούδι ξεκινά μόνο του από την αρχή.</div>
+    <div class="ytwrap"><div id="ytPlayer"></div></div>
+  </div>
+  <div class="card" id="tabHelp">
+    <h2 data-en="▶️ Listen from YouTube">▶️ Άκου από το YouTube</h2>
+    <div class="warn" id="tabWhy" data-en="This video does not allow being played inside other pages, so we will do it the other way:">Αυτό το βίντεο δεν επιτρέπει να παίξει μέσα σε άλλες σελίδες, οπότε θα το κάνουμε με τον άλλο τρόπο:</div>
+    <button class="big orange" id="ytOpen" style="margin:6px 0 14px" data-en="1️⃣ Open the song on YouTube">1️⃣ Άνοιξε το τραγούδι στο YouTube</button>
+    <ol class="steps">
+      <li data-en="Open the song on &lt;b&gt;YouTube in another tab&lt;/b&gt; of Chrome (don’t start playing it yet).">Άνοιξε το τραγούδι στο <b>YouTube σε άλλη καρτέλα</b> του Chrome (μην το βάλεις ακόμα να παίζει).</li>
+      <li data-en="Come back here and press the green button &lt;b&gt;«Start listening»&lt;/b&gt;.">Γύρνα εδώ και πάτα το πράσινο κουμπί <b>«Ξεκίνα να ακούς»</b>.</li>
+      <li data-en="A Chrome window will appear. Choose &lt;b&gt;«Chrome Tab»&lt;/b&gt; and then the YouTube tab.">Θα βγει ένα παράθυρο του Chrome. Διάλεξε <b>«Καρτέλα Chrome»</b> και μετά την καρτέλα του YouTube.</li>
+      <li data-en="Make sure the &lt;b&gt;switch for the tab’s audio is on&lt;/b&gt; (bottom left of the window) and press &lt;b&gt;«Share»&lt;/b&gt;.">Βεβαιώσου ότι είναι <b>ανοιχτός ο διακόπτης για τον ήχο της καρτέλας</b> (κάτω αριστερά στο παράθυρο) και πάτα <b>«Κοινή χρήση»</b>.</li>
+      <li data-en="Go to YouTube and play the song &lt;b&gt;from the beginning&lt;/b&gt;. Then come back here to watch the chords.">Πήγαινε στο YouTube και βάλε το τραγούδι να παίζει <b>από την αρχή</b>. Μετά γύρνα εδώ να βλέπεις τις συγχορδίες.</li>
+    </ol>
+    <button class="big green" id="startTab" data-en="🎧 Start listening">🎧 Ξεκίνα να ακούς</button>
+  </div>
+  <div class="card" id="micHelp">
+    <h2 data-en="🎤 Listen from the microphone">🎤 Άκου από το μικρόφωνο</h2>
+    <ol class="steps">
+      <li data-en="Press &lt;b&gt;«Start listening»&lt;/b&gt; and allow the microphone when asked.">Πάτα <b>«Ξεκίνα να ακούς»</b> και επίτρεψε τη χρήση του μικροφώνου όταν σε ρωτήσει.</li>
+      <li data-en="Play the song near the computer or phone, at a good volume. On a phone, don’t lock the screen while I listen.">Βάλε το τραγούδι να παίζει κοντά στον υπολογιστή ή στο κινητό, σε καλή ένταση. Στο κινητό μην κλειδώσεις την οθόνη όσο ακούω.</li>
+    </ol>
+    <button class="big green" id="startMic" data-en="🎧 Start listening">🎧 Ξεκίνα να ακούς</button>
+  </div>
+  <div id="listenErr"></div>
+  <div id="live" class="hidden">
+    <div class="card">
+      <div class="row" style="justify-content:space-between">
+        <div class="info"><span class="rec"></span><b id="liveTime">0:00</b> <span data-en="listening…">ακούω…</span></div>
+        <div class="row"><span class="muted" style="font-size:.9rem" data-en="Volume:">Ένταση:</span><div class="meter"><div id="meter"></div></div></div>
+        <button class="big red" id="stopBtn" data-en="⏹ Stop">⏹ Σταμάτα</button>
+      </div>
+      <div id="silentWarn" class="warn hidden" data-en="I don’t hear anything yet. Is the song playing? If you are on YouTube, did you turn on the switch for the tab’s audio? If needed, press «Stop» and try again.">Δεν ακούω τίποτα ακόμα. Έβαλες το τραγούδι να παίζει; Αν είσαι στο YouTube, μήπως δεν άνοιξες τον διακόπτη για τον ήχο της καρτέλας; Αν χρειαστεί, πάτα «Σταμάτα» και ξαναδοκίμασε.</div>
+    </div>
+    <div class="card now">
+      <div>
+        <div class="nowchord" id="liveChord"><div class="nm">…</div><div class="gr" data-en="Waiting for music">Περιμένω μουσική</div></div>
+        <div class="info" style="margin-top:12px"><span data-en="Key (so far):">Τονικότητα (μέχρι τώρα):</span> <b id="liveKey">—</b></div>
+      </div>
+      <div class="diagwrap" id="liveDiag"></div>
+    </div>
+    <div class="card">
+      <h2 data-en="The latest chords">Οι τελευταίες συγχορδίες</h2>
+      <div class="hist" id="liveHist"></div>
+      <p class="muted" style="font-size:.9rem;margin:14px 0 0" data-en="When you press «Stop», I will listen to the whole piece again more carefully and give you all the chords in order, so you can play it back.">Όταν πατήσεις «Σταμάτα», θα ξανακούσω όλο το κομμάτι πιο προσεκτικά και θα σου δώσω όλες τις συγχορδίες στη σειρά, με δυνατότητα να το ξανακούσεις.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WORKING -->
+<section id="working" class="hidden">
+  <div class="card" style="text-align:center;padding:50px 24px">
+    <div style="font-size:3.5rem">🎼</div>
+    <h2 id="workMsg" data-en="Listening carefully to the song…">Ακούω προσεκτικά το τραγούδι…</h2>
+    <div class="bar"><div id="workBar"></div></div>
+    <div class="muted" id="workPct">0%</div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results" class="hidden">
+  <div class="card tight">
+    <div class="row" style="justify-content:space-between">
+      <div style="flex:1;min-width:260px">
+        <h2 id="resTitle" style="margin:0" data-en="Song">Τραγούδι</h2>
+        <div class="info" style="margin-top:4px"><span data-en="Key:">Τονικότητα:</span> <b id="resKey">—</b> <span id="resBpm" class="muted" style="font-size:.85rem"></span></div>
+        <div id="resNote" class="muted" style="font-size:.78rem"></div>
+      </div>
+      <div class="row noprint">
+        <button class="mid" id="renameBtn" title="Δώσε όνομα στο τραγούδι" data-en-title="Give the song a name" data-en="✏️ Name">✏️ Όνομα</button>
+        <button class="mid" id="printBtn" data-en="🖨 Print">🖨 Εκτύπωση</button>
+        <button class="mid" id="saveBtn" data-en="💾 Save">💾 Αποθήκευση</button>
+        <button class="mid" id="newBtn" data-en="↩ New">↩ Νέο</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card tight noprint">
+    <div class="player" id="player">
+      <button class="play" id="playBtn">▶</button>
+      <input type="range" id="seek" min="0" max="1000" value="0">
+      <div class="time" id="timeLbl">0:00 / 0:00</div>
+      <div class="seg" id="speedSeg" title="Ταχύτητα" data-en-title="Speed"><button data-s="1" class="on">100%</button><button data-s="0.85">85%</button><button data-s="0.7">70%</button><button data-s="0.5">50%</button></div>
+    </div>
+    <div id="noAudio" class="muted hidden" style="font-size:.85rem" data-en="The sound is not kept in «My songs» — you only see chords and lyrics. To play along, load the song again.">Ο ήχος δεν κρατιέται στα «Τραγούδια μου» — βλέπεις μόνο συγχορδίες και στίχους. Για να παίξεις μαζί, ξαναβάλε το τραγούδι.</div>
+    <div class="row" style="margin-top:10px">
+      <div class="ctl"><span class="lbl" data-en="Capo">Καποτάστο</span><button class="pm" id="capoM">−</button><span class="v" id="capoV">0</span><button class="pm" id="capoP">+</button></div>
+      <button class="mid" id="capoBest" data-en="🪄 Easy capo">🪄 Εύκολο καποτάστο</button>
+      <div class="ctl"><span class="lbl" data-en="Key shift">Τόνος</span><button class="pm" id="trM">−</button><span class="v" id="trV">0</span><button class="pm" id="trP">+</button></div>
+      <div class="seg" id="modeSeg2"><button data-m="basic" data-en="Few">Λίγες</button><button data-m="simple" data-en="Simple">Απλές</button><button data-m="full" data-en="All">Όλες</button></div>
+    </div>
+    <div id="capoMsg" style="margin-top:8px;font-size:.95rem"></div>
+  </div>
+
+  <div class="work">
+    <div class="leftcol noprint">
+      <div class="nowchord" id="nowChord"><div class="nm">—</div><div class="gr" data-en="Press ▶ to play along">Πάτα ▶ για να παίξεις μαζί</div></div>
+      <div class="nextbox" id="nextBox"></div>
+      <div class="diagwrap" id="nowDiag"></div>
+    </div>
+    <div class="rightcol">
+      <div class="tabs noprint" id="tabs">
+        <button data-t="lyr" class="on" data-en="📝 Lyrics">📝 Στίχοι</button>
+        <button data-t="sheet" data-en="🎵 Chords">🎵 Συγχορδίες</button>
+        <button data-t="diags" data-en="✋ Fingers">✋ Δάχτυλα</button>
+        <button data-t="mel" data-en="🎼 Solo notes">🎼 Νότες σόλο</button>
+      </div>
+      <div class="panel" id="p-lyr"><div id="lyrBox"></div></div>
+      <div class="panel hidden" id="p-sheet">
+        <p class="muted noprint" style="font-size:.8rem;margin:0 0 10px" data-en="Press a chord to jump to that point.">Πάτα μια συγχορδία για να πας σε εκείνο το σημείο.</p>
+        <div class="sheet" id="sheet"></div>
+      </div>
+      <div class="panel hidden" id="p-diags"><div class="diags" id="diags"></div></div>
+      <div class="panel hidden" id="p-mel"><div id="melBox"></div></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+/* Chord recognition engine – pure JavaScript, no dependencies.
+   Pipeline: STFT peaks -> tuning estimate -> semitone spectrogram ->
+   harmonic/percussive smoothing -> standardisation -> bass & treble chroma ->
+   beat tracking -> beat-synchronous chord scores -> key -> HMM/Viterbi. */
+(function (root) {
+  'use strict';
+
+  // ---------- names ----------
+  var SHARP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  var FLAT = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+  var GR_SHARP = ['Ντο', 'Ντο#', 'Ρε', 'Ρε#', 'Μι', 'Φα', 'Φα#', 'Σολ', 'Σολ#', 'Λα', 'Λα#', 'Σι'];
+  var GR_FLAT = ['Ντο', 'Ρε♭', 'Ρε', 'Μι♭', 'Μι', 'Φα', 'Σολ♭', 'Σολ', 'Λα♭', 'Λα', 'Σι♭', 'Σι'];
+
+  // chord types: intervals, weights, display suffix, Greek name, prior penalty
+  var TYPES = {
+    maj:  { iv: [0, 4, 7],     w: [1.1, 1, 1],        suf: '',     gr: 'ματζόρε',     pen: 0,     simple: true },
+    min:  { iv: [0, 3, 7],     w: [1.1, 1, 1],        suf: 'm',    gr: 'μινόρε',      pen: 0,     simple: true },
+    '7':  { iv: [0, 4, 7, 10], w: [1.1, 1, 1, 0.85],  suf: '7',    gr: '7',           pen: 0.021 },
+    maj7: { iv: [0, 4, 7, 11], w: [1.1, 1, 1, 0.85],  suf: 'maj7', gr: 'maj7',        pen: 0.027 },
+    m7:   { iv: [0, 3, 7, 10], w: [1.1, 1, 1, 0.85],  suf: 'm7',   gr: 'μινόρε 7',    pen: 0.027 },
+    dim:  { iv: [0, 3, 6],     w: [1.1, 1, 1],        suf: 'dim',  gr: 'ελαττωμένη',  pen: 0.036 },
+    aug:  { iv: [0, 4, 8],     w: [1.1, 1, 1],        suf: 'aug',  gr: 'αυξημένη',    pen: 0.09 },
+    sus4: { iv: [0, 5, 7],     w: [1.1, 1, 1],        suf: 'sus4', gr: 'sus4',        pen: 0.036 },
+    sus2: { iv: [0, 2, 7],     w: [1.1, 1, 1],        suf: 'sus2', gr: 'sus2',        pen: 0.042 }
+  };
+  var TYPE_KEYS = Object.keys(TYPES);
+
+  var P = {                 // tunable parameters
+    sr: 22050, nfft: 8192, hop: 1024,
+    minMidi: 28, maxMidi: 96,
+    harmDecay: 0.5, nHarm: 6,
+    medianLen: 9, stdWin: 9, compress: 60,
+    bassWeight: 0.3, keyBonus: 0.05,
+    beta: 25, stay: 0.86, primBonus: 0.04,
+    stayBar: 0.8, stayHalf: 0.93, stayBeat: 0.985, outKey: 0.04, basicMid: 0.9, vocabCover: 0.95,
+    melVoice: 0.3, melJump: 0.5, melStep: 0.02, melVoiceCost: 0.4, melMinDur: 0.07, melMinConf: 0.2, melSplit: 1.7, melBelow: 9, nochord: 0.12, silence: 0.06
+  };
+
+  // ---------- FFT ----------
+  var fftCache = {};
+  function getFFT(n) {
+    if (fftCache[n]) return fftCache[n];
+    var levels = Math.round(Math.log2(n));
+    var rev = new Uint32Array(n);
+    for (var i = 0; i < n; i++) {
+      var r = 0, x = i;
+      for (var b = 0; b < levels; b++) { r = (r << 1) | (x & 1); x >>= 1; }
+      rev[i] = r;
+    }
+    var cos = new Float64Array(n / 2), sin = new Float64Array(n / 2);
+    for (i = 0; i < n / 2; i++) { cos[i] = Math.cos(2 * Math.PI * i / n); sin[i] = Math.sin(2 * Math.PI * i / n); }
+    var win = new Float32Array(n);
+    for (i = 0; i < n; i++) win[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / n);
+    var re = new Float64Array(n), im = new Float64Array(n);
+    var f = {
+      n: n, win: win,
+      mag: function (input, offset, out) {      // windowed magnitude spectrum
+        for (var i = 0; i < n; i++) {
+          var j = offset + i;
+          var v = (j >= 0 && j < input.length) ? input[j] * win[i] : 0;
+          re[rev[i]] = v; im[rev[i]] = 0;
+        }
+        for (var size = 2; size <= n; size <<= 1) {
+          var half = size >> 1, step = n / size;
+          for (var s = 0; s < n; s += size) {
+            for (var k = 0, t = 0; k < half; k++, t += step) {
+              var a = s + k, bb = a + half;
+              var tr = re[bb] * cos[t] + im[bb] * sin[t];
+              var ti = im[bb] * cos[t] - re[bb] * sin[t];
+              re[bb] = re[a] - tr; im[bb] = im[a] - ti;
+              re[a] += tr; im[a] += ti;
+            }
+          }
+        }
+        var h = n / 2;
+        for (i = 0; i <= h; i++) out[i] = Math.sqrt(re[i] * re[i] + im[i] * im[i]);
+        return out;
+      }
+    };
+    fftCache[n] = f;
+    return f;
+  }
+
+  // ---------- spectral peaks ----------
+  function framePeaks(mag, sr, n, fmin, fmax, maxPeaks) {
+    var kmin = Math.max(2, Math.floor(fmin * n / sr)), kmax = Math.min(mag.length - 2, Math.ceil(fmax * n / sr));
+    var mx = 0, k;
+    for (k = kmin; k <= kmax; k++) if (mag[k] > mx) mx = mag[k];
+    var peaks = [];
+    if (mx <= 1e-9) return peaks;
+    var thr = mx * 0.004;
+    for (k = kmin; k <= kmax; k++) {
+      var m = mag[k];
+      if (m > thr && m > mag[k - 1] && m >= mag[k + 1]) {
+        var a = Math.log(mag[k - 1] + 1e-12), b = Math.log(m + 1e-12), c = Math.log(mag[k + 1] + 1e-12);
+        var d = a - 2 * b + c, off = d < 0 ? 0.5 * (a - c) / d : 0;
+        if (off > 0.5) off = 0.5; else if (off < -0.5) off = -0.5;
+        var amp = Math.exp(b - 0.25 * (a - c) * off);
+        peaks.push((k + off) * sr / n, amp);
+      }
+    }
+    if (peaks.length / 2 > maxPeaks) {
+      var idx = [];
+      for (var i = 0; i < peaks.length / 2; i++) idx.push(i);
+      idx.sort(function (x, y) { return peaks[2 * y + 1] - peaks[2 * x + 1]; });
+      idx.length = maxPeaks;
+      idx.sort(function (x, y) { return x - y; });
+      var p2 = [];
+      for (i = 0; i < idx.length; i++) p2.push(peaks[2 * idx[i]], peaks[2 * idx[i] + 1]);
+      peaks = p2;
+    }
+    return peaks;
+  }
+
+  // tuning: weighted circular mean of cent deviation of peaks (in cents, -50..50)
+  function tuningFromPeaks(peakList) {
+    var sx = 0, sy = 0;
+    for (var f = 0; f < peakList.length; f++) {
+      var pk = peakList[f];
+      for (var i = 0; i < pk.length; i += 2) {
+        var fr = pk[i];
+        if (fr < 80 || fr > 2500) continue;
+        var cents = 1200 * Math.log2(fr / 440);
+        var ang = 2 * Math.PI * cents / 100;
+        var w = pk[i + 1];
+        sx += w * Math.cos(ang); sy += w * Math.sin(ang);
+      }
+    }
+    if (sx === 0 && sy === 0) return 0;
+    return 100 * Math.atan2(sy, sx) / (2 * Math.PI);
+  }
+
+  function peaksToSemitones(pk, tuningCents, out) {
+    var NP = P.maxMidi - P.minMidi + 1;
+    for (var p = 0; p < NP; p++) out[p] = 0;
+    var ref = 440 * Math.pow(2, tuningCents / 1200);
+    for (var i = 0; i < pk.length; i += 2) {
+      var s = 12 * Math.log2(pk[i] / ref) + 69;
+      var pr = Math.round(s), d = s - pr;
+      var idx = pr - P.minMidi;
+      if (idx < 0 || idx >= NP) continue;
+      var c = Math.cos(Math.PI * d);
+      out[idx] += pk[i + 1] * c * c;
+    }
+    return out;
+  }
+
+  // ---------- chord templates ----------
+  var TEMPLATES = null;
+  function buildTemplates() {
+    TEMPLATES = [];
+    for (var r = 0; r < 12; r++) {
+      for (var t = 0; t < TYPE_KEYS.length; t++) {
+        var ty = TYPES[TYPE_KEYS[t]], v = new Float64Array(12);
+        for (var i = 0; i < ty.iv.length; i++) {
+          var note = r + ty.iv[i];
+          for (var h = 1; h <= P.nHarm; h++) {
+            v[(note + Math.round(12 * Math.log2(h))) % 12] += ty.w[i] * Math.pow(P.harmDecay, h - 1);
+          }
+        }
+        TEMPLATES.push({ root: r, type: TYPE_KEYS[t], v: zscore(v) });
+      }
+    }
+  }
+  function zscore(v) {
+    var m = 0, i, o = new Float64Array(v.length);
+    for (i = 0; i < v.length; i++) m += v[i];
+    m /= v.length;
+    var s = 0;
+    for (i = 0; i < v.length; i++) { o[i] = v[i] - m; s += o[i] * o[i]; }
+    s = Math.sqrt(s) || 1;
+    for (i = 0; i < v.length; i++) o[i] /= s;
+    return o;
+  }
+
+  // ---------- chroma from semitone vectors ----------
+  function trebleW(midi) {
+    if (midi < 43) return 0;
+    if (midi < 50) return (midi - 43) / 7;
+    if (midi <= 84) return 1;
+    if (midi < 96) return (96 - midi) / 12;
+    return 0;
+  }
+  function bassW(midi) {
+    var d = (midi - 40) / 7;
+    return midi > 57 ? 0 : Math.exp(-0.5 * d * d);
+  }
+  var TW = [], BW = [];
+  (function () { for (var m = 0; m < 128; m++) { TW[m] = trebleW(m); BW[m] = bassW(m); } })();
+
+  function standardise(S, out) {           // subtract local mean across pitch, clamp at 0
+    var NP = S.length, W = P.stdWin;
+    for (var p = 0; p < NP; p++) {
+      var a = Math.max(0, p - W), b = Math.min(NP - 1, p + W), m = 0;
+      for (var q = a; q <= b; q++) m += S[q];
+      m /= (b - a + 1);
+      var v = S[p] - m;
+      out[p] = v > 0 ? v : 0;
+    }
+    return out;
+  }
+  function chromaOf(Sstd, treble, bass) {
+    for (var c = 0; c < 12; c++) { treble[c] = 0; bass[c] = 0; }
+    for (var p = 0; p < Sstd.length; p++) {
+      var midi = p + P.minMidi, pc = midi % 12, v = Sstd[p];
+      treble[pc] += v * TW[midi];
+      bass[pc] += v * BW[midi];
+    }
+  }
+
+  // ---------- key ----------
+  var KMAJ = [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88];
+  var KMIN = [6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17];
+  function estimateKey(chroma) {
+    var best = { score: -2, tonic: 0, mode: 'maj' }, cz = zscore(chroma);
+    for (var t = 0; t < 12; t++) {
+      for (var md = 0; md < 2; md++) {
+        var prof = md ? KMIN : KMAJ, pr = new Float64Array(12);
+        for (var i = 0; i < 12; i++) pr[(i + t) % 12] = prof[i];
+        var pz = zscore(pr), s = 0;
+        for (i = 0; i < 12; i++) s += pz[i] * cz[i];
+        if (s > best.score) best = { score: s, tonic: t, mode: md ? 'min' : 'maj' };
+      }
+    }
+    return best;
+  }
+  // chords that belong to the key (incl. harmonic-minor V and V7, common in Greek music)
+  function diatonicSet(key) {
+    var set = {}, t = key.tonic;
+    function add(iv, types) { types.forEach(function (ty) { set[((t + iv) % 12) + ty] = 1; }); }
+    if (key.mode === 'maj') {
+      add(0, ['maj', 'maj7', 'sus4', 'sus2']); add(2, ['min', 'm7']); add(4, ['min', 'm7']);
+      add(5, ['maj', 'maj7', 'sus2']); add(7, ['maj', '7', 'sus4']); add(9, ['min', 'm7']); add(11, ['dim']);
+      add(2, ['7']); add(4, ['7', 'maj']);          // secondary dominants V/V, V/vi
+    } else {
+      add(0, ['min', 'm7', 'sus4']); add(2, ['dim']); add(3, ['maj', 'maj7']); add(5, ['min', 'm7']);
+      add(7, ['min', 'maj', '7']); add(8, ['maj', 'maj7']); add(10, ['maj', '7']);
+    }
+    return set;
+  }
+
+  function usesFlats(key) {
+    // keys whose signature uses flats
+    if (key.mode === 'maj') return [5, 10, 3, 8, 1, 6].indexOf(key.tonic) >= 0;
+    return [2, 7, 0, 5, 10, 3].indexOf(key.tonic) >= 0;
+  }
+
+  // ---------- chord scoring ----------
+  function allowedTemplates(simple) {
+    if (!TEMPLATES) buildTemplates();
+    return TEMPLATES.filter(function (t) { return !simple || TYPES[t.type].simple; });
+  }
+  function scoreChords(treble, bass, temps, diat) {
+    var tz = zscore(treble), bmax = 0, i, c;
+    for (c = 0; c < 12; c++) if (bass[c] > bmax) bmax = bass[c];
+    var scores = new Float64Array(temps.length);
+    for (i = 0; i < temps.length; i++) {
+      var tp = temps[i], s = 0;
+      for (c = 0; c < 12; c++) s += tz[c] * tp.v[c];
+      s += P.bassWeight * (bmax > 0 ? bass[tp.root] / bmax : 0);
+      s -= TYPES[tp.type].pen;
+      if (diat && diat[tp.root + tp.type]) s += P.keyBonus;
+      scores[i] = s;
+    }
+    return scores;
+  }
+
+  // ---------- helpers ----------
+  function median(arr, n) {
+    var a = Array.prototype.slice.call(arr, 0, n).sort(function (x, y) { return x - y; });
+    return a[a.length >> 1];
+  }
+
+  // ---------- onset envelope + beat tracking (Ellis 2007 dynamic programming) ----------
+  function beatTrack(signal, sr) {
+    var n = 1024, hop = 256, fft = getFFT(n), mag = new Float64Array(n / 2 + 1);
+    var nF = Math.max(1, Math.floor((signal.length - n) / hop) + 1);
+    var prev = new Float64Array(n / 2 + 1), env = new Float64Array(nF);
+    var kmax = Math.floor(8000 * n / sr);
+    for (var f = 0; f < nF; f++) {
+      fft.mag(signal, f * hop, mag);
+      var flux = 0;
+      for (var k = 1; k < kmax; k++) {
+        var v = Math.log(1 + 20 * mag[k]);
+        var d = v - prev[k];
+        if (d > 0) flux += d;
+        prev[k] = v;
+      }
+      env[f] = flux;
+    }
+    // high-pass (remove local mean) and normalise
+    var fps = sr / hop, W = Math.round(fps * 0.5), out = new Float64Array(nF), cs = new Float64Array(nF + 1);
+    for (f = 0; f < nF; f++) cs[f + 1] = cs[f] + env[f];
+    var sd = 0;
+    for (f = 0; f < nF; f++) {
+      var a = Math.max(0, f - W), b = Math.min(nF, f + W + 1);
+      var v2 = env[f] - (cs[b] - cs[a]) / (b - a);
+      out[f] = v2 > 0 ? v2 : 0; sd += out[f] * out[f];
+    }
+    sd = Math.sqrt(sd / nF) || 1;
+    for (f = 0; f < nF; f++) out[f] /= sd;
+    // tempo via autocorrelation with log-gaussian prior around 110 BPM
+    var minLag = Math.round(fps * 60 / 200), maxLag = Math.round(fps * 60 / 45), bestLag = Math.round(fps * 60 / 110), bestV = -1;
+    var L = Math.min(nF, Math.round(fps * 90));
+    for (var lag = minLag; lag <= maxLag && lag < L; lag++) {
+      var ac = 0;
+      for (f = lag; f < L; f++) ac += out[f] * out[f - lag];
+      var bpm = 60 * fps / lag, pr = Math.exp(-0.5 * Math.pow(Math.log2(bpm / 110) / 0.9, 2));
+      if (ac * pr > bestV) { bestV = ac * pr; bestLag = lag; }
+    }
+    var period = bestLag;
+    // DP
+    var score = new Float64Array(nF), back = new Int32Array(nF), alpha = 100;
+    for (f = 0; f < nF; f++) {
+      var best = 0, bi = -1;
+      var lo = f - Math.round(2 * period), hi = f - Math.round(period / 2);
+      for (var q = Math.max(0, lo); q <= hi; q++) {
+        var lg = Math.log((f - q) / period), sc = score[q] - alpha * lg * lg;
+        if (bi < 0 || sc > best) { best = sc; bi = q; }
+      }
+      score[f] = out[f] + (bi >= 0 ? best : 0);
+      back[f] = bi;
+    }
+    var endStart = Math.max(0, nF - period), last = endStart;
+    for (f = endStart; f < nF; f++) if (score[f] > score[last]) last = f;
+    var beats = [];
+    for (f = last; f >= 0; f = back[f]) { beats.push(f); if (back[f] < 0) break; }
+    beats.reverse();
+    return { beats: beats.map(function (b) { return (b * hop + n / 2) / sr; }), bpm: 60 * fps / period };
+  }
+
+
+  // ---------- Viterbi decoding over a sequence of feature blocks ----------
+  function decodeFeats(feats, temps, diat, stay, bonus) {
+    var K = temps.length + 1, nS = feats.length, i, s;
+    if (!nS) return { segments: [], path: [] };
+    var emis = feats.map(function (f) {
+      var sc = scoreChords(f.T, f.B, temps, diat), em = new Float64Array(K);
+      for (var i = 0; i < temps.length; i++) em[i] = P.beta * ((f.silent ? sc[i] - 1 : sc[i]) + (bonus ? bonus[i] : 0));
+      em[temps.length] = P.beta * (f.silent ? 2 : P.nochord);
+      return em;
+    });
+    // stay may be one number, or one value per step (chords change more easily on the first beat of a bar)
+    var lstay, lsw;
+    function setStay(v) { lstay = Math.log(v); lsw = Math.log((1 - v) / Math.max(1, K - 1)); }
+    if (typeof stay === 'number') setStay(stay);
+    var delta = new Float64Array(K), nd = new Float64Array(K), bp = [];
+    for (i = 0; i < K; i++) delta[i] = emis[0][i];
+    for (s = 1; s < nS; s++) {
+      if (typeof stay !== 'number') setStay(stay[s]);
+      var b1 = -1, b2 = -1;
+      for (i = 0; i < K; i++) { if (b1 < 0 || delta[i] > delta[b1]) { b2 = b1; b1 = i; } else if (b2 < 0 || delta[i] > delta[b2]) b2 = i; }
+      var row = new Int32Array(K);
+      for (i = 0; i < K; i++) {
+        var other = (i === b1) ? b2 : b1;
+        if (other < 0) other = i;
+        var vs = delta[i] + lstay, vo = delta[other] + lsw;
+        if (vs >= vo) { nd[i] = vs; row[i] = i; } else { nd[i] = vo; row[i] = other; }
+        nd[i] += emis[s][i];
+      }
+      bp.push(row);
+      var tmpd = delta; delta = nd; nd = tmpd;
+    }
+    var st = 0;
+    for (i = 1; i < K; i++) if (delta[i] > delta[st]) st = i;
+    var path = new Int32Array(nS);
+    path[nS - 1] = st;
+    for (s = nS - 1; s > 0; s--) { st = bp[s - 1][st]; path[s - 1] = st; }
+    var out = [], labels = [];
+    for (s = 0; s < nS; s++) {
+      var ch = path[s] === temps.length ? null : { root: temps[path[s]].root, type: temps[path[s]].type };
+      labels.push(ch);
+      var lastSeg = out[out.length - 1];
+      if (lastSeg && sameChord(lastSeg.chord, ch)) lastSeg.end = feats[s].end;
+      else out.push({ start: feats[s].start, end: feats[s].end, chord: ch });
+    }
+    return { segments: out, path: labels };
+  }
+
+  // ---------- key from the chords heard (more reliable than counting single notes) ----------
+  function keyFromChords(segs, fallback) {
+    var best = fallback, bestS = -1, tot = 0;
+    segs.forEach(function (sg) { if (sg.chord) tot += sg.end - sg.start; });
+    if (tot <= 0) return fallback;
+    for (var t = 0; t < 12; t++) {
+      ['maj', 'min'].forEach(function (md) {
+        var k = { tonic: t, mode: md }, d = diatonicSet(k), s = 0;
+        segs.forEach(function (sg) {
+          if (!sg.chord) return;
+          var w = sg.end - sg.start, c = sg.chord;
+          if (d[c.root + c.type]) s += w;
+          var tri = c.type === 'min' || c.type === 'm7' ? 'min' : (c.type === 'dim' ? 'dim' : 'maj');
+          if (c.root === t && tri === md) s += 0.4 * w;            // time spent on the "home" chord
+        });
+        if (t === fallback.tonic && md === fallback.mode) s += 0.03 * tot;
+        if (s > bestS) { bestS = s; best = { tonic: t, mode: md, score: s / tot }; }
+      });
+    }
+    return best;
+  }
+  // ---------- bar length (4/4 or 3/4) and where the first beat of each bar falls ----------
+  function barGrid(lab) {
+    var n = lab.length, i;
+    function k(ch) { return ch ? ch.root + ':' + ch.type : ''; }
+    var changes = [];
+    for (i = 1; i < n; i++) if (k(lab[i]) !== k(lab[i - 1])) changes.push(i);
+    var bestL = 4, bestPh = 0, bestConc = -1;
+    [4, 3].forEach(function (L) {
+      for (var ph = 0; ph < L; ph++) {
+        var hit = 0; changes.forEach(function (c) { if (((c - ph) % L + L) % L === 0) hit++; });
+        var conc = changes.length ? hit / changes.length : 0;
+        if (L === 3) conc -= 0.12;                 // prefer 4/4 unless 3/4 is clearly better
+        if (conc > bestConc) { bestConc = conc; bestL = L; bestPh = ph; }
+      }
+    });
+    return { L: bestL, ph: bestPh };
+  }
+  // extra cost for chords that do not belong to the key
+  function outOfKey(temps, diat) {
+    return temps.map(function (t) { return diat[t.root + t.type] ? 0 : -P.outKey; });
+  }
+
+  // ---------- "basic" level: few chords, at most one per bar, only the song's main chords ----------
+  function basicLevel(feats, simp, key, diat, grid) {
+    var n = feats.length, i;
+    if (n < 4) return simp.segments;
+    function k(ch) { return ch ? ch.root + ':' + ch.type : ''; }
+    var bestL = grid.L, bestPh = grid.ph;
+    // 2. the main chords of the song: most-used chords covering ~90% of the playing time
+    var durs = {}, tot = 0;
+    simp.segments.forEach(function (sg) { if (!sg.chord) return; var d = sg.end - sg.start; durs[k(sg.chord)] = (durs[k(sg.chord)] || 0) + d; tot += d; });
+    var order = Object.keys(durs).sort(function (a, b) { return durs[b] - durs[a]; });
+    var vocab = {}, cum = 0, cnt = 0;
+    order.forEach(function (key2) {
+      var share = durs[key2] / (tot || 1);
+      if ((cum < P.vocabCover && cnt < 7 && share >= 0.03) || cnt < 3) { vocab[key2] = 1; cum += share; cnt++; }
+    });
+    var temps = allowedTemplates(true).filter(function (t) { return vocab[t.root + ':' + t.type]; });
+    if (!temps.length) return simp.segments;
+    // 3. one block per half bar (2 beats) in 4/4, one per bar in 3/4; changes mostly on the first beat of the bar
+    var bars = [], first = bestPh, step = bestL === 4 ? 2 : bestL, stays = [];
+    function addBar(a, b, onBar) {
+      if (b <= a) return;
+      var T = new Float64Array(12), B = new Float64Array(12), sil = true, c;
+      for (var j = a; j < b; j++) { for (c = 0; c < 12; c++) { T[c] += feats[j].T[c]; B[c] += feats[j].B[c]; } if (!feats[j].silent) sil = false; }
+      bars.push({ start: feats[a].start, end: feats[b - 1].end, T: T, B: B, silent: sil });
+      stays.push(onBar ? 0.6 : P.basicMid);
+    }
+    if (first > 0) addBar(0, first, true);
+    for (i = first; i < n; i += step) addBar(i, Math.min(n, i + step), (i - first) % bestL === 0);
+    // the song's pillars (I, IV, V and the relative chord) win close calls
+    var t0 = key.tonic, prim = {};
+    if (key.mode === 'maj') { prim[t0 + ':maj'] = 1; prim[(t0 + 5) % 12 + ':maj'] = 1; prim[(t0 + 7) % 12 + ':maj'] = 1; prim[(t0 + 9) % 12 + ':min'] = 1; }
+    else { prim[t0 + ':min'] = 1; prim[(t0 + 5) % 12 + ':min'] = 1; prim[(t0 + 7) % 12 + ':maj'] = 1; prim[(t0 + 3) % 12 + ':maj'] = 1; }
+    var bonus = temps.map(function (t) { return prim[t.root + ':' + t.type] ? P.primBonus : 0; });
+    var res = decodeFeats(bars, temps, diat, stays, bonus);
+    res.segments.barLength = bestL;
+    return res.segments;
+  }
+
+  // ---------- full offline analysis ----------
+  // signal: mono Float32Array at P.sr. onProgress(fraction) optional. Returns promise.
+  function analyzeSong(signal, opts) {
+    opts = opts || {};
+    var simple = !!opts.simple, onProgress = opts.onProgress || function () {};
+    var sr = opts.sr || P.sr, n = P.nfft, hop = P.hop, fft = getFFT(n);
+    var nF = Math.max(1, Math.floor((signal.length - n) / hop) + 2);
+    var NP = P.maxMidi - P.minMidi + 1;
+    var mag = new Float64Array(n / 2 + 1), peakList = new Array(nF);
+    var yieldFn = opts.yieldFn || function () { return new Promise(function (r) { setTimeout(r, 0); }); };
+
+    var f = 0;
+    function stage1() {
+      var chunkEnd = Math.min(nF, f + 60);
+      for (; f < chunkEnd; f++) {
+        fft.mag(signal, f * hop - n / 2, mag);
+        peakList[f] = framePeaks(mag, sr, n, 35, 5000, 120);
+      }
+      onProgress(0.7 * f / nF);
+      if (f < nF) return yieldFn().then(stage1);
+      return Promise.resolve();
+    }
+    return stage1().then(function () {
+      var tuning = tuningFromPeaks(peakList);
+      // semitone spectrogram
+      var S = new Array(nF), energy = new Float64Array(nF);
+      for (var i = 0; i < nF; i++) {
+        S[i] = peaksToSemitones(peakList[i], tuning, new Float64Array(NP));
+        var e = 0; for (var p = 0; p < NP; p++) e += S[i][p]; energy[i] = e;
+      }
+      // global compression reference
+      var all = [];
+      for (i = 0; i < nF; i += 4) for (p = 0; p < NP; p += 3) if (S[i][p] > 0) all.push(S[i][p]);
+      all.sort(function (a, b) { return a - b; });
+      var g = all.length ? all[Math.floor(all.length * 0.95)] : 1;
+      for (i = 0; i < nF; i++) for (p = 0; p < NP; p++) S[i][p] = Math.log(1 + P.compress * S[i][p] / g);
+      onProgress(0.75);
+      return yieldFn().then(function () {
+        // median filter in time (removes drums / short noises)
+        var M = P.medianLen, half = M >> 1, H = new Array(nF), buf = new Float64Array(M);
+        for (i = 0; i < nF; i++) H[i] = new Float64Array(NP);
+        for (p = 0; p < NP; p++) {
+          for (i = 0; i < nF; i++) {
+            var cnt = 0;
+            for (var j = i - half; j <= i + half; j++) if (j >= 0 && j < nF) buf[cnt++] = S[j][p];
+            H[i][p] = median(buf, cnt);
+          }
+        }
+        // chroma per frame
+        var tre = new Array(nF), bas = new Array(nF), tmp = new Float64Array(NP);
+        for (i = 0; i < nF; i++) {
+          standardise(H[i], tmp);
+          tre[i] = new Float64Array(12); bas[i] = new Float64Array(12);
+          chromaOf(tmp, tre[i], bas[i]);
+        }
+        onProgress(0.8);
+        return yieldFn().then(function () {
+          var bt = beatTrack(signal, sr);
+          onProgress(0.9);
+          var dur = signal.length / sr;
+          // segment boundaries: beats (fallback to 0.5 s grid)
+          var bounds = [0];
+          var beats = bt.beats.filter(function (b) { return b > 0.05 && b < dur - 0.05; });
+          if (beats.length < 4) { beats = []; for (var t = 0.5; t < dur; t += 0.5) beats.push(t); }
+          beats.forEach(function (b) { if (b - bounds[bounds.length - 1] > 0.12) bounds.push(b); });
+          bounds.push(dur);
+          // global key
+          var gsum = new Float64Array(12), c;
+          for (i = 0; i < nF; i++) for (c = 0; c < 12; c++) gsum[c] += tre[i][c];
+          var key = estimateKey(gsum), diat = diatonicSet(key);
+          var medE = median(energy, energy.length) || 1e-9;
+          // beat-level features (computed once, shared by every level)
+          var feats = [];
+          for (var s = 0; s + 1 < bounds.length; s++) {
+            var a = bounds[s], b = bounds[s + 1];
+            var fa = Math.max(0, Math.round(a * sr / hop)), fb = Math.min(nF, Math.max(fa + 1, Math.round(b * sr / hop)));
+            var T = new Float64Array(12), B = new Float64Array(12), E = 0;
+            for (i = fa; i < fb; i++) { for (c = 0; c < 12; c++) { T[c] += tre[i][c]; B[c] += bas[i][c]; } E += energy[i]; }
+            var nfr = Math.max(0, fb - fa);
+            E = nfr ? E / nfr : 0;
+            var tsum = 0; for (c = 0; c < 12; c++) tsum += T[c];
+            feats.push({ start: a, end: b, T: T, B: B, silent: E < P.silence * medE || tsum <= 1e-9 });
+          }
+          var levels = {};
+          // pass 1: a quick beat-by-beat guess, used to find the key and where the bars start
+          var first = decodeFeats(feats, allowedTemplates(true), diat, P.stay);
+          key = keyFromChords(first.segments, key); diat = diatonicSet(key);
+          var grid = barGrid(first.path);
+          // pass 2: chords change on the strong beats ("πατήματα"), and must fit the song's key
+          var stay = feats.map(function (f, s) {
+            var pos = ((s - grid.ph) % grid.L + grid.L) % grid.L;
+            return pos === 0 ? P.stayBar : (grid.L === 4 && pos === 2 ? P.stayHalf : P.stayBeat);
+          });
+          var tf = allowedTemplates(false), ts = allowedTemplates(true);
+          var full = decodeFeats(feats, tf, diat, stay, outOfKey(tf, diat));
+          var simp = decodeFeats(feats, ts, diat, stay, outOfKey(ts, diat));
+          levels.full = full.segments; levels.simple = simp.segments;
+          levels.basic = basicLevel(feats, simp, key, diat, grid);
+          onProgress(1);
+          var lv = opts.level || (opts.simple === undefined ? 'basic' : (opts.simple ? 'simple' : 'full'));
+          return {
+            levels: levels, segments: levels[lv], level: lv, key: key, tuning: tuning, bpm: bt.bpm, beats: bt.beats,
+            duration: dur, flats: usesFlats(key), simple: lv !== 'full'
+          };
+        });
+      });
+    });
+  }
+  function sameChord(a, b) {
+    if (!a || !b) return a === b;
+    return a.root === b.root && a.type === b.type;
+  }
+
+
+  // ---------- melody / solo transcription (predominant pitch, note by note) ----------
+  // Returns promise of { notes:[{s,e,m,c}] } ; m = sounding MIDI note, c = confidence 0..1
+  function analyzeMelody(signal, opts) {
+    opts = opts || {};
+    var sr = opts.sr || P.sr, n = 2048, hop = 256, fft = getFFT(n), tuning = opts.tuning || 0;
+    var LO = opts.lo || 52, HI = opts.hi || 96, NB = HI - LO + 1, H = 10, ALPHA = 0.8;
+    var nF = Math.max(1, Math.floor((signal.length - n) / hop) + 2);
+    var mag = new Float64Array(n / 2 + 1), sal = new Array(nF), fmax = new Float64Array(nF);
+    var onProgress = opts.onProgress || function () {};
+    var yieldFn = opts.yieldFn || function () { return new Promise(function (r) { setTimeout(r, 0); }); };
+    var ref = 440 * Math.pow(2, tuning / 1200), f = 0;
+    function stage() {
+      var end = Math.min(nF, f + 250);
+      for (; f < end; f++) {
+        fft.mag(signal, f * hop - n / 2, mag);
+        var pk = framePeaks(mag, sr, n, 120, 5000, 40), S = new Float64Array(NB), mx = 0;
+        for (var i = 0; i < pk.length; i += 2) {
+          var a = Math.sqrt(pk[i + 1]);
+          for (var h = 1; h <= H; h++) {
+            var st = 12 * Math.log2(pk[i] / h / ref) + 69, pr = Math.round(st), d = st - pr, idx = pr - LO;
+            if (idx < 0) break;
+            if (idx >= NB) continue;
+            var w = Math.cos(Math.PI * d); w *= w;
+            S[idx] += a * w * Math.pow(ALPHA, h - 1);
+          }
+        }
+        for (i = 0; i < NB; i++) if (S[i] > mx) mx = S[i];
+        sal[f] = S; fmax[f] = mx;
+      }
+      onProgress(0.85 * f / nF);
+      if (f < nF) return yieldFn().then(stage);
+      return Promise.resolve();
+    }
+    return stage().then(function () {
+      // normalise salience by a song-wide reference
+      var srt = Array.prototype.slice.call(fmax).sort(function (a, b) { return a - b; });
+      var g = srt[Math.floor(srt.length * 0.9)] || 1, i, p, t;
+      for (t = 0; t < nF; t++) for (p = 0; p < NB; p++) sal[t][p] /= g;
+      // Viterbi pitch tracking: states 0..NB-1 = notes, NB = silence
+      var K = NB + 1, UV = P.melVoice, JUMP = P.melJump, STEP = P.melStep, VC = P.melVoiceCost;
+      var delta = new Float64Array(K), nd = new Float64Array(K), bp = new Array(nF);
+      for (p = 0; p < NB; p++) delta[p] = sal[0][p]; delta[NB] = UV;
+      for (t = 1; t < nF; t++) {
+        var row = new Uint8Array(K), S = sal[t];
+        // best previous voiced state (for jumps) – O(K^2) is small (≈45²)
+        for (p = 0; p < NB; p++) {
+          var best = delta[p], bi = p;
+          for (var q = 0; q < NB; q++) {
+            if (q === p) continue;
+            var v = delta[q] - JUMP - STEP * Math.min(12, Math.abs(q - p));
+            if (v > best) { best = v; bi = q; }
+          }
+          var vu = delta[NB] - VC;
+          if (vu > best) { best = vu; bi = NB; }
+          nd[p] = best + S[p]; row[p] = bi;
+        }
+        var bu = delta[NB], bui = NB;
+        for (q = 0; q < NB; q++) if (delta[q] - VC > bu) { bu = delta[q] - VC; bui = q; }
+        nd[NB] = bu + UV; row[NB] = bui;
+        bp[t] = row;
+        var tmp = delta; delta = nd; nd = tmp;
+      }
+      var st = 0; for (p = 1; p < K; p++) if (delta[p] > delta[st]) st = p;
+      var path = new Int16Array(nF); path[nF - 1] = st;
+      for (t = nF - 1; t > 0; t--) { st = bp[t][st]; path[t - 1] = st; }
+      // notes from runs of the same pitch; split repeated notes at fresh attacks
+      var notes = [], fr2t = function (fi) { return fi * hop / sr; };
+      var runStart = 0;
+      for (t = 1; t <= nF; t++) {
+        if (t < nF && path[t] === path[runStart]) continue;
+        var pp = path[runStart];
+        if (pp !== NB) {
+          var a0 = runStart, cut = [];
+          for (var u = runStart + 4; u < t - 3; u++) {
+            var cur = sal[u][pp], mn = Math.min(sal[u - 1][pp], sal[u - 2][pp], sal[u - 3][pp]);
+            if (cur > P.melSplit * mn && mn < 0.7 * sal[Math.max(runStart, u - 6)][pp] + 0.05 && u - a0 >= 6) { cut.push(u); a0 = u; }
+          }
+          var pieces = [runStart].concat(cut).concat([t]);
+          for (var z = 0; z + 1 < pieces.length; z++) {
+            var A = pieces[z], B = pieces[z + 1], conf = 0;
+            for (u = A; u < B; u++) conf += sal[u][pp];
+            conf /= (B - A);
+            notes.push({ s: fr2t(A), e: fr2t(B), m: LO + pp, c: Math.min(1, conf) });
+          }
+        }
+        runStart = t;
+      }
+      // drop tiny blips, then glue a blip-split note back together
+      var out = [];
+      notes.forEach(function (nt) {
+        var last = out[out.length - 1];
+        if (nt.e - nt.s < P.melMinDur) {
+          if (last && last.m === nt.m && nt.s - last.e < 0.05) last.e = nt.e;
+          return;
+        }
+        if (last && last.m === nt.m && nt.s - last.e < 0.06 && nt.s - last.e > 0.0) { last.e = nt.e; return; }
+        out.push(nt);
+      });
+      // octave slips: a short note an octave away from both neighbours is moved back
+      for (i = 1; i + 1 < out.length; i++) {
+        var a1 = out[i - 1], b1 = out[i], c1 = out[i + 1];
+        if (b1.e - b1.s < 0.25) {
+          [12, -12].forEach(function (o) { if (Math.abs(b1.m - o - a1.m) <= 2 && Math.abs(b1.m - o - c1.m) <= 2 && Math.abs(b1.m - a1.m) > 7) b1.m -= o; });
+        }
+      }
+      out = out.filter(function (x) { return x.c >= P.melMinConf; });
+      // accompaniment leaking into the gaps: short notes far below the surrounding melody
+      out = out.filter(function (x, idx) {
+        var nb = []; for (var j = Math.max(0, idx - 6); j <= Math.min(out.length - 1, idx + 6); j++) if (j !== idx) nb.push(out[j].m);
+        if (nb.length < 3) return true;
+        nb.sort(function (a, b) { return a - b; });
+        var med = nb[nb.length >> 1];
+        return !(x.m < med - P.melBelow && x.e - x.s < 0.6);
+      });
+      onProgress(1);
+      return { notes: out };
+    });
+  }
+
+  // ---------- live (real-time) analyser ----------
+  function LiveAnalyzer(sr, simple) {
+    this.sr = sr; this.simple = !!simple;
+    this.n = Math.pow(2, Math.round(Math.log2(sr * 0.37)));
+    this.fft = getFFT(this.n);
+    this.buf = new Float32Array(this.n); this.fill = 0;
+    this.mag = new Float64Array(this.n / 2 + 1);
+    this.hist = []; this.peakHist = []; this.tuning = 0; this.frames = 0;
+    this.keySum = new Float64Array(12);
+    this.cur = null; this.cand = null; this.candCount = 0;
+    this.eHist = []; this.gRef = 0;
+  }
+  LiveAnalyzer.prototype.push = function (samples) {
+    var n = this.n, b = this.buf;
+    if (samples.length >= n) { b.set(samples.subarray(samples.length - n)); }
+    else { b.copyWithin(0, samples.length); b.set(samples, n - samples.length); }
+    this.fill = Math.min(n, this.fill + samples.length);
+  };
+  // call ~10 times per second; returns {chord, strength, silent, key}
+  LiveAnalyzer.prototype.step = function () {
+    var NP = P.maxMidi - P.minMidi + 1;
+    this.fft.mag(this.buf, 0, this.mag);
+    var pk = framePeaks(this.mag, this.sr, this.n, 35, 5000, 120);
+    this.peakHist.push(pk); if (this.peakHist.length > 150) this.peakHist.shift();
+    if (++this.frames % 20 === 0) this.tuning = tuningFromPeaks(this.peakHist);
+    var S = peaksToSemitones(pk, this.tuning, new Float64Array(NP)), e = 0, p;
+    for (p = 0; p < NP; p++) e += S[p];
+    this.eHist.push(e); if (this.eHist.length > 100) this.eHist.shift();
+    var sorted = this.eHist.slice().sort(function (a, b) { return a - b; });
+    var medE = sorted[sorted.length >> 1] || 1e-9;
+    // running compression reference
+    var mx = 0; for (p = 0; p < NP; p++) if (S[p] > mx) mx = S[p];
+    this.gRef = this.gRef ? 0.97 * this.gRef + 0.03 * mx * 0.5 : mx * 0.5 || 1;
+    var g = this.gRef || 1;
+    for (p = 0; p < NP; p++) S[p] = Math.log(1 + P.compress * S[p] / g);
+    this.hist.push(S); if (this.hist.length > 7) this.hist.shift();
+    var H = new Float64Array(NP), tmp = new Float64Array(this.hist.length);
+    for (p = 0; p < NP; p++) {
+      for (var i = 0; i < this.hist.length; i++) tmp[i] = this.hist[i][p];
+      H[p] = median(tmp, this.hist.length);
+    }
+    var Sstd = standardise(H, new Float64Array(NP)), T = new Float64Array(12), B = new Float64Array(12);
+    chromaOf(Sstd, T, B);
+    for (var c = 0; c < 12; c++) this.keySum[c] = this.keySum[c] * 0.998 + T[c];
+    var key = estimateKey(this.keySum);
+    var silent = e < 0.15 * medE || e < 1e-6;
+    if (silent) { this.candCount = 0; return { chord: this.cur, silent: true, key: key, flats: usesFlats(key) }; }
+    var temps = allowedTemplates(this.simple);
+    var sc = scoreChords(T, B, temps, this.frames > 50 ? diatonicSet(key) : null);
+    var dl = this.frames > 50 ? diatonicSet(key) : null;
+    for (i = 0; i < temps.length; i++) {
+      if (!TYPES[temps[i].type].simple) sc[i] -= 0.03;
+      if (dl && !dl[temps[i].root + temps[i].type]) sc[i] -= P.outKey;   // chords outside the key need clearer evidence
+    }
+    var bi = 0; for (i = 1; i < sc.length; i++) if (sc[i] > sc[bi]) bi = i;
+    var best = { root: temps[bi].root, type: temps[bi].type };
+    var curScore = -9;
+    if (this.cur) for (i = 0; i < temps.length; i++) if (temps[i].root === this.cur.root && temps[i].type === this.cur.type) curScore = sc[i];
+    if (!this.cur || sameChord(best, this.cur)) { this.cur = this.cur || best; this.candCount = 0; }
+    else if (sc[bi] > curScore + 0.03) {
+      if (this.cand && sameChord(this.cand, best)) this.candCount++; else { this.cand = best; this.candCount = 1; }
+      if (this.candCount >= 3) { this.cur = best; this.candCount = 0; }
+    }
+    return { chord: this.cur, silent: false, key: key, flats: usesFlats(key), strength: sc[bi] };
+  };
+
+  // ---------- naming ----------
+  function chordName(ch, flats) {
+    if (!ch) return '—';
+    return (flats ? FLAT : SHARP)[ch.root] + TYPES[ch.type].suf;
+  }
+  var EN_TYPE = { maj: 'major', min: 'minor', '7': '7', maj7: 'maj7', m7: 'minor 7', dim: 'diminished', aug: 'augmented', sus4: 'sus4', sus2: 'sus2' };
+  function isEn() { return typeof window !== 'undefined' && window.KLANG === 'en'; }
+  function chordNameGreek(ch, flats) {
+    if (!ch) return isEn() ? 'no chord' : 'χωρίς συγχορδία';
+    if (isEn()) return (flats ? FLAT : SHARP)[ch.root] + ' ' + EN_TYPE[ch.type];
+    var nm = (flats ? GR_FLAT : GR_SHARP)[ch.root], t = TYPES[ch.type];
+    return nm + ' ' + t.gr;
+  }
+  function keyName(key, flats) {
+    if (isEn()) return (flats ? FLAT : SHARP)[key.tonic] + (key.mode === 'maj' ? ' major' : ' minor') + ' (' + (flats ? FLAT : SHARP)[key.tonic] + (key.mode === 'min' ? 'm' : '') + ')';
+    var nm = (flats ? GR_FLAT : GR_SHARP)[key.tonic];
+    return nm + (key.mode === 'maj' ? ' ματζόρε' : ' μινόρε') + ' (' + (flats ? FLAT : SHARP)[key.tonic] + (key.mode === 'min' ? 'm' : '') + ')';
+  }
+  function transpose(ch, semis) {
+    if (!ch) return ch;
+    return { root: ((ch.root + semis) % 12 + 12) % 12, type: ch.type };
+  }
+
+  var api = {
+    analyzeSong: analyzeSong, analyzeMelody: analyzeMelody, LiveAnalyzer: LiveAnalyzer, chordName: chordName, chordNameGreek: chordNameGreek,
+    keyName: keyName, transpose: transpose, usesFlats: usesFlats, SHARP: SHARP, FLAT: FLAT, sameChord: sameChord, TYPES: TYPES, params: P,
+    _internal: { buildTemplates: function () { buildTemplates(); }, beatTrack: beatTrack, estimateKey: estimateKey }
+  };
+  if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.ChordEngine = api;
+})(this);
+
+</script>
+<script>
+/* 23-10-2026: chord AI (BTC), lyric alignment and voice separation */
+/* Chord recognition with the BTC transformer (Park, Choi, Bae, Lee – ISMIR 2019, MIT licence),
+   re-implemented in plain JavaScript: constant-Q transform + bi-directional transformer.
+   Needs window.BTC_MODEL (weights) – see btc-model.js. */
+(function (root) {
+  'use strict';
+  var SR = 22050, HOP = 2048, CHUNK = 220500, NB = 144, BPO = 24, T = 108, H = 128, NH = 4, DK = 32, NCLS = 170;
+  var UNIT = 10.0 / 108;
+
+  // ---------- fp16 weights ----------
+  var W = null, MEAN = 0, STD = 1;
+  function half2float(h) {
+    var s = (h & 0x8000) ? -1 : 1, e = (h >> 10) & 0x1f, f = h & 0x3ff;
+    if (e === 0) return s * Math.pow(2, -14) * (f / 1024);
+    if (e === 31) return f ? NaN : s * Infinity;
+    return s * Math.pow(2, e - 15) * (1 + f / 1024);
+  }
+  function loadWeights() {
+    if (W) return W;
+    var M = root.BTC_MODEL; if (!M) throw new Error('Δεν φορτώθηκε το μοντέλο συγχορδιών (btc-model.js)');
+    var bin = atob(M.b64), n = bin.length >> 1, u16 = new Uint16Array(n), i;
+    for (i = 0; i < n; i++) u16[i] = bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8);
+    var lut = new Float32Array(65536); for (i = 0; i < 65536; i++) lut[i] = half2float(i);
+    W = {};
+    M.meta.forEach(function (m) {
+      var len = m.s.reduce(function (a, b) { return a * b; }, 1), a = new Float32Array(len), o = m.o >> 1;
+      for (var j = 0; j < len; j++) a[j] = lut[u16[o + j]];
+      W[m.n] = a;
+    });
+    MEAN = M.mean; STD = M.std;
+    return W;
+  }
+
+  // ---------- FFT (complex, radix-2, in place) ----------
+  function makeFFT(n) {
+    var lv = Math.round(Math.log2(n)), rev = new Uint32Array(n), i;
+    for (i = 0; i < n; i++) { var r = 0, x = i; for (var b = 0; b < lv; b++) { r = (r << 1) | (x & 1); x >>= 1; } rev[i] = r; }
+    var cs = new Float64Array(n / 2), sn = new Float64Array(n / 2);
+    for (i = 0; i < n / 2; i++) { cs[i] = Math.cos(2 * Math.PI * i / n); sn[i] = -Math.sin(2 * Math.PI * i / n); }
+    return function (re, im) {
+      for (var i = 0; i < n; i++) { var j = rev[i]; if (j > i) { var t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; } }
+      for (var size = 2; size <= n; size <<= 1) {
+        var half = size >> 1, step = n / size;
+        for (var s = 0; s < n; s += size) {
+          for (var k = 0, tw = 0; k < half; k++, tw += step) {
+            var a = s + k, b = a + half, wr = cs[tw], wi = sn[tw];
+            var xr = re[b] * wr - im[b] * wi, xi = re[b] * wi + im[b] * wr;
+            re[b] = re[a] - xr; im[b] = im[a] - xi; re[a] += xr; im[a] += xi;
+          }
+        }
+      }
+    };
+  }
+
+  // ---------- constant-Q kernel (matches librosa.cqt, verified) ----------
+  var KER = null;
+  function kernel(tuningCents) {
+    var key = Math.round(tuningCents || 0);
+    if (KER && KER.key === key) return KER;
+    var fmin = 32.70319566257483 * Math.pow(2, key / 1200), r = Math.pow(2, 1 / BPO), alpha = (r * r - 1) / (r * r + 1), Q = 1 / alpha;
+    var lengths = [], freqs = [], maxL = 0, k;
+    for (k = 0; k < NB; k++) { freqs[k] = fmin * Math.pow(r, k); lengths[k] = Q * SR / freqs[k]; if (lengths[k] > maxL) maxL = lengths[k]; }
+    var nfft = Math.pow(2, Math.ceil(Math.log2(maxL))), fft = makeFFT(nfft);
+    var re = new Float64Array(nfft), im = new Float64Array(nfft), bins = [];
+    for (k = 0; k < NB; k++) {
+      re.fill(0); im.fill(0);
+      var L = lengths[k], n0 = Math.ceil(-L / 2), n1 = Math.ceil(L / 2), N = n1 - n0, wsum = 0, n;
+      for (n = n0; n < n1; n++) wsum += 0.5 - 0.5 * Math.cos(2 * Math.PI * (n - n0) / N);
+      for (n = n0; n < n1; n++) {
+        var w = (0.5 - 0.5 * Math.cos(2 * Math.PI * (n - n0) / N)) / wsum, ph = 2 * Math.PI * freqs[k] * n / SR;
+        re[n + nfft / 2] = w * Math.cos(ph); im[n + nfft / 2] = w * Math.sin(ph);
+      }
+      fft(re, im);
+      var mx = 0, j; for (j = 0; j <= nfft / 2; j++) { var m = Math.hypot(re[j], im[j]); if (m > mx) mx = m; }
+      var idx = [], kr = [], ki = [];
+      for (j = 0; j <= nfft / 2; j++) {
+        if (Math.hypot(re[j], im[j]) >= 0.0054 * mx) { idx.push(j); kr.push(re[j] / nfft); ki.push(-im[j] / nfft); }
+      }
+      bins.push({ idx: Int32Array.from(idx), re: Float64Array.from(kr), im: Float64Array.from(ki), scale: Math.sqrt(L) });
+    }
+    KER = { key: key, nfft: nfft, fft: fft, bins: bins };
+    return KER;
+  }
+
+  // features [frames][144] (log-CQT), computed per 10-second chunk exactly like the model was trained
+  function features(y, tuningCents, onProgress, yieldFn) {
+    var K = kernel(tuningCents), nfft = K.nfft, fft = K.fft, re = new Float64Array(nfft), im = new Float64Array(nfft);
+    var out = [], chunks = [], cur = 0;
+    while (true) { var last = !(y.length > cur + CHUNK); chunks.push([cur, last ? y.length : cur + CHUNK]); if (last) break; cur += CHUNK; }
+    var total = 0; chunks.forEach(function (c) { total += 1 + Math.floor((c[1] - c[0]) / HOP); });
+    var ci = 0, t = 0, done = 0;
+    function step() {
+      var budget = 40;
+      while (ci < chunks.length && budget-- > 0) {
+        var a = chunks[ci][0], b = chunks[ci][1], Tn = 1 + Math.floor((b - a) / HOP);
+        var start = a + t * HOP - nfft / 2;
+        for (var i = 0; i < nfft; i++) { var p = start + i; re[i] = (p >= a && p < b) ? y[p] : 0; im[i] = 0; }
+        fft(re, im);
+        var f = new Float32Array(NB);
+        for (var k = 0; k < NB; k++) {
+          var B = K.bins[k], sr_ = 0, si = 0, ix = B.idx, kr = B.re, ki = B.im;
+          for (var j = 0; j < ix.length; j++) { var q = ix[j]; sr_ += kr[j] * re[q] - ki[j] * im[q]; si += kr[j] * im[q] + ki[j] * re[q]; }
+          f[k] = Math.log(Math.sqrt(sr_ * sr_ + si * si) * B.scale + 1e-6);
+        }
+        out.push(f); done++;
+        if (++t >= Tn) { t = 0; ci++; }
+      }
+      if (onProgress) onProgress(done / total);
+      if (ci < chunks.length) return yieldFn().then(step);
+      return Promise.resolve(out);
+    }
+    return step();
+  }
+
+  // ---------- transformer ----------
+  var TIMING = null, MASK_F = null;
+  function timing() {
+    if (TIMING) return TIMING;
+    TIMING = new Float32Array(T * H); var nts = H / 2, inc = Math.log(1e4) / (nts - 1);
+    for (var p = 0; p < T; p++) for (var i = 0; i < nts; i++) { var v = p * Math.exp(-i * inc); TIMING[p * H + i] = Math.sin(v); TIMING[p * H + nts + i] = Math.cos(v); }
+    return TIMING;
+  }
+  function linear(x, rows, inD, w, outD, bias) {         // y = x W^T (+b); w is [outD][inD]
+    var y = new Float32Array(rows * outD);
+    for (var r = 0; r < rows; r++) {
+      var xo = r * inD, yo = r * outD;
+      for (var o = 0; o < outD; o++) {
+        var s = bias ? bias[o] : 0, wo = o * inD;
+        for (var i = 0; i < inD; i++) s += x[xo + i] * w[wo + i];
+        y[yo + o] = s;
+      }
+    }
+    return y;
+  }
+  function layerNorm(x, rows, d, g, b) {
+    var y = new Float32Array(rows * d);
+    for (var r = 0; r < rows; r++) {
+      var o = r * d, m = 0, v = 0, i;
+      for (i = 0; i < d; i++) m += x[o + i]; m /= d;
+      for (i = 0; i < d; i++) { var z = x[o + i] - m; v += z * z; }
+      var sd = Math.sqrt(v / (d - 1)) + 1e-6;
+      for (i = 0; i < d; i++) y[o + i] = g[i] * (x[o + i] - m) / sd + b[i];
+    }
+    return y;
+  }
+  function conv3relu(x, rows, d, w, b) {                  // w stored [3][out][in]
+    var y = new Float32Array(rows * d);
+    for (var r = 0; r < rows; r++) {
+      for (var o = 0; o < d; o++) {
+        var s = b[o];
+        for (var k = 0; k < 3; k++) {
+          var rr = r + k - 1; if (rr < 0 || rr >= rows) continue;
+          var xo = rr * d, wo = (k * d + o) * d;
+          for (var i = 0; i < d; i++) s += x[xo + i] * w[wo + i];
+        }
+        y[r * d + o] = s > 0 ? s : 0;
+      }
+    }
+    return y;
+  }
+  function block(x, rows, p, backward) {
+    var xn = layerNorm(x, rows, H, W[p + '.layer_norm_mha.gamma'], W[p + '.layer_norm_mha.beta']), a = p + '.multi_head_attention.';
+    var q = linear(xn, rows, H, W[a + 'query_linear.weight'], H), k = linear(xn, rows, H, W[a + 'key_linear.weight'], H), v = linear(xn, rows, H, W[a + 'value_linear.weight'], H);
+    var ctx = new Float32Array(rows * H), sc = 1 / Math.sqrt(DK), lg = new Float64Array(rows);
+    for (var h = 0; h < NH; h++) {
+      var ho = h * DK;
+      for (var i = 0; i < rows; i++) {
+        var j0 = backward ? i : 0, j1 = backward ? rows - 1 : i, mx = -Infinity, j, d;
+        for (j = j0; j <= j1; j++) { var s = 0; for (d = 0; d < DK; d++) s += q[i * H + ho + d] * k[j * H + ho + d]; s *= sc; lg[j] = s; if (s > mx) mx = s; }
+        var sum = 0; for (j = j0; j <= j1; j++) { lg[j] = Math.exp(lg[j] - mx); sum += lg[j]; }
+        for (j = j0; j <= j1; j++) { var wgt = lg[j] / sum; for (d = 0; d < DK; d++) ctx[i * H + ho + d] += wgt * v[j * H + ho + d]; }
+      }
+    }
+    var y = linear(ctx, rows, H, W[a + 'output_linear.weight'], H), x2 = new Float32Array(rows * H), n;
+    for (n = 0; n < x2.length; n++) x2[n] = x[n] + y[n];
+    var xn2 = layerNorm(x2, rows, H, W[p + '.layer_norm_ffn.gamma'], W[p + '.layer_norm_ffn.beta']);
+    var h1 = conv3relu(xn2, rows, H, W[p + '.positionwise_convolution.layers.0.conv.weight'], W[p + '.positionwise_convolution.layers.0.conv.bias']);
+    var h2 = conv3relu(h1, rows, H, W[p + '.positionwise_convolution.layers.1.conv.weight'], W[p + '.positionwise_convolution.layers.1.conv.bias']);
+    for (n = 0; n < x2.length; n++) x2[n] += h2[n];
+    return x2;
+  }
+  function forward(feat) {                               // feat Float32Array [T*144] normalised -> logits [T*170]
+    var rows = T, tm = timing();
+    var x = linear(feat, rows, NB, W['self_attn_layers.embedding_proj.weight'], H);
+    for (var n = 0; n < x.length; n++) x[n] += tm[n];
+    for (var l = 0; l < 8; l++) {
+      var p = 'self_attn_layers.self_attn_layers.' + l;
+      var a = block(x, rows, p + '.attn_block', false), b = block(x, rows, p + '.backward_attn_block', true);
+      var cat = new Float32Array(rows * 2 * H);
+      for (var r = 0; r < rows; r++) { cat.set(a.subarray(r * H, r * H + H), r * 2 * H); cat.set(b.subarray(r * H, r * H + H), r * 2 * H + H); }
+      x = linear(cat, rows, 2 * H, W[p + '.linear.weight'], H, W[p + '.linear.bias']);
+    }
+    x = layerNorm(x, rows, H, W['self_attn_layers.layer_norm.gamma'], W['self_attn_layers.layer_norm.beta']);
+    return linear(x, rows, H, W['output_layer.output_projection.weight'], NCLS, W['output_layer.output_projection.bias']);
+  }
+  // logits for the whole song: [frames][170]
+  function predict(feats, onProgress, yieldFn) {
+    loadWeights();
+    var nF = feats.length, nInst = Math.ceil(nF / T) || 1, out = [], t = 0;
+    function step() {
+      var buf = new Float32Array(T * NB);
+      for (var i = 0; i < T; i++) {
+        var fi = t * T + i;
+        if (fi < nF) { var f = feats[fi]; for (var k = 0; k < NB; k++) buf[i * NB + k] = (f[k] - MEAN) / STD; }
+      }
+      var lg = forward(buf);
+      for (i = 0; i < T && t * T + i < nF; i++) out.push(lg.subarray(i * NCLS, (i + 1) * NCLS));
+      t++;
+      if (onProgress) onProgress(t / nInst);
+      if (t < nInst) return yieldFn().then(step);
+      return Promise.resolve(out);
+    }
+    return step();
+  }
+
+  // ---------- labels ----------
+  var QUAL = ['min', 'maj', 'dim', 'aug', 'min6', 'maj6', 'min7', 'minmaj7', 'maj7', '7', 'dim7', 'hdim7', 'sus2', 'sus4'];
+  // BTC quality -> our chord types (shapes we can draw) and major/minor family
+  var TO_TYPE = { min: 'min', maj: 'maj', dim: 'dim', aug: 'aug', min6: 'min', maj6: 'maj', min7: 'm7', minmaj7: 'min', maj7: 'maj7', '7': '7', dim7: 'dim', hdim7: 'dim', sus2: 'sus2', sus4: 'sus4' };
+  var FAMILY = { min: 1, dim: 1, min6: 1, min7: 1, minmaj7: 1, dim7: 1, hdim7: 1 };
+  function softmax(lg) {
+    var mx = -Infinity, i, p = new Float64Array(lg.length), s = 0;
+    for (i = 0; i < lg.length; i++) if (lg[i] > mx) mx = lg[i];
+    for (i = 0; i < lg.length; i++) { p[i] = Math.exp(lg[i] - mx); s += p[i]; }
+    for (i = 0; i < lg.length; i++) p[i] /= s;
+    return p;
+  }
+  // per-frame probabilities for our label sets
+  function labelProbs(logits) {
+    var full = [], mm = [];
+    logits.forEach(function (lg) {
+      var p = softmax(lg), f = {}, m = new Float64Array(25), i;
+      for (i = 0; i < 168; i++) {
+        var r = Math.floor(i / 14), q = QUAL[i % 14], key = r + ':' + TO_TYPE[q];
+        f[key] = (f[key] || 0) + p[i];
+        m[r * 2 + (FAMILY[q] ? 1 : 0)] += p[i];
+      }
+      f.N = p[169] + p[168]; m[24] = p[169] + p[168];
+      full.push(f); mm.push(m);
+    });
+    return { full: full, mm: mm };
+  }
+  root.BTC = { features: features, predict: predict, labelProbs: labelProbs, UNIT: UNIT, SR: SR, _forward: forward, _load: loadWeights, QUAL: QUAL };
+  if (typeof module !== 'undefined' && module.exports) module.exports = root.BTC;
+})(typeof window !== 'undefined' ? window : global);
+
+/* Turns BTC frame probabilities into chord sheets on the song's beats.
+   Levels: full (all chord types), simple (major/minor), basic (one chord per bar, only the song's main chords). */
+(function (root) {
+  'use strict';
+  var CE = root.ChordEngine, BTC = root.BTC;
+  var EPS = 1e-4;
+  var P = { stayBeat: 0.55, stayBar: 0.5, primBonus: 0.6, minShare: 0.035 };
+
+  // beat grid -> list of [startTime, endTime]
+  function beatGrid(beats, dur) {
+    var b = [0];
+    (beats || []).forEach(function (t) { if (t > 0.05 && t < dur - 0.05 && t - b[b.length - 1] > 0.15) b.push(t); });
+    if (b.length < 4) { b = [0]; for (var t = 0.5; t < dur; t += 0.5) b.push(t); }
+    b.push(dur);
+    var g = []; for (var i = 0; i + 1 < b.length; i++) g.push([b[i], b[i + 1]]);
+    return g;
+  }
+  // average log-probability of every label inside each time block
+  function blockScores(probs, labels, blocks, getP) {
+    var U = BTC.UNIT, nF = probs.length;
+    return blocks.map(function (bl) {
+      var f0 = Math.max(0, Math.floor(bl[0] / U + 0.5)), f1 = Math.min(nF, Math.max(f0 + 1, Math.floor(bl[1] / U + 0.5)));
+      var s = new Float64Array(labels.length), cnt = 0;
+      for (var f = f0; f < f1 && f < nF; f++) { cnt++; for (var i = 0; i < labels.length; i++) s[i] += Math.log(getP(probs[f], labels[i]) + EPS); }
+      if (!cnt) { var ff = Math.min(nF - 1, f0); for (i = 0; i < labels.length; i++) s[i] = Math.log(getP(probs[ff], labels[i]) + EPS); cnt = 1; }
+      for (i = 0; i < labels.length; i++) s[i] /= cnt;
+      return s;
+    });
+  }
+  function viterbi(em, K, stay, bonus) {
+    var n = em.length; if (!n) return [];
+    var ls = Math.log(stay), lw = Math.log((1 - stay) / Math.max(1, K - 1));
+    var d = new Float64Array(K), nd = new Float64Array(K), bp = [], i, s;
+    for (i = 0; i < K; i++) d[i] = em[0][i] + (bonus ? bonus[i] : 0);
+    for (s = 1; s < n; s++) {
+      var b1 = 0; for (i = 1; i < K; i++) if (d[i] > d[b1]) b1 = i;
+      var row = new Int32Array(K);
+      for (i = 0; i < K; i++) {
+        var vs = d[i] + ls, vo = d[b1] + lw;
+        if (i !== b1 && vo > vs) { nd[i] = vo; row[i] = b1; } else { nd[i] = vs; row[i] = i; }
+        nd[i] += em[s][i] + (bonus ? bonus[i] : 0);
+      }
+      bp.push(row); var t = d; d = nd; nd = t;
+    }
+    var st = 0; for (i = 1; i < K; i++) if (d[i] > d[st]) st = i;
+    var path = new Int32Array(n); path[n - 1] = st;
+    for (s = n - 1; s > 0; s--) { st = bp[s - 1][st]; path[s - 1] = st; }
+    return path;
+  }
+  function toSegments(blocks, path, labels) {
+    var out = [];
+    for (var i = 0; i < blocks.length; i++) {
+      var ch = labels[path[i]], last = out[out.length - 1];
+      if (last && CE.sameChord(last.chord, ch)) last.end = blocks[i][1];
+      else out.push({ start: blocks[i][0], end: blocks[i][1], chord: ch });
+    }
+    return out;
+  }
+  // labels
+  var MM_LABELS = [], FULL_LABELS = [], FULL_KEYS = [];
+  (function () {
+    for (var r = 0; r < 12; r++) { MM_LABELS.push({ root: r, type: 'maj' }); MM_LABELS.push({ root: r, type: 'min' }); }
+    MM_LABELS.push(null);
+    var types = ['maj', 'min', '7', 'maj7', 'm7', 'dim', 'aug', 'sus4', 'sus2'];
+    for (r = 0; r < 12; r++) types.forEach(function (t) { FULL_LABELS.push({ root: r, type: t }); FULL_KEYS.push(r + ':' + t); });
+    FULL_LABELS.push(null); FULL_KEYS.push('N');
+  })();
+
+  function decode(logits, beatsInfo, key) {
+    var lp = BTC.labelProbs(logits), dur = beatsInfo.duration;
+    var beats = beatGrid(beatsInfo.beats, dur);
+    // simple (major / minor) on beats
+    var mmIdx = MM_LABELS.map(function (l, i) { return i; });
+    var emS = blockScores(lp.mm, mmIdx, beats, function (p, i) { return p[i]; });
+    var pathS = viterbi(emS, MM_LABELS.length, P.stayBeat);
+    var simple = toSegments(beats, pathS, MM_LABELS);
+    // full vocabulary on beats
+    var emF = blockScores(lp.full, FULL_KEYS, beats, function (p, k) { return p[k] || 0; });
+    var pathF = viterbi(emF, FULL_LABELS.length, P.stayBeat);
+    var full = toSegments(beats, pathF, FULL_LABELS);
+    // basic: bars
+    var basic = basicLevel(lp.mm, beats, pathS, simple, key);
+    return { full: full, simple: simple, basic: basic, beatsUsed: beats, pathS: pathS, mm: lp.mm };
+  }
+
+  function basicLevel(mm, beats, pathS, simple, key) {
+    var n = beats.length, i;
+    if (n < 4) return simple;
+    var changes = [];
+    for (i = 1; i < n; i++) if (pathS[i] !== pathS[i - 1]) changes.push(i);
+    var bestL = 4, bestPh = 0, bestConc = -1;
+    [4, 3].forEach(function (L) {
+      for (var ph = 0; ph < L; ph++) {
+        var hit = 0; changes.forEach(function (c) { if (((c - ph) % L + L) % L === 0) hit++; });
+        var conc = changes.length ? hit / changes.length : 0;
+        if (L === 3) conc -= 0.12;
+        if (conc > bestConc) { bestConc = conc; bestL = L; bestPh = ph; }
+      }
+    });
+    // the song's main chords
+    var durs = {}, tot = 0;
+    simple.forEach(function (sg) { if (!sg.chord) return; var k = sg.chord.root * 2 + (sg.chord.type === 'min' ? 1 : 0), d = sg.end - sg.start; durs[k] = (durs[k] || 0) + d; tot += d; });
+    var order = Object.keys(durs).sort(function (a, b) { return durs[b] - durs[a]; }), vocab = [], cum = 0;
+    order.forEach(function (k) { var sh = durs[k] / (tot || 1); if ((cum < 0.9 && vocab.length < 6 && sh >= P.minShare) || vocab.length < 3) { vocab.push(+k); cum += sh; } });
+    vocab.push(24);                                  // no chord
+    var labels = vocab.map(function (k) { return MM_LABELS[k]; });
+    var bars = []; if (bestPh > 0) bars.push([beats[0][0], beats[bestPh - 1][1]]);
+    for (i = bestPh; i < n; i += bestL) bars.push([beats[i][0], beats[Math.min(n, i + bestL) - 1][1]]);
+    var em = blockScores(mm, vocab, bars, function (p, k) { return p[k]; });
+    // pillars of the key win close calls
+    var t0 = key.tonic, prim = {};
+    if (key.mode === 'maj') { prim[t0 * 2] = 1; prim[((t0 + 5) % 12) * 2] = 1; prim[((t0 + 7) % 12) * 2] = 1; prim[((t0 + 9) % 12) * 2 + 1] = 1; }
+    else { prim[t0 * 2 + 1] = 1; prim[((t0 + 5) % 12) * 2 + 1] = 1; prim[((t0 + 7) % 12) * 2] = 1; prim[((t0 + 3) % 12) * 2] = 1; }
+    var bonus = vocab.map(function (k) { return prim[k] ? P.primBonus * 0.1 : 0; });
+    var path = viterbi(em, labels.length, P.stayBar, bonus);
+    var segs = toSegments(bars, path, labels); segs.barLength = bestL;
+    return segs;
+  }
+
+  // key from chord durations (more reliable than raw chroma on real mixes)
+  function keyFromChords(segs, fallback) {
+    var pc = new Float64Array(12);
+    segs.forEach(function (s) {
+      if (!s.chord) return; var d = s.end - s.start, r = s.chord.root, mn = s.chord.type === 'min';
+      pc[r] += d; pc[(r + (mn ? 3 : 4)) % 12] += d; pc[(r + 7) % 12] += d;
+    });
+    var k = CE._internal.estimateKey(pc);
+    return k && k.score > 0.3 ? k : fallback;
+  }
+
+  // full analysis. signal: mono Float32Array @22050
+  function analyze(signal, opts) {
+    opts = opts || {};
+    var prog = opts.onProgress || function () {}, yieldFn = opts.yieldFn || function () { return new Promise(function (r) { setTimeout(r, 0); }); };
+    var base;
+    return CE.analyzeSong(signal, { sr: 22050, level: 'simple', yieldFn: yieldFn, onProgress: function (p) { prog(0.15 * p, 'beats'); } })
+      .then(function (b) {
+        base = b;
+        var tune = Math.abs(b.tuning) > 12 ? b.tuning : 0;
+        return BTC.features(signal, tune, function (p) { prog(0.15 + 0.35 * p, 'listen'); }, yieldFn);
+      })
+      .then(function (feats) { return BTC.predict(feats, function (p) { prog(0.5 + 0.48 * p, 'model'); }, yieldFn); })
+      .then(function (logits) {
+        var lv = decode(logits, base, base.key);
+        var key = base.key;   // chroma key proved more reliable than chord-histogram key in tests
+        if (key.tonic !== base.key.tonic || key.mode !== base.key.mode) lv.basic = basicLevel(lv.mm, lv.beatsUsed, lv.pathS, lv.simple, key);
+        prog(1, 'done');
+        var levels = { basic: lv.basic, simple: lv.simple, full: lv.full };
+        var level = opts.level || 'basic';
+        return {
+          levels: levels, segments: levels[level], level: level, key: key, tuning: base.tuning, bpm: base.bpm, beats: base.beats,
+          duration: base.duration, flats: CE.usesFlats(key), simple: level !== 'full', engine: 'ai'
+        };
+      });
+  }
+  root.ChordAI = { analyze: analyze, decode: decode, params: P, _basic: basicLevel };
+  if (typeof module !== 'undefined' && module.exports) module.exports = root.ChordAI;
+})(typeof window !== 'undefined' ? window : global);
+
+/* Automatic lyrics-to-voice alignment.
+   Lyrics syllables are matched, in order, to the sung notes of the main melody (dynamic programming),
+   so every line and every word gets a time without the user tapping anything. */
+(function (root) {
+  'use strict';
+  var P = { skipVoice: 1.0, skipMelisma: 0.6, skipIn: 0.3, skipSyl: 0.5, lineGapBonus: 0.8, lineNoGap: 0.5, gap: 0.22, inactive: 1.5, longHold: 0.8, attack: 0.6 };
+
+  // ---------- syllables ----------
+  var GR_V = 'αεηιουωάέήίόύώϊϋΐΰ', EN_V = 'aeiouyäöüàèéìòù';
+  var STRIP = { 'ά': 'α', 'έ': 'ε', 'ή': 'η', 'ί': 'ι', 'ό': 'ο', 'ύ': 'υ', 'ώ': 'ω', 'ϊ': 'ϊ', 'ϋ': 'ϋ', 'ΐ': 'ϊ', 'ΰ': 'ϋ' };
+  var DI = { 'αι': 1, 'ει': 1, 'οι': 1, 'υι': 1, 'ου': 1, 'αυ': 1, 'ευ': 1, 'ηυ': 1 };
+  function isV(c) { return GR_V.indexOf(c) >= 0 || EN_V.indexOf(c) >= 0; }
+  // number of sung syllables in a word (Greek & English, approximate)
+  function syllables(word) {
+    var w = word.toLowerCase().replace(/[^a-zα-ωάέήίόύώϊϋΐΰς]/g, '');
+    if (!w) return 0;
+    var greek = /[α-ω]/.test(w), n = 0, i = 0;
+    while (i < w.length) {
+      if (!isV(w[i])) { i++; continue; }
+      n++;
+      var a = STRIP[w[i]] || w[i], b = w[i + 1] ? (STRIP[w[i + 1]] || w[i + 1]) : '';
+      if (greek) {
+        // accent on the 1st vowel breaks the pair (e.g. "άι"); diaeresis on the 2nd breaks it too
+        if (b && DI[a + b] && w[i + 1] !== 'ϊ' && w[i + 1] !== 'ϋ' && w[i + 1] !== 'ΐ' && w[i + 1] !== 'ΰ' && !(STRIP[w[i]] && STRIP[w[i + 1]] === undefined && false)) { i += 2; }
+        // synizesis: consonant + ι/υ + vowel sung as one syllable (καρδιά, παιδιά)
+        else if ((a === 'ι' || a === 'υ' || a === 'ε') && b && isV(b) && i > 0 && !isV(w[i - 1]) && !STRIP[w[i]]) { i += 2; }
+        else i++;
+        while (i < w.length && isV(w[i]) && !(STRIP[w[i]] || w[i]).match(/[αεηοω]/) && false) i++;
+      } else {
+        while (i < w.length && isV(w[i])) i++;
+      }
+    }
+    if (!greek && n > 1 && /[^aeiouy]e$/.test(w)) n--;   // silent final e
+    return Math.max(1, n);
+  }
+  // lines -> [{words:[{text,pos,syl}], nsyl}]
+  function parseLines(text) {
+    return text.replace(/\r/g, '').split('\n').map(function (line) {
+      var words = [], re = /\S+/g, m, tot = 0;
+      while ((m = re.exec(line))) { var s = syllables(m[0]); if (!s) continue; words.push({ text: m[0], pos: m.index, syl: s }); tot += s; }
+      return { text: line, words: words, nsyl: tot };
+    });
+  }
+
+  // ---------- onset strength (how sharply a new sound starts) ----------
+  // y: mono samples, sr. Returns function(t) -> 0..1
+  function onsetStrength(y, sr) {
+    var n = 1024, hop = 256, nF = Math.max(1, Math.floor((y.length - n) / hop) + 1), CE = root.ChordEngine;
+    var re = new Float64Array(n), im = new Float64Array(n), prev = null, flux = new Float32Array(nF), k0 = Math.floor(150 * n / sr), k1 = Math.floor(5000 * n / sr);
+    var fft = makeFFT(n), win = new Float64Array(n), i, f;
+    for (i = 0; i < n; i++) win[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / n);
+    for (f = 0; f < nF; f++) {
+      for (i = 0; i < n; i++) { re[i] = (y[f * hop + i] || 0) * win[i]; im[i] = 0; }
+      fft(re, im);
+      var cur = new Float32Array(k1 - k0), fl = 0;
+      for (var k = k0; k < k1; k++) { var m = Math.log(1 + 100 * Math.hypot(re[k], im[k])); cur[k - k0] = m; if (prev) { var d = m - prev[k - k0]; if (d > 0) fl += d; } }
+      flux[f] = fl; prev = cur;
+    }
+    var srt = Array.prototype.slice.call(flux).sort(function (a, b) { return a - b; }), ref = srt[Math.floor(srt.length * 0.97)] || 1;
+    return function (t) {
+      var a = Math.max(0, Math.floor((t - 0.04) * sr / hop)), b = Math.min(nF - 1, Math.ceil((t + 0.06) * sr / hop)), mx = 0;
+      for (var q = a; q <= b; q++) if (flux[q] > mx) mx = flux[q];
+      return Math.min(1, mx / ref);
+    };
+  }
+  function makeFFT(n) {
+    var lv = Math.round(Math.log2(n)), rev = new Uint32Array(n), i;
+    for (i = 0; i < n; i++) { var r = 0, x = i; for (var b = 0; b < lv; b++) { r = (r << 1) | (x & 1); x >>= 1; } rev[i] = r; }
+    var cs = new Float64Array(n / 2), sn = new Float64Array(n / 2);
+    for (i = 0; i < n / 2; i++) { cs[i] = Math.cos(2 * Math.PI * i / n); sn[i] = -Math.sin(2 * Math.PI * i / n); }
+    return function (re, im) {
+      for (var i = 0; i < n; i++) { var j = rev[i]; if (j > i) { var t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; } }
+      for (var size = 2; size <= n; size <<= 1) { var half = size >> 1, step = n / size;
+        for (var s = 0; s < n; s += size) for (var k = 0, tw = 0; k < half; k++, tw += step) { var a = s + k, b = a + half, wr = cs[tw], wi = sn[tw], xr = re[b] * wr - im[b] * wi, xi = re[b] * wi + im[b] * wr; re[b] = re[a] - xr; im[b] = im[a] - xi; re[a] += xr; im[a] += xi; } }
+    };
+  }
+
+  // ---------- vocal events (note onsets of the main melody) ----------
+  function events(notes, activity, onset) {
+    var ev = [];
+    notes.forEach(function (n, i) {
+      var prev = notes[i - 1], gapBefore = prev ? n.s - prev.e : 9;
+      var act = activity ? activity(n.s, n.e) : 1;
+      ev.push({ t: n.s, e: n.e, m: n.m, gap: gapBefore, conf: n.c, act: act, on: onset ? onset(n.s) : 1 });
+    });
+    return ev;
+  }
+
+  // ---------- alignment ----------
+  // sylls: [{line, first, last}] ; ev: events. DP over (syllable i, event j).
+  function align(lines, notes, activity, onset) {
+    var ev = events(notes, activity, onset), sy = [];
+    lines.forEach(function (L, li) {
+      var k = 0;
+      L.words.forEach(function (w, wi) { for (var s = 0; s < w.syl; s++) { sy.push({ line: li, word: wi, first: k === 0, last: k === L.nsyl - 1 }); k++; } });
+    });
+    var S = sy.length, N = ev.length;
+    if (!S || !N) return null;
+    var INF = 1e18;
+    // D[i][j] = best cost having used syllables < i and events < j, with syllable i-1 matched at/ before event j-1
+    var D = new Float64Array((S + 1) * (N + 1)).fill(INF), B = new Int8Array((S + 1) * (N + 1));
+    function id(i, j) { return i * (N + 1) + j; }
+    D[id(0, 0)] = 0;
+    for (var i = 0; i <= S; i++) {
+      for (var j = 0; j <= N; j++) {
+        var c = D[id(i, j)]; if (c >= INF) continue;
+        var inLine = i > 0 && i < S && !sy[i - 1].last;   // between two syllables of the same line?
+        // 1) skip event j: cheap if it is not the voice (instrument), dearer if it is
+        if (j < N) {
+          var e = ev[j], sk = e.act * (inLine && e.gap < 0.08 ? P.skipMelisma + P.attack * e.on : P.skipVoice) + (inLine ? P.skipIn * (1 - e.act) : 0);
+          var v = c + sk;
+          if (v < D[id(i, j + 1)]) { D[id(i, j + 1)] = v; B[id(i, j + 1)] = 1; }
+        }
+        // 2) match syllable i to event j
+        if (i < S && j < N) {
+          var e2 = ev[j], s = sy[i], mc = (1 - e2.act) * P.inactive;
+          if (s.first) mc += e2.gap >= P.gap ? -P.lineGapBonus : P.lineNoGap;
+          else if (e2.gap > 1.2) mc += P.longHold;
+          mc += P.attack * (1 - e2.on);
+          var v2 = c + mc;
+          if (v2 < D[id(i + 1, j + 1)]) { D[id(i + 1, j + 1)] = v2; B[id(i + 1, j + 1)] = 2; }
+        }
+        // 3) syllable i shares the previous event (two syllables on one note)
+        if (i < S && j > 0 && !sy[i].first) {
+          var v3 = c + P.skipSyl;
+          if (v3 < D[id(i + 1, j)]) { D[id(i + 1, j)] = v3; B[id(i + 1, j)] = 3; }
+        }
+      }
+    }
+    // best end: all syllables used, any j
+    var bj = N;                                   // every sung note must be accounted for (matched or skipped)
+    var times = new Array(S), ii = S, jj = bj;
+    while (ii > 0 || jj > 0) {
+      var b = B[id(ii, jj)];
+      if (b === 1) jj--;
+      else if (b === 2) { times[ii - 1] = ev[jj - 1].t; ii--; jj--; }
+      else if (b === 3) { times[ii - 1] = null; ii--; }
+      else break;
+    }
+    // shared syllables: put them between neighbours
+    for (i = 0; i < S; i++) if (times[i] == null) {
+      var a = i - 1; while (a >= 0 && times[a] == null) a--;
+      var z = i + 1; while (z < S && times[z] == null) z++;
+      var ta = a >= 0 ? times[a] : 0, tz = z < S ? times[z] : ta + 0.5;
+      times[i] = ta + (tz - ta) * (i - a) / (z - a);
+    }
+    // per line / per word
+    var out = lines.map(function () { return { start: null, words: [] }; });
+    sy.forEach(function (s, k) {
+      var L = out[s.line];
+      if (L.start === null) L.start = times[k];
+      if (!L.words[s.word]) L.words[s.word] = times[k];
+    });
+    return out;
+  }
+
+  root.LyricAlign = { onsetStrength: onsetStrength, syllables: syllables, parseLines: parseLines, align: align, params: P };
+  if (typeof module !== 'undefined' && module.exports) module.exports = root.LyricAlign;
+})(typeof window !== 'undefined' ? window : global);
+
+/* Voice separation with Spleeter 2-stems (Deezer, MIT licence; ONNX export by k2-fsa/sherpa-onnx, Apache-2.0),
+   run in the browser with onnxruntime-web. Gives back the singer's voice (mono, 22050 Hz) and how strongly
+   the voice is present at every moment. */
+(function (root) {
+  'use strict';
+  var N = 4096, HOP = 1024, BINS = 1024, CH = 512, SR = 44100;
+  var sessV = null, sessA = null, loading = null;
+
+  function base() { return location.href.split('#')[0].split('?')[0].replace(/[^\/]*$/, ''); }
+  function load(onStatus) {
+    if (loading) return loading;
+    if (!root.ort) return Promise.reject(new Error('ort not loaded'));
+    var b = base();
+    root.ort.env.wasm.wasmPaths = b;
+    root.ort.env.wasm.numThreads = (root.crossOriginIsolated && navigator.hardwareConcurrency) ? Math.min(4, navigator.hardwareConcurrency) : 1;
+    var opt = { executionProviders: ['wasm'], graphOptimizationLevel: 'all' };
+    loading = root.ort.InferenceSession.create(b + 'vocals.fp16.onnx', opt)
+      .then(function (s) { sessV = s; if (onStatus) onStatus(0.5); return root.ort.InferenceSession.create(b + 'accompaniment.fp16.onnx', opt); })
+      .then(function (s) { sessA = s; if (onStatus) onStatus(1); return true; })
+      .catch(function (e) { loading = null; throw e; });
+    return loading;
+  }
+
+  function makeFFT(n) {
+    var lv = Math.round(Math.log2(n)), rev = new Uint32Array(n), i;
+    for (i = 0; i < n; i++) { var r = 0, x = i; for (var b = 0; b < lv; b++) { r = (r << 1) | (x & 1); x >>= 1; } rev[i] = r; }
+    var cs = new Float64Array(n / 2), sn = new Float64Array(n / 2);
+    for (i = 0; i < n / 2; i++) { cs[i] = Math.cos(2 * Math.PI * i / n); sn[i] = -Math.sin(2 * Math.PI * i / n); }
+    return function (re, im, inverse) {
+      for (var i = 0; i < n; i++) { var j = rev[i]; if (j > i) { var t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; } }
+      var sg = inverse ? -1 : 1;
+      for (var size = 2; size <= n; size <<= 1) {
+        var half = size >> 1, step = n / size;
+        for (var s = 0; s < n; s += size) for (var k = 0, tw = 0; k < half; k++, tw += step) {
+          var a = s + k, bb = a + half, wr = cs[tw], wi = sg * sn[tw], xr = re[bb] * wr - im[bb] * wi, xi = re[bb] * wi + im[bb] * wr;
+          re[bb] = re[a] - xr; im[bb] = im[a] - xi; re[a] += xr; im[a] += xi;
+        }
+      }
+    };
+  }
+
+  // stereo: [Float32Array L, Float32Array R] at 44100 Hz
+  function separate(stereo, onProgress, yieldFn) {
+    yieldFn = yieldFn || function () { return new Promise(function (r) { setTimeout(r, 0); }); };
+    var L = stereo[0], R = stereo[1] || stereo[0], len = L.length;
+    var nF = Math.floor(len / HOP) + 1, fft = makeFFT(N), win = new Float64Array(N), i;
+    for (i = 0; i < N; i++) win[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N);
+    var out = new Float32Array(len + N), wsum = new Float32Array(len + N);
+    var act = new Float32Array(nF), tot = new Float32Array(nF);
+    var k0 = Math.floor(150 * N / SR), k1 = Math.floor(5000 * N / SR);
+    var nChunks = Math.ceil(nF / CH), c = 0;
+    function frameSpec(x, f, re, im) {
+      var st = f * HOP - N / 2;
+      for (var i = 0; i < N; i++) { var p = st + i; re[i] = (p >= 0 && p < len) ? x[p] * win[i] : 0; im[i] = 0; }
+      fft(re, im, false);
+    }
+    function step() {
+      var f0 = c * CH, f1 = Math.min(nF, f0 + CH), n = f1 - f0;
+      var input = new Float32Array(2 * CH * BINS), spec = [];
+      for (var ch = 0; ch < 2; ch++) {
+        var x = ch ? R : L;
+        for (var f = f0; f < f1; f++) {
+          var re = new Float64Array(N), im = new Float64Array(N); frameSpec(x, f, re, im);
+          spec.push([re, im]);
+          var o = (ch * CH + (f - f0)) * BINS;
+          for (var k = 0; k < BINS; k++) input[o + k] = Math.hypot(re[k], im[k]);
+        }
+      }
+      var feeds = { x: new root.ort.Tensor('float32', input, [2, 1, CH, BINS]) };
+      var V;
+      return sessV.run(feeds).then(function (r) { V = r.y.data; return sessA.run(feeds); }).then(function (r) {
+        var A = r.y.data, re2 = new Float64Array(N), im2 = new Float64Array(N);
+        for (var f = f0; f < f1; f++) {
+          re2.fill(0); im2.fill(0);
+          var ve = 0, te = 0;
+          for (var ch = 0; ch < 2; ch++) {
+            var sp = spec[ch * n + (f - f0)], o = (ch * CH + (f - f0)) * BINS;
+            for (var k = 0; k < BINS; k++) {
+              var v = V[o + k], a = A[o + k], m = (v * v + 1e-10) / (v * v + a * a + 2e-10);
+              var mr = sp[0][k] * m, mi = sp[1][k] * m;
+              re2[k] += mr / 2; im2[k] += mi / 2;
+              if (k >= k0 && k < k1) { ve += mr * mr + mi * mi; te += sp[0][k] * sp[0][k] + sp[1][k] * sp[1][k]; }
+            }
+          }
+          act[f] = ve; tot[f] = te;
+          // inverse STFT (mono voice), conjugate-symmetric spectrum
+          for (k = 1; k < N / 2; k++) { re2[N - k] = re2[k]; im2[N - k] = -im2[k]; }
+          fft(re2, im2, true);
+          var st = f * HOP - N / 2;
+          for (var j = 0; j < N; j++) { var p = st + j; if (p < 0 || p >= len) continue; out[p] += re2[j] / N * win[j]; wsum[p] += win[j] * win[j]; }
+        }
+        c++;
+        if (onProgress) onProgress(c / nChunks);
+        if (c < nChunks) return yieldFn().then(step);
+        for (i = 0; i < len; i++) if (wsum[i] > 1e-6) out[i] /= wsum[i];
+        // voice at 22050 Hz
+        var half = new Float32Array(len >> 1);
+        for (i = 0; i < half.length; i++) half[i] = 0.25 * (out[2 * i - 1] || 0) + 0.5 * out[2 * i] + 0.25 * (out[2 * i + 1] || 0);
+        // voice presence per frame: share of the voice in the 150–5000 Hz band, relative to the song's loud level
+        var ratio = new Float32Array(nF), srt = [];
+        for (f = 0; f < nF; f++) { ratio[f] = act[f] / (tot[f] + 1e-9); srt.push(act[f]); }
+        srt.sort(function (a, b) { return a - b; });
+        var vref = srt[Math.floor(srt.length * 0.9)] || 1;
+        var pres = new Float32Array(nF);
+        for (f = 0; f < nF; f++) pres[f] = Math.min(1, Math.max(0, (ratio[f] - 0.08) / 0.32)) * Math.min(1, act[f] / (0.02 * vref + 1e-12));
+        var sm = new Float32Array(nF), Wn = 4;
+        for (f = 0; f < nF; f++) { var s = 0, cnt = 0; for (var q = f - Wn; q <= f + Wn; q++) if (q >= 0 && q < nF) { s += pres[q]; cnt++; } sm[f] = s / cnt; }
+        return {
+          voice: half, sr: 22050,
+          presence: sm, fps: SR / HOP,
+          activity: function (a, b) {
+            var fa = Math.max(0, Math.floor(a * SR / HOP)), fb = Math.min(nF - 1, Math.max(fa, Math.ceil(b * SR / HOP))), s = 0;
+            for (var q = fa; q <= fb; q++) s += sm[q];
+            return s / (fb - fa + 1);
+          }
+        };
+      });
+    }
+    return step();
+  }
+  root.VoiceSep = { load: load, separate: separate, available: function () { return !!root.ort; } };
+})(window);
+
+</script>
+<script>
+(function(){
+'use strict';
+var LG = window.LG;
+/* 13-10-2026: στατικά κείμενα στη γλώσσα του επισκέπτη / static texts in the visitor's language */
+if(window.KLANG==='en'){
+  document.querySelectorAll('[data-en]').forEach(function(e){ e.innerHTML=e.getAttribute('data-en'); });
+  document.querySelectorAll('[data-en-title]').forEach(function(e){ e.title=e.getAttribute('data-en-title'); });
+  document.querySelectorAll('[data-en-ph]').forEach(function(e){ e.placeholder=e.getAttribute('data-en-ph'); });
+}
+(function(){ var b=document.getElementById('langBtn'); if(!b) return; b.textContent = window.KLANG==='en' ? 'ΕΛ' : 'EN';
+  b.onclick=function(){ try{ localStorage.setItem('ak-lang', window.KLANG==='en'?'el':'en'); }catch(e){} location.reload(); }; })();
+var CE = window.ChordEngine;
+var $ = function(s){ return document.querySelector(s); };
+function show(id){ ['home','listen','working','results'].forEach(function(s){ $('#'+s).classList.toggle('hidden', s!==id); }); var lb=$('#langBtn'); if(lb) lb.classList.toggle('hidden', id!=='home'); window.scrollTo(0,0); }
+function fmt(t){ t=Math.max(0,t||0); var m=Math.floor(t/60), s=Math.floor(t%60); return m+':'+(s<10?'0':'')+s; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function store(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+function load(k,d){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):d; }catch(e){ return d; } }
+
+var state = { level: load('ak-level', 'basic'), capo:0, trans:0, res:null, signal:null, sr:22050, title:'', audioURL:null, fromHistory:false };
+
+// ---------- font size ----------
+var fs = load('ak-fs', (window.innerWidth||1000)<600 ? 18 : 22);
+function applyFs(){ document.documentElement.style.setProperty('--fs', fs+'px'); store('ak-fs', fs); }
+applyFs();
+$('#fsUp').onclick=function(){ fs=Math.min(34,fs+2); applyFs(); };
+$('#fsDown').onclick=function(){ fs=Math.max(16,fs-2); applyFs(); };
+
+// ---------- colours ----------
+// one clear colour per note: Ντο red, Ρε orange, Μι yellow, Φα green, Σολ light blue, Λα lilac, Σι pink
+var NOTE_COL=['#e03131','#fd7e14','#fcc419','#2f9e44','#3ba7f0','#a07cf5','#f06595'];
+var NOTE_INK=['#fff','#1a1a1a','#1a1a1a','#fff','#1a1a1a','#1a1a1a','#1a1a1a'];
+function curFlats(){ return state.res ? flatsFor(state.trans-state.capo) : false; }
+function letterOf(ch, flats){ var nm=(flats?CE.FLAT:CE.SHARP)[ch.root]; return 'CDEFGAB'.indexOf(nm.charAt(0)); }
+function colorOf(ch, flats){ if(!ch) return '#adb5bd'; return NOTE_COL[letterOf(ch, flats===undefined?curFlats():flats)]; }
+function inkOf(ch, flats){ if(!ch) return '#333'; return NOTE_INK[letterOf(ch, flats===undefined?curFlats():flats)]; }
+function chip(ch, name, flats){ return '<b class="chip" style="background:'+colorOf(ch,flats)+';color:'+inkOf(ch,flats)+'">'+esc(name)+'</b>'; }
+
+// ---------- guitar shapes ----------
+var X=null;
+var OPEN={
+ '0:maj':[X,3,2,0,1,0],'0:7':[X,3,2,3,1,0],'0:maj7':[X,3,2,0,0,0],'0:sus2':[X,3,0,0,1,0],'0:sus4':[X,3,3,0,1,1],'0:aug':[X,3,2,1,1,0],
+ '2:maj':[X,X,0,2,3,2],'2:min':[X,X,0,2,3,1],'2:7':[X,X,0,2,1,2],'2:maj7':[X,X,0,2,2,2],'2:m7':[X,X,0,2,1,1],'2:sus4':[X,X,0,2,3,3],'2:sus2':[X,X,0,2,3,0],
+ '4:maj':[0,2,2,1,0,0],'4:min':[0,2,2,0,0,0],'4:7':[0,2,0,1,0,0],'4:maj7':[0,2,1,1,0,0],'4:m7':[0,2,0,0,0,0],'4:sus4':[0,2,2,2,0,0],
+ '5:maj7':[X,X,3,2,1,0],
+ '7:maj':[3,2,0,0,0,3],'7:7':[3,2,0,0,0,1],'7:maj7':[3,2,0,0,0,2],
+ '9:maj':[X,0,2,2,2,0],'9:min':[X,0,2,2,1,0],'9:7':[X,0,2,0,2,0],'9:maj7':[X,0,2,1,2,0],'9:m7':[X,0,2,0,1,0],'9:sus4':[X,0,2,2,3,0],'9:sus2':[X,0,2,2,0,0],
+ '11:7':[X,2,1,2,0,2]
+};
+var MOV={
+ E:{base:4, s:{maj:[0,2,2,1,0,0],min:[0,2,2,0,0,0],'7':[0,2,0,1,0,0],m7:[0,2,0,0,0,0],sus4:[0,2,2,2,0,0],maj7:[0,X,1,1,0,X]}},
+ A:{base:9, s:{maj:[X,0,2,2,2,0],min:[X,0,2,2,1,0],'7':[X,0,2,0,2,0],maj7:[X,0,2,1,2,0],m7:[X,0,2,0,1,0],sus4:[X,0,2,2,3,0],sus2:[X,0,2,2,0,0],dim:[X,0,1,2,1,X],aug:[X,0,-1,-2,-2,X]}}
+};
+function shapeOf(ch){
+  var k=ch.root+':'+ch.type;
+  if(OPEN[k]) return {f:OPEN[k], barre:0};
+  var best=null;
+  ['E','A'].forEach(function(nm){
+    var m=MOV[nm], off=m.s[ch.type]; if(!off) return;
+    var r=(ch.root-m.base+12)%12, mn=Math.min.apply(null,off.filter(function(v){return v!==X;}));
+    if(r+mn<0) r+=12;
+    if(r===0 && off.some(function(v){return v!==X && v>0;}) && nm==='E' && ch.type==='maj7') {}
+    var f=off.map(function(v){return v===X?X:v+r;});
+    var zeros=off.filter(function(v){return v===0;}).length;
+    var cand={f:f, barre:(r>0&&zeros>=3)?r:0, r:r};
+    if(!best || cand.r<best.r) best=cand;
+  });
+  if(!best) return {f:[X,X,X,X,X,X],barre:0};
+  return best;
+}
+function diagramSVG(ch, w){
+  if(!ch) return '';
+  var sh=shapeOf(ch), f=sh.f, h=w*1.25;
+  var fretted=f.filter(function(v){return v!==X&&v>0;});
+  var mx=fretted.length?Math.max.apply(null,fretted):0, mn=fretted.length?Math.min.apply(null,fretted):1;
+  var base = mx<=5 ? 1 : mn;
+  var L=w*0.2, R=w*0.92, T=h*0.2, B=h*0.95, sw=(R-L)/5, fh=(B-T)/5;
+  var s='<svg viewBox="0 0 '+w+' '+h+'" width="'+w+'" height="'+h+'" role="img" aria-label="διάγραμμα">';
+  for(var i=0;i<6;i++) s+='<line x1="'+(L+i*sw)+'" y1="'+T+'" x2="'+(L+i*sw)+'" y2="'+B+'" stroke="#333" stroke-width="'+(w/110)+'"/>';
+  for(i=0;i<=5;i++) s+='<line x1="'+L+'" y1="'+(T+i*fh)+'" x2="'+R+'" y2="'+(T+i*fh)+'" stroke="#333" stroke-width="'+(i===0&&base===1?w/28:w/110)+'"/>';
+  if(base>1) s+='<text x="'+(L-w*0.05)+'" y="'+(T+fh*0.68)+'" font-size="'+(w*0.12)+'" text-anchor="end" font-weight="700" fill="#333">'+base+'</text>';
+  var col=colorOf(ch), r=Math.min(sw,fh)*0.36;
+  if(sh.barre){
+    var idx=[]; f.forEach(function(v,j){ if(v===sh.barre) idx.push(j); });
+    var first=f.findIndex(function(v){return v!==X;});
+    var y=T+(sh.barre-base+0.5)*fh;
+    s+='<rect x="'+(L+first*sw-r)+'" y="'+(y-r)+'" width="'+((5-first)*sw+2*r)+'" height="'+(2*r)+'" rx="'+r+'" fill="'+col+'" stroke="#333" stroke-width="'+(w/110)+'"/>';
+  }
+  f.forEach(function(v,j){
+    var x=L+j*sw;
+    if(v===X) s+='<text x="'+x+'" y="'+(T-h*0.04)+'" font-size="'+(w*0.13)+'" text-anchor="middle" fill="#c92a2a" font-weight="700">✕</text>';
+    else if(v===0) s+='<circle cx="'+x+'" cy="'+(T-h*0.08)+'" r="'+(r*0.6)+'" fill="none" stroke="#333" stroke-width="'+(w/70)+'"/>';
+    else if(v!==sh.barre) s+='<circle cx="'+x+'" cy="'+(T+(v-base+0.5)*fh)+'" r="'+r+'" fill="'+col+'" stroke="#333" stroke-width="'+(w/110)+'"/>';
+  });
+  return s+'</svg>';
+}
+var EASY={}; Object.keys(OPEN).forEach(function(k){ EASY[k]=1; });
+
+// ---------- naming with capo/transpose ----------
+function flatsFor(shift){
+  if(!state.res) return false;
+  var k=state.res.key; return CE.usesFlats({tonic:((k.tonic+shift)%12+12)%12, mode:k.mode});
+}
+function played(ch){ return CE.transpose(ch, state.trans-state.capo); }   // shape you play
+function sounding(ch){ return CE.transpose(ch, state.trans); }            // what is heard
+function nameP(ch){ return CE.chordName(played(ch), flatsFor(state.trans-state.capo)); }
+
+// ---------- mode switch ----------
+var LEVEL_NAME={basic:LG('Λίγες, βασικές συγχορδίες','Few, basic chords'), simple:LG('Απλές συγχορδίες','Simple chords'), full:LG('Όλες οι συγχορδίες','All chords')};
+function paintMode(){
+  document.querySelectorAll('#modeSeg button, #modeSeg2 button').forEach(function(b){
+    b.classList.toggle('on', b.dataset.m===state.level);
+    var miss = state.res && !$('#results').classList.contains('hidden') && !(state.res.levels && state.res.levels[b.dataset.m]);
+    if(b.parentNode.id==='modeSeg2'){ b.disabled=!!miss; b.style.opacity=miss?.4:1; b.title=miss?LG('Αυτό το παλιό τραγούδι έχει μόνο ένα είδος. Ξαναβάλε το τραγούδι για να τα έχεις όλα.','This older song has only one kind. Load the song again to have them all.'):''; }
+  });
+}
+function applyLevel(){
+  var r=state.res; if(!r || !r.levels) return;
+  var lv = r.levels[state.level] ? state.level : Object.keys(r.levels)[0];
+  r.segments = r.levels[lv]; r.level = lv;
+}
+function setMode(level){
+  if(level===state.level) return;
+  state.level=level; store('ak-level', level);
+  if(state.res && !$('#results').classList.contains('hidden')){ applyLevel(); updateNote(); renderAll(); }
+  paintMode();
+}
+document.querySelectorAll('#modeSeg button, #modeSeg2 button').forEach(function(b){ b.onclick=function(){ setMode(b.dataset.m); }; });
+paintMode();
+
+// ---------- history ----------
+function renderHist(){
+  var h=load('ak-hist', []), el=$('#histList');
+  $('#histCard').classList.toggle('hidden', !h.length);
+  el.innerHTML='';
+  h.forEach(function(it, i){
+    var b=document.createElement('button');
+    var segsH = it.levels ? (it.levels.basic || it.levels.simple || it.levels.full) : it.segments;
+    var chs=[]; segsH.forEach(function(s){ var n=CE.chordName(s.chord, it.flats); if(s.chord && chs.indexOf(n)<0 && chs.length<8) chs.push(n); });
+    b.innerHTML='🎵 <b>'+esc(it.title)+'</b> <span class="muted" style="font-size:.85rem">— '+esc(chs.join(' '))+' — '+new Date(it.date).toLocaleDateString('el-GR')+'</span>';
+    b.onclick=function(){
+      var fresh=load('ak-hist',[]).filter(function(x){ return x.title===it.title; })[0]; if(fresh) it=fresh;
+      if(!it.levels){ it.levels={}; it.levels[it.simple===false?'full':'simple']=it.segments; }
+      openResult(it, null, true);
+    };
+    var row=document.createElement('div'); row.className='hrow';
+    var d=document.createElement('button'); d.className='delbtn'; d.textContent='🗑'; d.title=LG('Σβήσε αυτό το τραγούδι','Delete this song');
+    d.onclick=function(){ deleteSong(it.title); };
+    row.appendChild(b); row.appendChild(d); el.appendChild(row);
+  });
+  renderTrash();
+}
+function deleteSong(title){
+  var h=load('ak-hist',[]), tr=load('ak-trash',[]), L=load('ak-lyr',{}), gone=null;
+  h=h.filter(function(x){ if(x.title===title && !gone){ gone=x; return false; } return true; });
+  if(!gone) return;
+  gone.deleted=Date.now(); if(L[title]){ gone.lyrics=L[title]; delete L[title]; }
+  tr.unshift(gone); if(tr.length>30) tr.length=30;
+  store('ak-hist',h); store('ak-trash',tr); store('ak-lyr',L);
+  renderHist();
+  showToast(LG('Το «'+title+'» πήγε στον κάδο.','«'+title+'» went to the bin.'), function(){ restoreSong(gone.deleted); });
+}
+function restoreSong(stamp){
+  var tr=load('ak-trash',[]), h=load('ak-hist',[]), L=load('ak-lyr',{}), it=null;
+  tr=tr.filter(function(x){ if(x.deleted===stamp && !it){ it=x; return false; } return true; });
+  if(!it) return;
+  if(it.lyrics){ L[it.title]=it.lyrics; delete it.lyrics; }
+  delete it.deleted;
+  h=h.filter(function(x){ return x.title!==it.title; }); h.unshift(it);
+  store('ak-trash',tr); store('ak-hist',h); store('ak-lyr',L);
+  hideToast(); renderHist();
+}
+function renderTrash(){
+  var tr=load('ak-trash',[]), el=$('#trashList');
+  $('#trashCard').classList.toggle('hidden', !tr.length);
+  $('#trashN').textContent=tr.length;
+  el.innerHTML='';
+  tr.forEach(function(it){
+    var row=document.createElement('div'); row.className='hrow';
+    var info=document.createElement('button'); info.style.cursor='default'; info.style.opacity='.75';
+    info.innerHTML='🎵 <b>'+esc(it.title)+'</b> <span class="muted" style="font-size:.8rem">— '+LG('σβήστηκε','deleted')+' '+new Date(it.deleted).toLocaleDateString(LG('el-GR','en-GB'))+'</span>';
+    var r=document.createElement('button'); r.className='resbtn'; r.textContent=LG('↩ Επαναφορά','↩ Restore');
+    r.onclick=function(){ restoreSong(it.deleted); };
+    row.appendChild(info); row.appendChild(r); el.appendChild(row);
+  });
+}
+$('#trashEmpty').onclick=function(){
+  if(confirm(LG('Να σβηστούν για πάντα όλα τα τραγούδια του κάδου; Αυτό δεν γυρίζει πίσω.','Delete all songs in the bin for good? This cannot be undone.'))){ store('ak-trash',[]); renderTrash(); }
+};
+var toastTimer=null;
+function showToast(msg, undo){
+  var t=$('#toast'); t.innerHTML='<span>'+esc(msg)+'</span>'+(undo?'<button id="toastUndo">'+LG('↩ Αναίρεση','↩ Undo')+'</button>':'');
+  t.classList.remove('hidden');
+  if(undo) $('#toastUndo').onclick=undo;
+  clearTimeout(toastTimer); toastTimer=setTimeout(hideToast, 9000);
+}
+function hideToast(){ $('#toast').classList.add('hidden'); }
+function saveHist(res, title){
+  var h=load('ak-hist', []), old=null;
+  h=h.filter(function(x){ if(x.title===title){ old=old||x; return false; } return true; });
+  var it={title:title, date:Date.now(), levels:res.levels, key:res.key, flats:res.flats, duration:res.duration, bpm:res.bpm, tuning:res.tuning, beats:res.beats};
+  if(res.melody) it.melody=res.melody;
+  h.unshift(it);
+  if(h.length>30) h.length=30;
+  store('ak-hist', h);
+  if(JSON.stringify(load('ak-hist',[]).slice(0,1).map(function(x){return x.title;}))!==JSON.stringify([title])){ // storage full: keep fewer songs
+    while(h.length>3){ h.pop(); store('ak-hist', h); if(load('ak-hist',[]).length===h.length) break; }
+  }
+}
+renderHist();
+
+// ---------- errors ----------
+function errBox(where, msg){ $(where).innerHTML = msg ? '<div class="err">'+msg+'</div>' : ''; }
+
+// ---------- file analysis ----------
+$('#goFile').onclick=function(){ errBox('#homeErr',''); $('#fileIn').value=''; $('#fileIn').click(); };
+$('#fileIn').onchange=function(){
+  var file=this.files[0]; if(!file) return;
+  var ctx; try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+  show('working'); setProgress(0,LG('Ανοίγω το τραγούδι…','Opening the song…'));
+  readBuf(file).then(function(buf){ return decodeAny(ctx, buf); }).then(function(ab){
+    try{ ctx.close(); }catch(e){}
+    setProgress(0.02,LG('Ετοιμάζω τον ήχο…','Preparing the sound…'));
+    return toStereo44(ab).then(function(st){ state.stereo44=st; return toMono22k(ab); });
+  }).then(function(sig){
+    if(state.audioURL) URL.revokeObjectURL(state.audioURL);
+    state.audioURL=URL.createObjectURL(file);
+    runAnalysis(sig, 22050, file.name.replace(/\.[^.]+$/,''), false);
+  }).catch(function(e){
+    show('home');
+    errBox('#homeErr',LG('Δεν μπόρεσα να ανοίξω αυτό το αρχείο. Δοκίμασε ένα mp3, m4a ή wav. (','I could not open this file. Try an mp3, m4a or wav. (')+esc(e&&e.message||e)+')');
+  });
+};
+// --- audio file helpers that also work on older phones ---
+function readBuf(file){
+  if(file.arrayBuffer) return file.arrayBuffer();
+  return new Promise(function(ok,bad){ var r=new FileReader(); r.onload=function(){ ok(r.result); }; r.onerror=function(){ bad(r.error); }; r.readAsArrayBuffer(file); });
+}
+function decodeAny(ctx, buf){
+  return new Promise(function(ok,bad){
+    var p; try{ p=ctx.decodeAudioData(buf, ok, bad); }catch(e){ bad(e); return; }
+    if(p && p.then) p.then(ok, bad);
+  });
+}
+// mix to mono and resample to 22050 Hz (by hand if the phone refuses an OfflineAudioContext at that rate)
+function toMono22k(ab){
+  var sr=22050, len=Math.ceil(ab.duration*sr);
+  try{
+    var OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext;
+    var off=new OAC(1, len, sr), src=off.createBufferSource();
+    src.buffer=ab; src.connect(off.destination); src.start(0);
+    return new Promise(function(ok,bad){
+      off.oncomplete=function(e){ ok(e.renderedBuffer.getChannelData(0).slice(0)); };
+      var p=off.startRendering(); if(p && p.then) p.then(function(rb){ ok(rb.getChannelData(0).slice(0)); }, bad);
+    }).catch(function(){ return manualResample(ab, sr); });
+  }catch(e){ return Promise.resolve(manualResample(ab, sr)); }
+}
+// stereo at 44100 Hz for the voice separation (null if the device cannot)
+function toStereo44(ab){
+  try{
+    var OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext, sr=44100, len=Math.ceil(ab.duration*sr);
+    if(ab.duration>12*60) return Promise.resolve(null);
+    var off=new OAC(2, len, sr), src=off.createBufferSource();
+    src.buffer=ab; src.connect(off.destination); src.start(0);
+    return new Promise(function(ok){
+      var done=false; function fin(rb){ if(done) return; done=true; ok([rb.getChannelData(0).slice(0), rb.getChannelData(rb.numberOfChannels>1?1:0).slice(0)]); }
+      off.oncomplete=function(e){ fin(e.renderedBuffer); };
+      var p=off.startRendering(); if(p && p.then) p.then(fin, function(){ ok(null); });
+    }).catch(function(){ return null; });
+  }catch(e){ return Promise.resolve(null); }
+}
+function loadScript(src){
+  return new Promise(function(ok,bad){
+    if(document.querySelector('script[data-ld="'+src+'"]')){ var w=setInterval(function(){ if(document.querySelector('script[data-ld="'+src+'"]').dataset.ok){ clearInterval(w); ok(); } },100); return; }
+    var sc=document.createElement('script'); sc.src=src; sc.dataset.ld=src; sc.onload=function(){ sc.dataset.ok='1'; ok(); }; sc.onerror=function(){ bad(new Error('load '+src)); };
+    document.head.appendChild(sc);
+  });
+}
+function manualResample(ab, sr){
+  var nc=ab.numberOfChannels, n=ab.length, mono=new Float32Array(n), c, i;
+  for(c=0;c<nc;c++){ var d=ab.getChannelData(c); for(i=0;i<n;i++) mono[i]+=d[i]/nc; }
+  var ratio=ab.sampleRate/sr, len=Math.floor(n/ratio), out=new Float32Array(len);
+  for(i=0;i<len;i++){ // average over the source samples (simple low-pass) then pick
+    var a=Math.floor(i*ratio), b=Math.min(n, Math.max(a+1, Math.floor((i+1)*ratio))), sm=0;
+    for(var j=a;j<b;j++) sm+=mono[j]; out[i]=sm/(b-a);
+  }
+  return out;
+}
+function setProgress(fr,msg){ $('#workBar').style.width=Math.round(fr*100)+'%'; $('#workPct').textContent=Math.round(fr*100)+'%'; if(msg) $('#workMsg').textContent=msg; }
+function runAnalysis(signal, sr, title, keepAudio){
+  show('working'); setProgress(0,LG('Ακούω προσεκτικά το τραγούδι…','Listening carefully to the song…'));
+  state.signal=signal; state.sr=sr; state.title=title; state.voice=null;
+  var MSG={beats:LG('Βρίσκω τον ρυθμό του τραγουδιού…','Finding the song’s beat…'), listen:LG('Ακούω τις νότες…','Listening to the notes…'), model:LG('Η τεχνητή νοημοσύνη αναγνωρίζει τις συγχορδίες…','The artificial intelligence is recognising the chords…')};
+  var old=function(){ return CE.analyzeSong(signal, {sr:sr, level:state.level, onProgress:function(p){ setProgress(0.03+0.97*p, p>0.85?LG('Βρίσκω πότε αλλάζουν οι συγχορδίες…','Finding when the chords change…'):null); }}); };
+  var job = (sr===22050) ? loadScript('btc-model.js').then(function(){
+      setProgress(0.03, MSG.beats);
+      return window.ChordAI.analyze(signal, {level:state.level, onProgress:function(p,stage){ setProgress(0.03+0.97*p, MSG[stage]||null); }});
+    }).catch(function(e){ if(window.console) console.warn('AI chords failed, using the old method', e); return old(); }) : old();
+  job.then(function(res){
+    saveHist(res, title); renderHist();
+    openResult(res, state.audioURL, false);
+  }).catch(function(e){ show('home'); errBox('#homeErr',LG('Κάτι πήγε στραβά στην ανάλυση: ','Something went wrong in the analysis: ')+esc(e&&e.message||e)); });
+}
+
+// ---------- results ----------
+var audio=new Audio(); audio.preservesPitch=true; audio.webkitPreservesPitch=true; audio.setAttribute('playsinline','');
+function openResult(res, url, fromHist){
+  state.res=res; state.fromHistory=fromHist; state.capo=0; state.trans=0;
+  if(fromHist){ state.signal=null; state.stereo44=null; state.voice=null; }
+  alignTried={};
+  if(!fromHist) res.title=state.title;
+  applyLevel(); melView.from=null; melView.to=null; melBusy=false;
+  $('#resTitle').textContent='🎵 '+res.title;
+  $('#resBpm').textContent = res.bpm ? LG('· Ρυθμός περίπου '+Math.round(res.bpm)+' χτύποι το λεπτό','· Tempo about '+Math.round(res.bpm)+' beats per minute') : '';
+  updateNote();
+  audio.pause();
+  if(url && !fromHist){ audio.src=url; $('#player').classList.remove('hidden'); $('#noAudio').classList.add('hidden'); }
+  else { audio.removeAttribute('src'); $('#player').classList.add('hidden'); $('#noAudio').classList.remove('hidden'); }
+  lyrMode='view';
+  $('#capoMsg').textContent='';
+  $('#playBtn').textContent='▶';
+  show('results'); renderAll(); paintMode();
+}
+function updateNote(){
+  var res=state.res;
+  $('#resNote').textContent = LEVEL_NAME[res.level||'simple'] + (Math.abs(res.tuning)>15 ? LG(' · Κουρδισμένο λίγο '+(res.tuning>0?'ψηλά':'χαμηλά'),' · Tuned slightly '+(res.tuning>0?'high':'low')) : '');
+}
+function renderAll(){
+  var res=state.res; if(!res) return;
+  $('#capoV').textContent=state.capo; $('#trV').textContent=(state.trans>0?'+':'')+state.trans;
+  var kflat=flatsFor(state.trans);
+  $('#resKey').textContent=CE.keyName({tonic:((res.key.tonic+state.trans)%12+12)%12, mode:res.key.mode}, kflat);
+  // sheet
+  var sh=$('#sheet'); sh.innerHTML='';
+  res.segments.forEach(function(s,i){
+    if(!s.chord && s.end-s.start<1.5) return;
+    var d=document.createElement('div'); d.className='tile'+(s.chord?'':' none'); d.dataset.i=i;
+    var p=played(s.chord);
+    d.style.background=colorOf(p); d.style.color=inkOf(p);
+    d.innerHTML='<div class="n">'+esc(nameP(s.chord))+'</div><div class="t">'+fmt(s.start)+'</div>';
+    d.onclick=function(){ if(audio.src){ audio.currentTime=s.start+0.01; if(audio.paused) playPause(); } };
+    sh.appendChild(d);
+  });
+  // diagrams of unique chords (by first appearance)
+  var seen={}, dg=$('#diags'); dg.innerHTML='';
+  res.segments.forEach(function(s){
+    if(!s.chord) return; var p=played(s.chord), k=p.root+':'+p.type; if(seen[k]) return; seen[k]=1;
+    var d=document.createElement('div'); d.className='diag';
+    d.innerHTML='<div class="n">'+chip(p, nameP(s.chord))+'</div>'+diagramSVG(p,150)+'<div class="muted" style="font-size:.75rem">'+esc(CE.chordNameGreek(p, flatsFor(state.trans-state.capo)))+'</div>';
+    dg.appendChild(d);
+  });
+  renderLyrics(); if(curTab==='mel') renderMelody();
+  lastIdx=-2; lastLine=-2; updateNow(true);
+}
+var lastIdx=-2;
+function segAt(t){ var sg=state.res.segments; for(var i=0;i<sg.length;i++) if(t>=sg[i].start && t<sg[i].end) return i; return -1; }
+function updateNow(force){
+  if(!state.res) return;
+  followLyrics(force); followMelody(force);
+  var t=audio.src?audio.currentTime:0, i=segAt(t);
+  if(i===lastIdx && !force) return; lastIdx=i;
+  var sg=state.res.segments, s=sg[i], box=$('#nowChord');
+  if(!audio.src){ // history view: show first chord
+    s=null; for(var q=0;q<sg.length;q++) if(sg[q].chord){ s=sg[q]; i=q; break; }
+  }
+  var p=s?played(s.chord):null;
+  box.style.background=colorOf(p); box.style.color=inkOf(p);
+  if(s && s.chord){
+    var snd = state.capo ? '<div class="snd">'+LG('Με καποτάστο στο '+state.capo+'ο τάστο · ακούγεται ','With capo on fret '+state.capo+' · sounds as ')+esc(CE.chordName(sounding(s.chord), flatsFor(state.trans)))+'</div>' : '';
+    box.innerHTML='<div class="nm">'+esc(nameP(s.chord))+'</div><div class="gr">'+esc(CE.chordNameGreek(p, flatsFor(state.trans-state.capo)))+'</div>'+snd;
+    $('#nowDiag').innerHTML=diagramSVG(p,190);
+  } else { box.innerHTML='<div class="nm">—</div><div class="gr">'+(audio.src?(t<0.5?LG('Πάτα ▶ για να παίξεις μαζί','Press ▶ to play along'):LG('Χωρίς συγχορδία εδώ','No chord here')):'')+'</div>'; $('#nowDiag').innerHTML=''; }
+  var nx=null; for(var j=i+1;j<sg.length;j++) if(sg[j].chord){ nx=sg[j]; break; }
+  $('#nextBox').innerHTML = nx && audio.src ? LG('Επόμενη: ','Next: ')+chip(played(nx.chord), nameP(nx.chord))+' <span id="cd"></span>' : '';
+  document.querySelectorAll('.tile.cur').forEach(function(e){ e.classList.remove('cur'); });
+  var tl=document.querySelector('.tile[data-i="'+i+'"]'); if(tl && audio.src && !audio.paused){ tl.classList.add('cur'); var r=tl.getBoundingClientRect(); if(r.top<0||r.bottom>innerHeight){} }
+  if(tl && audio.src) tl.classList.add('cur');
+}
+function tick(){
+  if(audio.src && !audio.paused){
+    updateNow(false);
+    var d=audio.duration||state.res.duration||1;
+    $('#seek').value=Math.round(1000*audio.currentTime/d);
+    $('#timeLbl').textContent=fmt(audio.currentTime)+' / '+fmt(d);
+    var i=segAt(audio.currentTime), sg=state.res.segments, cd=$('#cd');
+    if(cd && i>=0){ var left=sg[i].end-audio.currentTime; cd.textContent= left<4 ? '('+LG('σε ','in ')+Math.ceil(left/ (audio.playbackRate||1))+'″)' : ''; }
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+function playPause(){ if(!audio.src) return; if(audio.paused){ audio.play(); $('#playBtn').textContent='⏸'; } else { audio.pause(); $('#playBtn').textContent='▶'; } }
+$('#playBtn').onclick=playPause;
+audio.onended=function(){ $('#playBtn').textContent='▶'; if(lyrMode==='sync') syncFinish(); };
+audio.onloadedmetadata=function(){ $('#timeLbl').textContent='0:00 / '+fmt(audio.duration); };
+$('#seek').oninput=function(){ var d=audio.duration||state.res.duration; audio.currentTime=d*this.value/1000; updateNow(true); $('#timeLbl').textContent=fmt(audio.currentTime)+' / '+fmt(d); };
+document.querySelectorAll('#speedSeg button').forEach(function(b){ b.onclick=function(){ audio.playbackRate=+b.dataset.s; document.querySelectorAll('#speedSeg button').forEach(function(x){ x.classList.toggle('on', x===b); }); }; });
+$('#capoM').onclick=function(){ state.capo=Math.max(0,state.capo-1); $('#capoMsg').textContent=''; renderAll(); };
+$('#capoP').onclick=function(){ state.capo=Math.min(9,state.capo+1); $('#capoMsg').textContent=''; renderAll(); };
+$('#trM').onclick=function(){ state.trans=state.trans<=-6?-6:state.trans-1; renderAll(); };
+$('#trP').onclick=function(){ state.trans=state.trans>=6?6:state.trans+1; renderAll(); };
+$('#capoBest').onclick=function(){
+  var best=0, bestS=-1, tot=0;
+  state.res.segments.forEach(function(s){ if(s.chord) tot+=s.end-s.start; });
+  for(var k=0;k<=7;k++){
+    var sc=0; state.res.segments.forEach(function(s){ if(!s.chord) return; var p=CE.transpose(s.chord, state.trans-k); if(EASY[p.root+':'+p.type]) sc+=s.end-s.start; });
+    var adj=sc-k*0.04*tot;               // a capo must really be worth it
+    if(adj>bestS+0.5){ bestS=adj; best=k; }
+  }
+  state.capo=best; renderAll();
+  var easyT=0; state.res.segments.forEach(function(s){ if(!s.chord) return; var p=CE.transpose(s.chord, state.trans-best); if(EASY[p.root+':'+p.type]) easyT+=s.end-s.start; });
+  var pct=tot?Math.round(100*easyT/tot):0;
+  $('#capoMsg').innerHTML = best===0 ? LG('👍 Δεν χρειάζεσαι καποτάστο — παίζεται με τις πιο εύκολες θέσεις ('+pct+'% εύκολες συγχορδίες).','👍 You don’t need a capo — it plays with the easiest shapes ('+pct+'% easy chords).') : LG('🪄 Βάλε το καποτάστο στο <b>'+best+'ο τάστο</b> — έτσι το '+pct+'% του τραγουδιού παίζεται με ανοιχτές, εύκολες συγχορδίες.','🪄 Put the capo on <b>fret '+best+'</b> — then '+pct+'% of the song plays with open, easy chords.');
+};
+$('#printBtn').onclick=function(){ window.print(); };
+$('#saveBtn').onclick=function(){
+  var r=state.res, lines=[];
+  lines.push(LG('Τραγούδι: ','Song: ')+r.title);
+  lines.push(LG('Τονικότητα: ','Key: ')+$('#resKey').textContent);
+  if(state.capo) lines.push(LG('Καποτάστο: '+state.capo+'ο τάστο','Capo: fret '+state.capo));
+  if(state.trans) lines.push(LG('Αλλαγή τόνου: ','Key shift: ')+(state.trans>0?'+':'')+state.trans);
+  lines.push('');
+  var seq=[]; r.segments.forEach(function(s){ if(s.chord){ lines.push(fmt(s.start)+'   '+nameP(s.chord)); seq.push(nameP(s.chord)); } });
+  lines.push(''); lines.push(LG('Σε μια γραμμή: ','In one line: ')+seq.join(' | '));
+  if(state.res.melody){ lines.push(''); lines.push(LG('— Νότες (σόλο / μελωδία) —','— Notes (solo / melody) —')); var ln=[]; guitarNotes().forEach(function(n){ ln.push(noteNameGr(n.m, flatsFor(state.trans))+(n.tab?'('+LG(['1η','2η','3η','4η','5η','6η'][n.tab.si]+' χορδή, ',['1st','2nd','3rd','4th','5th','6th'][n.tab.si]+' string, ')+n.tab.f+')':'')); }); for(var q=0;q<ln.length;q+=8) lines.push(ln.slice(q,q+8).join('  ')); }
+  var lt=lyricsText(); if(lt){ lines.push(''); lines.push(LG('— Στίχοι με συγχορδίες —','— Lyrics with chords —')); lines.push(''); lines.push(lt); }
+  var blob=new Blob(['﻿'+lines.join('\n')],{type:'text/plain;charset=utf-8'}), a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=r.title+LG(' - συγχορδίες.txt',' - chords.txt'); a.click();
+};
+$('#newBtn').onclick=function(){ audio.pause(); show('home'); };
+$('#homeBtn').onclick=function(){ if(live) stopLive(false); try{ if(ytPlayer) ytPlayer.stopVideo(); }catch(e){} $('#ytBox').classList.add('hidden'); audio.pause(); show('home'); };
+
+
+// ---------- tabs ----------
+var curTab='lyr';
+function setTab(t){ curTab=t; document.querySelectorAll('#tabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.t===t); }); ['lyr','sheet','diags','mel'].forEach(function(x){ $('#p-'+x).classList.toggle('hidden', x!==t); }); lastLine=-2; lastNote=-2; if(t==='mel') renderMelody(); }
+document.querySelectorAll('#tabs button').forEach(function(b){ b.onclick=function(){ setTab(b.dataset.t); }; });
+
+// ---------- rename ----------
+$('#renameBtn').onclick=function(){
+  var r=state.res, old=r.title, nw=prompt(LG('Όνομα τραγουδιού:','Song name:'), old);
+  if(!nw || !(nw=nw.trim()) || nw===old) return;
+  r.title=nw; state.title=nw; $('#resTitle').textContent='🎵 '+nw;
+  var h=load('ak-hist',[]); h.forEach(function(x){ if(x.title===old) x.title=nw; }); store('ak-hist',h);
+  var L=load('ak-lyr',{}); if(L[old]){ L[nw]=L[old]; delete L[old]; store('ak-lyr',L); }
+  renderHist();
+};
+
+// ---------- lyrics ----------
+// stored per song title: {text:"...", times:[t per non-blank line] or null}
+var lyrMode='view', lastLine=-2, sync=null;
+function getLyr(){ var L=load('ak-lyr',{}); return L[state.res.title]||null; }
+function putLyr(v){ var L=load('ak-lyr',{}); if(v) L[state.res.title]=v; else delete L[state.res.title]; store('ak-lyr',L); }
+function lyricLines(text){ return text.replace(/\r/g,'').split('\n').map(function(x){ return x.replace(/\s+$/,''); }); }
+function wordStarts(t){ var a=[0]; for(var i=1;i<t.length;i++) if(t[i-1]===' ' && t[i]!==' ') a.push(i); return a; }
+// Build lyric rows: [{type:'line', text, start, dur, chords:[{pos, ch}]}, {type:'instr', chords:[ch]}, {type:'blank'}]
+// non-blank lines that are only labels, e.g. "(Ρεφρέν)", "[x2]", "Ρεφρέν:" – not sung
+function isLabelLine(l){ var t=l.trim(); return /^[\(\[\{].*[\)\]\}]$/.test(t) || /:\s*$/.test(t) || !/[A-Za-zΑ-Ωα-ωάέήίόύώϊϋΐΰΆΈΉΊΌΎΏ]/.test(t); }
+function buildRows(ly){
+  var lines=lyricLines(ly.text), times=ly.times, segs=state.res.segments, rows=[], wt=ly.wt||[];
+  if(!times || !times.length){ lines.forEach(function(l){ rows.push(l.trim()?{type:'line',text:l,chords:[]}:{type:'blank'}); }); return rows; }
+  var tt=times.filter(function(x){ return x!=null; }), durs=[];
+  for(var k=0;k+1<tt.length;k++) durs.push(tt[k+1]-tt[k]);
+  var sorted=durs.slice().sort(function(a,b){return a-b;}), med=sorted.length?sorted[sorted.length>>1]:4;
+  if(!(med>0.5)) med=4;
+  var songEnd=state.res.duration;
+  function chordsIn(a,b){ return segs.filter(function(s){ return s.chord && s.start>=a && s.start<b; }); }
+  function activeAt(t){ for(var i=0;i<segs.length;i++) if(t>=segs[i].start && t<segs[i].end) return segs[i]; return null; }
+  function nextTime(n){ for(var j=n+1;j<times.length;j++) if(times[j]!=null) return times[j]; return null; }
+  // intro
+  var first=tt.length?tt[0]:0, intro=first>1.5?chordsIn(0, first-0.3):[];
+  if(intro.length) rows.push({type:'instr', chords:intro.map(function(s){return s.chord;}), start:0});
+  var n=0, prevEnd=null;
+  lines.forEach(function(l){
+    if(!l.trim()){ rows.push({type:'blank'}); return; }
+    if(n>=times.length || times[n]==null){ rows.push({type:'line', text:l, chords:[], li:n, untimed:true}); n++; return; }
+    var t0=times[n], nx=nextTime(n), next=nx!=null?nx:Math.min(songEnd, t0+med*1.3);
+    var W=(window.LyricAlign && wt[n]) ? window.LyricAlign.parseLines(l)[0].words : null, wtimes=W?wt[n]:null;
+    var lastWord = wtimes && wtimes.length ? wtimes[wtimes.length-1] : null;
+    var dur=Math.max(0.5, Math.min(next-t0, lastWord!=null ? Math.max(lastWord-t0+1.2, 0.5) : med*1.35));
+    var lo=t0-0.35, cs=chordsIn(lo, Math.min(next-0.35, t0+dur)), placed=[], len=l.length;
+    var act=activeAt(t0+0.05);
+    if(act && act.chord && (!cs.length || cs[0].start>t0+0.25)) placed.push({pos:0, ch:act.chord});
+    cs.forEach(function(sg){
+      var pos;
+      if(W && wtimes){
+        // the word that is sung when the chord changes (or the first one right after)
+        var best=-1, bd=1e9;
+        for(var w=0;w<W.length;w++){ var wtm=wtimes[w]; if(wtm==null) continue; var d=wtm-sg.start; var cost=d>=-0.3 ? Math.abs(d) : 2+Math.abs(d); if(cost<bd){ bd=cost; best=w; } }
+        pos = best<0 ? len : W[best].pos;
+        if(best>=0 && wtimes[best]<sg.start-0.3 && best===W.length-1) pos=len;
+      } else {
+        var ws=wordStarts(l), f=Math.max(0,(sg.start-t0)/dur), want=Math.round(f*len); pos=0;
+        ws.forEach(function(w){ if(Math.abs(w-want)<Math.abs(pos-want)) pos=w; });
+        if(f>1) pos=len;
+      }
+      if(placed.length && pos<=placed[placed.length-1].pos){
+        if(sg.start-(placed[placed.length-1].t||t0)<0.6){ placed[placed.length-1]={pos:placed[placed.length-1].pos, ch:sg.chord, t:sg.start}; return; }
+        var nxs=wordStarts(l).filter(function(w){ return w>placed[placed.length-1].pos; });
+        pos = nxs.length ? nxs[0] : len;
+      }
+      placed.push({pos:pos, ch:sg.chord, t:sg.start});
+    });
+    rows.push({type:'line', text:l, chords:placed, start:t0, dur:dur, li:n});
+    var endT=t0+dur, gap=chordsIn(Math.max(endT, next-0.35-0.01) > endT ? endT : endT, next-0.35);
+    if(gap.length && next-endT>1.5) rows.push({type:'instr', chords:gap.map(function(s){return s.chord;}), start:endT});
+    n++;
+  });
+  return rows;
+}
+// ---------- automatic alignment of the lyrics with the voice ----------
+var alignBusy=false, alignTried={};
+function canAlign(){ return !!state.signal; }
+function getVoice(onP){
+  if(state.voice) return Promise.resolve(state.voice);
+  if(!state.stereo44 || location.protocol.indexOf('http')!==0) return Promise.resolve(null);
+  return loadScript('ort.wasm.min.js').then(function(){ return window.VoiceSep.load(); })
+    .then(function(){ return window.VoiceSep.separate(state.stereo44, onP); })
+    .then(function(v){
+      // no clear voice found (instrumental, or the separation failed): do not trust it
+      var pr=Array.prototype.slice.call(v.presence).sort(function(a,b){return a-b;});
+      var p90=pr[Math.floor(pr.length*0.9)]||0;
+      if(p90<0.15) return null;
+      state.voice=v; return v;
+    })
+    .catch(function(e){ if(window.console) console.warn('voice separation failed', e); return null; });
+}
+function autoAlign(){
+  var ly=getLyr(); if(alignBusy || !ly || !state.signal || !window.LyricAlign) return;
+  alignBusy=true; alignTried[state.res.title]=1;
+  var box=$('#lyrBox'), r=state.res;
+  box.innerHTML='<div style="text-align:center;padding:24px 8px"><div style="font-size:2.4rem">🎤</div><h2 id="alMsg">'+LG('Ξεχωρίζω τη φωνή από τα όργανα…','Separating the voice from the instruments…')+'</h2><div class="aibar"><div id="alBar"></div></div><div class="muted" style="font-size:.85rem">'+LG('Βρίσκω πού τραγουδιέται κάθε λέξη, για να βάλω τη συγχορδία ακριβώς πάνω της. Παίρνει λίγα δευτερόλεπτα.','I am finding where each word is sung, to put the chord right above it. It takes a few seconds.')+'</div></div>';
+  function bar(p){ var b=$('#alBar'); if(b) b.style.width=Math.round(p*100)+'%'; }
+  function msg(m){ var e=$('#alMsg'); if(e) e.textContent=m; }
+  getVoice(function(p){ bar(0.6*p); }).then(function(v){
+    msg(LG('Ακούω τη μελωδία της φωνής…','Listening to the melody of the voice…')); bar(0.62);
+    var sig=v?v.voice:state.signal;
+    return CE.analyzeMelody(sig,{sr:22050, tuning:r.tuning||0, lo:45, hi:88, onProgress:function(p){ bar(0.62+0.33*p); }}).then(function(m){ return {v:v, notes:m.notes, sig:sig}; });
+  }).then(function(o){
+    var cur=getLyr(); if(!cur || cur.text!==ly.text) return;
+    var all=lyricLines(cur.text), sung=[], map=[];
+    all.forEach(function(l){ if(!l.trim()) return; map.push(sung.length); sung.push(isLabelLine(l)?'':l); });
+    var parsed=window.LyricAlign.parseLines(sung.join('\n'));
+    var res=window.LyricAlign.align(parsed, o.notes, o.v?o.v.activity:null, window.LyricAlign.onsetStrength(o.sig, 22050));
+    if(!res) return;
+    cur.times=res.map(function(x,i){ return parsed[i].nsyl ? x.start : null; });
+    cur.wt=res.map(function(x,i){ return parsed[i].nsyl ? x.words.map(function(t){ return t==null?null:+t.toFixed(2); }) : null; });
+    cur.auto=o.v?'voice':'mix';
+    putLyr(cur);
+  }).catch(function(e){ if(window.console) console.warn(e); }).then(function(){ alignBusy=false; lastLine=-2; renderLyrics(); });
+}
+function renderLyrics(){
+  var box=$('#lyrBox'), ly=getLyr();
+  if(lyrMode==='sync') return;
+  if(lyrMode==='edit' || !ly){
+    box.innerHTML='<div class="info" style="font-size:.95rem;margin-bottom:10px">'+(ly?LG('Διόρθωσε τους στίχους:','Correct the lyrics:'):LG('<b>Βάλε τους στίχους του τραγουδιού</b> και θα σου δείξω τις συγχορδίες πάνω από τα λόγια.','<b>Add the song’s lyrics</b> and I will show you the chords above the words.'))+'</div>'+
+      (ly?'':LG('<ol class="steps" style="font-size:.85rem"><li>Άνοιξε σε άλλη καρτέλα μια σελίδα με τους στίχους (γράψε στο Google: <i>όνομα τραγουδιού στίχοι</i>).</li><li>Διάλεξέ τους με το ποντίκι και πάτα <b>Cmd + C</b> (αντιγραφή). <span class="muted">Στο κινητό: κράτα πατημένο το δάχτυλο πάνω στο κείμενο, τράβα τα σημάδια να πιάσουν όλους τους στίχους και πάτα «Αντιγραφή».</span></li><li>Έλα εδώ, πάτα μέσα στο κουτί και μετά <b>Cmd + V</b> (επικόλληση). <span class="muted">Στο κινητό: κράτα πατημένο μέσα στο κουτί και πάτα «Επικόλληση».</span></li></ol>','<ol class="steps" style="font-size:.85rem"><li>Open a page with the lyrics in another tab (search Google for: <i>song name lyrics</i>).</li><li>Select them with the mouse and press <b>Cmd + C</b> (copy). <span class="muted">On a phone: press and hold on the text, drag the handles to cover all the lyrics and tap «Copy».</span></li><li>Come here, tap inside the box and then <b>Cmd + V</b> (paste). <span class="muted">On a phone: press and hold inside the box and tap «Paste».</span></li></ol>'))+
+      '<textarea id="lyrText" placeholder="'+LG('Επικόλλησε εδώ τους στίχους…','Paste the lyrics here…')+'">'+esc(ly?ly.text:'')+'</textarea>'+
+      '<div class="row" style="margin-top:10px"><button class="big green" id="lyrSave">'+LG('✔ Κράτα τους στίχους','✔ Keep the lyrics')+'</button>'+(ly?'<button class="mid" id="lyrCancel">'+LG('Άκυρο','Cancel')+'</button><button class="mid" id="lyrDel">'+LG('🗑 Σβήσε τους στίχους','🗑 Delete the lyrics')+'</button>':'')+'</div>';
+    $('#lyrSave').onclick=function(){
+      var t=$('#lyrText').value.replace(/\r/g,'').replace(/\n{3,}/g,'\n\n').trim();
+      if(!t){ putLyr(null); lyrMode='view'; renderLyrics(); return; }
+      var old=getLyr(); var keep=old && old.text===t ? old.times : null;
+      putLyr({text:t, times:keep, wt:keep?(old.wt||null):null, auto:keep?old.auto:null}); lyrMode='view'; lastLine=-2;
+      if(!keep && canAlign()) autoAlign(); else renderLyrics();
+    };
+    if(ly){ $('#lyrCancel').onclick=function(){ lyrMode='view'; renderLyrics(); }; $('#lyrDel').onclick=function(){ if(confirm(LG('Να σβήσω τους στίχους αυτού του τραγουδιού;','Delete the lyrics of this song?'))){ putLyr(null); lyrMode='view'; renderLyrics(); } }; }
+    return;
+  }
+  var rows=buildRows(ly), synced=!!(ly.times && ly.times.length), html='';
+  var fl=flatsFor(state.trans-state.capo);
+  if(!synced){
+    if(canAlign() && !alignTried[state.res.title]){ setTimeout(autoAlign, 30); }
+    html+='<div class="warn" style="font-size:.95rem">'+(canAlign()
+      ? LG('Οι στίχοι είναι έτοιμοι.','The lyrics are ready.')+'<div style="margin-top:10px"><button class="big green" id="alGo">'+LG('🎯 Βάλε τις συγχορδίες πάνω στους στίχους','🎯 Put the chords on the lyrics')+'</button></div>'
+      : LG('<b>Για να βάλω τις συγχορδίες πάνω στους στίχους χρειάζομαι τον ήχο:</b> ξαναβάλε το τραγούδι (από το YouTube ή από αρχείο) με το ίδιο όνομα.','<b>To put the chords on the lyrics I need the sound:</b> load the song again (from YouTube or a file) with the same name.'))+'</div>';
+  } else if(ly.auto==='mix'){
+    html+='<div class="muted noprint" style="font-size:.8rem;margin:0 0 8px">'+LG('Ταίριαξα τους στίχους χωρίς να ξεχωρίσω τη φωνή (γίνεται μόνο όταν ανοίγεις το πρόγραμμα από τη σελίδα του στο ίντερνετ), οπότε μπορεί να υπάρχουν λάθη.','I matched the lyrics without separating the voice (that works only when you open the program from its web page), so there may be mistakes.')+'</div>';
+  }
+  html+='<div class="lyrics">';
+  rows.forEach(function(r,i){
+    if(r.type==='blank'){ html+='<div class="lline blank"></div>'; return; }
+    if(r.type==='instr'){ html+='<div class="instr">🎸 '+r.chords.map(function(c){ return chip(played(c), nameP(c)); }).join('')+'</div>'; return; }
+    var parts=[], cs=r.chords;
+    if(!cs.length || cs[0].pos>0) parts.push({ch:null, txt:r.text.slice(0, cs.length?cs[0].pos:r.text.length)});
+    cs.forEach(function(c,k){ parts.push({ch:c.ch, txt:r.text.slice(c.pos, k+1<cs.length?cs[k+1].pos:r.text.length)}); });
+    // word by word, so that long lines wrap on a phone; the chord sits on the first word of its part
+    var chunks=[]; parts.forEach(function(p){ var ws=(p.txt||' ').match(/\S+\s*|\s+/g)||[' ']; ws.forEach(function(w,wi){ chunks.push({ch:wi===0?p.ch:null, txt:w}); }); });
+    html+='<div class="lline" data-li="'+(r.li===undefined||r.untimed?'':r.li)+'" data-t="'+(r.start||0)+'">'+chunks.map(function(p){
+      var lab=p.ch?'<b>'+chip(played(p.ch), nameP(p.ch))+'</b>':(synced?'<b></b>':'');
+      return '<span class="ck">'+lab+'<span>'+esc(p.txt)+'</span></span>';
+    }).join('')+'</div>';
+  });
+  html+='</div><div class="row noprint" style="margin-top:14px">'+(synced&&canAlign()?'<button class="mid" id="alGo">'+LG('🎯 Ξανά αυτόματα','🎯 Again, automatically')+'</button>':'')+(audio.src?'<button class="mid" id="syncGo">'+LG('✋ Διόρθωση με το χέρι','✋ Correct by hand')+'</button>':'')+'<button class="mid" id="lyrEdit">'+LG('✏️ Αλλαγή στίχων','✏️ Edit lyrics')+'</button></div>';
+  if(synced) html='<p class="muted noprint" style="font-size:.8rem;margin:0 0 8px">'+LG('Πάτα σε μια γραμμή για να πας εκεί στο τραγούδι.','Tap a line to go there in the song.')+'</p>'+html;
+  box.innerHTML=html;
+  $('#lyrEdit').onclick=function(){ lyrMode='edit'; renderLyrics(); };
+  var sg=$('#syncGo'); if(sg) sg.onclick=startSync;
+  var ag=$('#alGo'); if(ag) ag.onclick=function(){ alignTried[state.res.title]=0; autoAlign(); };
+  box.querySelectorAll('.lline[data-li]').forEach(function(el){ if(el.dataset.li==='') return; el.style.cursor='pointer'; el.onclick=function(){ if(audio.src){ audio.currentTime=Math.max(0,+el.dataset.t-0.3); if(audio.paused) playPause(); } }; });
+}
+function followLyrics(force){
+  if(curTab!=='lyr' || lyrMode!=='view') return;
+  var ly=getLyr(); if(!ly || !ly.times || !audio.src) return;
+  var t=audio.currentTime, li=-1;
+  for(var i=0;i<ly.times.length;i++) if(ly.times[i]!=null && t>=ly.times[i]-0.25) li=i;
+  if(li===lastLine && !force) return; lastLine=li;
+  var box=$('#lyrBox'); box.querySelectorAll('.lline.cur').forEach(function(e){ e.classList.remove('cur'); });
+  var el=box.querySelector('.lline[data-li="'+li+'"]'); if(!el) return;
+  el.classList.add('cur');
+  if(!audio.paused){ var pn=$('#p-lyr'), top=el.offsetTop-pn.offsetTop-pn.clientHeight*0.3; pn.scrollTo({top:Math.max(0,top), behavior:'smooth'}); }
+}
+function startSync(){
+  var ly=getLyr(); if(!ly || !audio.src) return;
+  var lines=lyricLines(ly.text).filter(function(l){ return l.trim(); });
+  sync={lines:lines, times:[]}; lyrMode='sync';
+  audio.currentTime=0; audio.playbackRate=+(document.querySelector('#speedSeg button.on')||{dataset:{s:1}}).dataset.s;
+  drawSync(); if(audio.paused) playPause();
+}
+function drawSync(){
+  var k=sync.times.length, L=sync.lines;
+  $('#lyrBox').innerHTML='<div class="syncbox">'+
+    '<div class="info">'+LG('Γραμμή','Line')+' <b>'+Math.min(k+1,L.length)+'</b> '+LG('από','of')+' '+L.length+'</div>'+
+    '<div class="pv">'+(k>0?'✔ '+esc(L[k-1]):'&nbsp;')+'</div>'+
+    '<div class="ln">'+(k<L.length?'«'+esc(L[k])+'»':LG('Τέλος!','The end!'))+'</div>'+
+    '<div class="pv">'+(k+1<L.length?LG('μετά: ','next: ')+esc(L[k+1]):'&nbsp;')+'</div>'+
+    '<button class="tapbtn" id="tapNow">'+LG('👉 ΤΩΡΑ','👉 NOW')+'</button>'+
+    '<div class="muted" style="font-size:.9rem">'+LG('Πάτα <b>«ΤΩΡΑ»</b> (ή το πλήκτρο <b>Enter</b>) τη στιγμή που αρχίζει να τραγουδιέται η γραμμή.','Press <b>«NOW»</b> (or the <b>Enter</b> key) the moment the line starts being sung.')+'</div>'+
+    '<div class="row" style="justify-content:center;margin-top:14px"><button class="big green" id="tapDone">'+LG('✔ Τέλος — δείξε μου τις συγχορδίες','✔ Done — show me the chords')+'</button></div>'+
+    '<div class="row" style="justify-content:center;margin-top:10px"><button class="mid" id="tapBack">'+LG('↶ Λάθος, μία πίσω','↶ Oops, one back')+'</button><button class="mid" id="tapStop">'+LG('✕ Άκυρο','✕ Cancel')+'</button></div>'+
+    '<div class="muted" style="font-size:.85rem;margin-top:10px">'+LG('Αν το τραγούδι τελειώσει πριν τις γραμμές, δεν πειράζει: πάτα «Τέλος» ή απλά άφησέ το να τελειώσει.','If the song ends before the lines do, no problem: press «Done» or just let it finish.')+'</div></div>';
+  $('#tapNow').onclick=syncTap; $('#tapBack').onclick=syncBack; $('#tapDone').onclick=syncFinish;
+  $('#tapStop').onclick=function(){ sync=null; lyrMode='view'; audio.pause(); $('#playBtn').textContent='▶'; renderLyrics(); };
+}
+function syncTap(){
+  if(!sync) return;
+  var t=audio.currentTime, T=sync.times;
+  if(T.length && t<=T[T.length-1]+0.2) return;          // ignore double presses
+  T.push(t);
+  if(T.length>=sync.lines.length){ syncFinish(); return; }
+  drawSync();
+}
+function syncFinish(){
+  if(!sync) return;
+  var ly=getLyr(), T=sync.times; sync=null; lyrMode='view';
+  if(T.length){ ly.times=T; ly.wt=null; ly.auto='hand'; putLyr(ly); }
+  setTab('lyr'); renderLyrics(); lastLine=-2; followLyrics(true);
+  var box=$('#lyrBox');
+  box.insertAdjacentHTML('afterbegin', T.length
+    ? '<div class="warn" style="background:#d3f9d8;border-color:#2b8a3e">'+LG('✔ Έτοιμο! Οι συγχορδίες μπήκαν πάνω από τα λόγια','✔ Ready! The chords are above the words')+(T.length<ly.text.split('\n').filter(function(x){return x.trim();}).length?LG(' (στις γραμμές που πρόλαβες να πατήσεις)',' (on the lines you managed to mark)'):'')+LG('. Πάτα ▶ για να παίξεις μαζί.','. Press ▶ to play along.')+'</div>'
+    : '<div class="warn">'+LG('Δεν πάτησες «ΤΩΡΑ» σε καμία γραμμή, οπότε δεν άλλαξε κάτι.','You did not press «NOW» on any line, so nothing changed.')+'</div>');
+  $('#p-lyr').scrollTop=0;
+}
+function syncBack(){
+  if(!sync || !sync.times.length) return;
+  var t=sync.times.pop(); audio.currentTime=Math.max(0,t-3); drawSync();
+}
+function lyricsText(){
+  var ly=getLyr(); if(!ly) return '';
+  var out=[];
+  buildRows(ly).forEach(function(r){
+    if(r.type==='blank'){ out.push(''); return; }
+    if(r.type==='instr'){ out.push('[ '+r.chords.map(nameP).join('  ')+' ]'); return; }
+    if(r.chords.length){
+      var line='';
+      r.chords.forEach(function(c){ var nm=nameP(c.ch); while(line.length<c.pos) line+=' '; if(line.length>c.pos) line+=' '; line+=nm; });
+      out.push(line);
+    }
+    out.push(r.text);
+  });
+  return out.join('\n');
+}
+
+
+// ---------- solo notes (melody) ----------
+var melView={from:null,to:null}, melBusy=false, lastNote=-2, melCache=null;
+var STEP_COL=NOTE_COL;
+var STEP_GR=LG(['Ντο','Ρε','Μι','Φα','Σολ','Λα','Σι'],['C','D','E','F','G','A','B']);
+var SH_STEP=[0,0,1,1,2,3,3,4,4,5,5,6], SH_ACC=[0,1,0,1,0,0,1,0,1,0,1,0];
+var FL_STEP=[0,1,1,2,2,3,4,4,5,5,6,6], FL_ACC=[0,-1,0,-1,0,0,-1,0,-1,0,-1,0];
+function spell(m, flats){ var pc=((m%12)+12)%12, oct=Math.floor(m/12)-1; return {step:(flats?FL_STEP:SH_STEP)[pc], acc:(flats?FL_ACC:SH_ACC)[pc], oct:oct}; }
+function noteNameGr(m, flats){ var sp=spell(m,flats); return STEP_GR[sp.step]+(sp.acc>0?'♯':sp.acc<0?'♭':''); }
+function ensureMelody(){
+  var r=state.res;
+  if(r.melody || melBusy) return;
+  if(!state.signal){ return; }
+  melBusy=true;
+  var sig=state.signal, sr=state.sr;
+  CE.analyzeMelody(sig, {sr:sr, tuning:r.tuning||0, onProgress:function(p){ var b=$('#melProg'); if(b) b.style.width=Math.round(p*100)+'%'; }})
+  .then(function(m){
+    melBusy=false; r.melody={notes:m.notes.map(function(n){ return {s:+n.s.toFixed(3), e:+n.e.toFixed(3), m:n.m, c:+n.c.toFixed(2)}; })};
+    var h=load('ak-hist',[]); h.forEach(function(x){ if(x.title===r.title) x.melody=r.melody; }); store('ak-hist',h); renderHist();
+    if(state.res===r) renderMelody();
+  }).catch(function(e){ melBusy=false; $('#melBox').innerHTML='<div class="err">'+LG('Δεν μπόρεσα να βγάλω τις νότες: ','I could not find the notes: ')+esc(e&&e.message||e)+'</div>'; });
+}
+// choose the octave that fits the guitar best (sounding E2=40 … E5=76 ≈ 12th fret on the high string)
+function guitarNotes(){
+  var r=state.res, ns=r.melody.notes.map(function(n){ return {s:n.s,e:n.e,m:n.m+state.trans,c:n.c}; });
+  var best=0, bs=-1e9, ms=ns.map(function(n){return n.m;}).sort(function(a,b){return a-b;}), med=ms.length?ms[ms.length>>1]:60;
+  [0,-12,12,-24].forEach(function(k){ var c=0; ns.forEach(function(n){ if(n.m+k>=40+state.capo && n.m+k<=76+state.capo) c++; }); var sc=c-0.02*ns.length*Math.abs(med+k-60)/12; if(sc>bs){ bs=sc; best=k; } });
+  ns.forEach(function(n){ n.m+=best; });
+  // TAB: pick string & fret for every note, keeping the hand still where possible
+  var OPEN=[64,59,55,50,45,40], capo=state.capo, prevPos=null, opts, i;
+  var dp=[];
+  ns.forEach(function(n,idx){
+    opts=[];
+    OPEN.forEach(function(o,si){ var f=n.m-o-capo; if(f>=0 && f<=17) opts.push({si:si,f:f}); });
+    if(!opts.length){ n.tab=null; dp.push([]); return; }
+    var prev = idx>0 ? dp[idx-1] : [];
+    opts.forEach(function(op){
+      var base = 0.15*op.f + (op.f>12?1.5:0);
+      var cost=base, from=-1;
+      if(prev.length){
+        cost=Infinity;
+        prev.forEach(function(pv,pi){
+          var gap = n.s-ns[idx-1].e > 0.6 ? 0.3 : 1;   // after a pause the hand can move freely
+          var mv = (op.f===0||pv.f===0) ? 0 : Math.abs(op.f-pv.f);
+          var c = pv.cost + base + gap*(mv>3 ? mv*0.6 : mv*0.15);
+          if(c<cost){ cost=c; from=pi; }
+        });
+      }
+      op.cost=cost; op.from=from;
+    });
+    dp.push(opts);
+  });
+  // backtrack
+  var k=-1;
+  for(i=ns.length-1;i>=0;i--){
+    var o=dp[i]; if(!o.length){ k=-1; continue; }
+    if(k<0){ k=0; o.forEach(function(x,xi){ if(x.cost<o[k].cost) k=xi; }); }
+    ns[i].tab=o[k]; k=o[k].from;
+  }
+  return ns;
+}
+// note lengths, as written on the staff (in beats of the song's rhythm)
+var DURS=[
+  {k:'w', dot:false, b:4,   nm:LG('Ολόκληρο','Whole'), txt:LG('4 χρόνοι','4 beats')},
+  {k:'h', dot:true,  b:3,   nm:LG('Μισό με τελεία','Dotted half'), txt:LG('3 χρόνοι','3 beats')},
+  {k:'h', dot:false, b:2,   nm:LG('Μισό','Half'), txt:LG('2 χρόνοι','2 beats')},
+  {k:'q', dot:false, b:1,   nm:LG('Τέταρτο','Quarter'), txt:LG('1 χρόνος','1 beat')},
+  {k:'e', dot:false, b:0.5, nm:LG('Όγδοο','Eighth'), txt:LG('μισός χρόνος','half a beat')}
+];
+function durOf(beats){ var best=DURS[0], bd=1e9; DURS.forEach(function(d){ var e=Math.abs(Math.log(Math.max(beats,0.2)/d.b)); if(e<bd){ bd=e; best=d; } }); return best; }
+function noteGlyph(x, y, col, k, dot, up){
+  var g='', hollow=(k==='w'||k==='h');
+  if(hollow){
+    var rx=k==='w'?10:8.8, ry=k==='w'?6.8:6.4, tr=k==='w'?'':' transform="rotate(-20 '+x+' '+y+')"';
+    g+='<ellipse class="hd" cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'"'+tr+' fill="#fff" stroke="#222" stroke-width="6.2"/>';
+    g+='<ellipse cx="'+x+'" cy="'+y+'" rx="'+rx+'" ry="'+ry+'"'+tr+' fill="#fff" stroke="'+col+'" stroke-width="3.6"/>';
+  } else {
+    g+='<ellipse class="hd" cx="'+x+'" cy="'+y+'" rx="8.8" ry="6.4" transform="rotate(-20 '+x+' '+y+')" fill="'+col+'" stroke="#222" stroke-width="1.4"/>';
+  }
+  if(k!=='w'){
+    var sx=up?x+8:x-8, y1=up?y-1:y+1, y2=up?y-40:y+40;
+    g+='<line x1="'+sx+'" y1="'+y1+'" x2="'+sx+'" y2="'+y2+'" stroke="#222" stroke-width="2"/>';
+    if(k==='e') g+= up ? '<path d="M'+sx+' '+y2+' q 4 10 13 14 q 4 4 0 14 q 2 -9 -13 -14 z" fill="#222"/>'
+                       : '<path d="M'+sx+' '+y2+' q 4 -10 13 -14 q 4 -4 0 -14 q 2 9 -13 14 z" fill="#222"/>';
+  }
+  if(dot) g+='<circle cx="'+(x+(k==='w'?17:16))+'" cy="'+(y-3)+'" r="3" fill="#222"/>';
+  return g;
+}
+function renderMelody(){
+  var box=$('#melBox'), r=state.res; if(!box || !r) return;
+  if(!r.melody){
+    if(!state.signal){ box.innerHTML='<div class="warn">'+LG('Για να βγάλω τις νότες χρειάζομαι τον ήχο. Ξαναβάλε το τραγούδι (από αρχείο ή YouTube) και άνοιξε πάλι αυτή την καρτέλα.','To find the notes I need the sound. Load the song again (from a file or YouTube) and open this tab again.')+'</div>'; return; }
+    box.innerHTML='<div style="text-align:center;padding:30px 10px"><div style="font-size:2.6rem">🎼</div><h2>'+LG('Ακούω τη μελωδία νότα-νότα…','Listening to the melody note by note…')+'</h2><div class="bar"><div id="melProg"></div></div><div class="muted" style="font-size:.85rem">'+LG('Βρίσκω το όργανο ή τη φωνή που ακούγεται πιο δυνατά: το σόλο της κιθάρας ή του μπουζουκιού, ή τη φωνή του τραγουδιστή.','I find the instrument or voice that sounds loudest: the guitar or bouzouki solo, or the singer’s voice.')+'</div></div>';
+    ensureMelody(); return;
+  }
+  var all=guitarNotes(), fl=flatsFor(state.trans);
+  var from=melView.from, to=melView.to;
+  var notes=all.filter(function(n){ return (from===null||n.e>from) && (to===null||n.s<to); });
+  melCache=notes;
+  var html='<div class="mbar noprint">'+
+    '<button class="mid" id="melFrom">'+LG('📍 Αρχή του σόλο εδώ','📍 Solo starts here')+'</button>'+
+    '<button class="mid" id="melTo">'+LG('📍 Τέλος του σόλο εδώ','📍 Solo ends here')+'</button>'+
+    (from!==null||to!==null?'<button class="mid" id="melAll">'+LG('↺ Όλο το τραγούδι','↺ Whole song')+'</button>':'')+
+    '<span class="muted" style="font-size:.85rem">'+(from!==null||to!==null?LG('Δείχνω από','Showing from')+' <b>'+fmt(from||0)+'</b> '+LG('έως','to')+' <b>'+fmt(to===null?r.duration:to)+'</b>':LG('Δείχνω όλο το τραγούδι','Showing the whole song'))+'</span></div>'+
+    '<details class="noprint" style="margin-bottom:8px;font-size:.85rem"><summary style="cursor:pointer;font-weight:700">'+LG('❓ Πώς διαβάζεται','❓ How to read it')+'</summary>'+
+    '<p style="margin:6px 0">'+LG('Κάθε <b>χρωματιστό σημάδι</b> είναι μια νότα. Όσο πιο <b>ψηλά</b> στις 5 γραμμές, τόσο πιο ψιλή η νότα. Το <b>σχήμα</b> της δείχνει <b>πόσους χρόνους κρατάει</b>, όπως στο πεντάγραμμο (δες τα σημάδια πιο κάτω). Οι αχνές κάθετες γραμμές είναι οι χτύποι του ρυθμού. Από κάτω γράφει το <b>όνομα</b> (Ντο, Ρε, Μι…) και πιο κάτω στις 6 γραμμές της κιθάρας το <b>τάστο</b>: η πάνω γραμμή είναι η λεπτή χορδή (Μι), η κάτω η χοντρή. 0 = ανοιχτή χορδή.','Each <b>coloured mark</b> is a note. The <b>higher</b> on the 5 lines, the higher the note. Its <b>shape</b> shows <b>how many beats it lasts</b>, as on the staff (see the marks below). The faint vertical lines are the beats of the rhythm. Below is the <b>name</b> (C, D, E…) and further down, on the 6 guitar lines, the <b>fret</b>: the top line is the thin string (E), the bottom the thick one. 0 = open string.')+'</p>'+
+    '<p style="margin:6px 0">'+LG('Πάτα πάνω σε μια νότα για να την <b>ακούσεις</b>. Πάτα στη σειρά για να πάει το τραγούδι εκεί. Βάλε ταχύτητα 50% για να τη μάθεις αργά.','Tap a note to <b>hear</b> it. Tap the row to move the song there. Set speed to 50% to learn it slowly.')+'</p>'+
+    '<p style="margin:6px 0" class="muted">'+LG('Όταν δεν παίζει σόλο, γράφει τη μελωδία της φωνής, που κι αυτή παίζεται στην κιθάρα. Τα αχνά σημάδια είναι νότες για τις οποίες δεν είμαι σίγουρος.','When there is no solo, it writes the vocal melody, which can also be played on guitar. Faint marks are notes I am not sure about.')+'</p></details>'+
+    '<div class="legend">'+STEP_GR.map(function(g,i){ return '<span style="background:'+STEP_COL[i]+';color:'+NOTE_INK[i]+'">'+g+'</span>'; }).join('')+'</div>'+
+    '<div class="durleg">'+DURS.map(function(d){ return '<span><svg viewBox="0 0 44 60" width="34" height="46">'+noteGlyph(18, d.k==='w'?32:44, '#555', d.k, d.dot, true)+'</svg><span><b>'+d.nm+'</b><br>'+d.txt+'</span></span>'; }).join('')+'</div>';
+  if(!notes.length){ box.innerHTML=html+'<div class="warn">'+LG('Δεν βρήκα νότες σε αυτό το κομμάτι.','I found no notes in this piece.')+'</div>'; bindMel(); return; }
+  // rows of two bars (8 beats)
+  var spb = r.bpm ? 60/r.bpm : 0.5, rowDur = Math.max(2.4, Math.min(4.2, 4*spb));
+  var t0 = from!==null ? from : Math.max(0, Math.floor(notes[0].s/rowDur)*rowDur);
+  if(from!==null) t0=from;
+  var tEnd = to!==null ? to : notes[notes.length-1].e;
+  var rows=[]; for(var t=t0; t<tEnd; t+=rowDur) rows.push([t, t+rowDur]);
+  var W=((box.clientWidth||innerWidth)<560)?420:640, LS=12, top=46, bottom=top+4*LS, tabTop=bottom+92, TS=13, H=tabTop+5*TS+16;
+  var beatList = (r.beats||[]);
+  rows.forEach(function(rw, ri){
+    var a=rw[0], b=rw[1], X=function(tt){ return 66+(W-80)*(tt-a)/(b-a); };
+    var svg='<svg viewBox="0 0 '+W+' '+H+'">';
+    // beat grid
+    beatList.forEach(function(bt,bi){ if(bt>=a && bt<b) svg+='<line x1="'+X(bt)+'" y1="'+(top-30)+'" x2="'+X(bt)+'" y2="'+(tabTop+5*TS)+'" stroke="#e9dfcf" stroke-width="1.2"/>'; });
+    for(var l=0;l<5;l++) svg+='<line x1="10" y1="'+(top+l*LS)+'" x2="'+W+'" y2="'+(top+l*LS)+'" stroke="#555" stroke-width="1.3"/>';
+    svg+='<text x="12" y="'+(bottom+8)+'" font-size="'+(LS*5.6)+'" fill="#333" font-family="serif">𝄞</text>';
+    for(l=0;l<6;l++) svg+='<line x1="10" y1="'+(tabTop+l*TS)+'" x2="'+W+'" y2="'+(tabTop+l*TS)+'" stroke="#aaa" stroke-width="1"/>';
+    svg+='<text x="20" y="'+(tabTop+2.9*TS)+'" font-size="15" font-weight="800" fill="#888">TAB</text>';
+    notes.forEach(function(n, ni){
+      if(n.s<a-0.001 || n.s>=b) return;
+      var w=spell(n.m+12, fl), dn=w.oct*7+w.step, y=bottom-(dn-30)*LS/2, x=X(n.s), xe=Math.min(W-4, X(Math.min(n.e,b)));
+      var col=STEP_COL[w.step], op=n.c<0.35?0.38:1, id=' data-ni="'+notes.indexOf(n)+'"';
+      svg+='<g class="mn"'+id+' opacity="'+op+'" style="cursor:pointer">';
+      // ledger lines
+      for(var ld=28; ld>=dn; ld-=2) svg+='<line x1="'+(x-12)+'" y1="'+(bottom-(ld-30)*LS/2)+'" x2="'+(x+12)+'" y2="'+(bottom-(ld-30)*LS/2)+'" stroke="#555" stroke-width="1.3"/>';
+      for(ld=40; ld<=dn; ld+=2) svg+='<line x1="'+(x-12)+'" y1="'+(bottom-(ld-30)*LS/2)+'" x2="'+(x+12)+'" y2="'+(bottom-(ld-30)*LS/2)+'" stroke="#555" stroke-width="1.3"/>';
+      var dd=durOf((n.e-n.s)/spb);
+      svg+='<circle class="halo" cx="'+x+'" cy="'+y+'" r="16" fill="#ffd43b" opacity="0"/>';
+      svg+=noteGlyph(x, y, col, dd.k, dd.dot, dn<34);
+      if(w.acc) svg+='<text x="'+(x-23)+'" y="'+(y+6)+'" font-size="18" font-weight="700" fill="#222">'+(w.acc>0?'♯':'♭')+'</text>';
+      var nm=noteNameGr(n.m, fl), nw=12+nm.length*10, ny=bottom+44+(ni%2)*24;
+      svg+='<rect x="'+(x-nw/2)+'" y="'+(ny-16)+'" width="'+nw+'" height="22" rx="7" fill="'+col+'" stroke="rgba(0,0,0,.3)"/>';
+      svg+='<text x="'+x+'" y="'+ny+'" font-size="16" font-weight="800" text-anchor="middle" fill="'+NOTE_INK[w.step]+'">'+esc(nm)+'</text>';
+      if(n.tab) svg+='<rect x="'+(x-10)+'" y="'+(tabTop+n.tab.si*TS-8)+'" width="20" height="16" fill="#fff"/><text x="'+x+'" y="'+(tabTop+n.tab.si*TS+6)+'" font-size="17" font-weight="800" text-anchor="middle" fill="#222">'+n.tab.f+'</text>';
+      svg+='</g>';
+    });
+    svg+='</svg>';
+    html+='<div class="melrow" data-a="'+a+'"><span class="tm">'+fmt(a)+'</span>'+svg+'</div>';
+  });
+  if(state.capo) html='<div class="info" style="font-size:.9rem;margin-bottom:6px">'+LG('Τα τάστα είναι μετρημένα <b>από το καποτάστο</b> (καποτάστο στο '+state.capo+'ο).','Frets are counted <b>from the capo</b> (capo on fret '+state.capo+').')+'</div>'+html;
+  box.innerHTML=html; bindMel(); lastNote=-2; followMelody(true);
+}
+function bindMel(){
+  var f=$('#melFrom'), t=$('#melTo'), al=$('#melAll');
+  if(f) f.onclick=function(){ melView.from=audio.src?audio.currentTime:null; if(melView.to!==null && melView.to<=melView.from) melView.to=null; renderMelody(); };
+  if(t) t.onclick=function(){ melView.to=audio.src?audio.currentTime:null; if(melView.from!==null && melView.to<=melView.from) melView.from=null; renderMelody(); };
+  if(al) al.onclick=function(){ melView.from=null; melView.to=null; renderMelody(); };
+  document.querySelectorAll('#melBox .mn').forEach(function(g){ g.onclick=function(e){ e.stopPropagation(); var n=melCache[+g.dataset.ni]; if(n) pluck(n.m); }; });
+  document.querySelectorAll('#melBox .melrow').forEach(function(rw){ rw.onclick=function(){ if(audio.src){ audio.currentTime=+rw.dataset.a; if(audio.paused) playPause(); } }; });
+}
+var pctx=null;
+function pluck(m){
+  try{
+    pctx=pctx||new (window.AudioContext||window.webkitAudioContext)();
+    var f=440*Math.pow(2,(m-69)/12), t=pctx.currentTime, g=pctx.createGain(), o=pctx.createOscillator(), o2=pctx.createOscillator(), g2=pctx.createGain();
+    o.type='triangle'; o.frequency.value=f; o2.type='sine'; o2.frequency.value=f*2; g2.gain.value=0.3;
+    g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.5,t+0.01); g.gain.exponentialRampToValueAtTime(0.0001,t+1.4);
+    o.connect(g); o2.connect(g2); g2.connect(g); g.connect(pctx.destination); o.start(t); o2.start(t); o.stop(t+1.5); o2.stop(t+1.5);
+  }catch(e){}
+}
+function followMelody(force){
+  if(curTab!=='mel' || !melCache || !audio.src) return;
+  var t=audio.currentTime, idx=-1;
+  for(var i=0;i<melCache.length;i++){ if(melCache[i].s<=t+0.02) idx=i; else break; }
+  if(idx>=0 && t>melCache[idx].e+0.15) idx=-1;
+  if(idx===lastNote && !force) return; lastNote=idx;
+  document.querySelectorAll('#melBox .halo.on').forEach(function(e){ e.classList.remove('on'); e.setAttribute('opacity','0'); });
+  document.querySelectorAll('#melBox .melrow.cur').forEach(function(e){ e.classList.remove('cur'); e.style.background=''; });
+  // current row follows the playback even between notes
+  var rowsEl=document.querySelectorAll('#melBox .melrow'), rowEl=null;
+  rowsEl.forEach(function(rw){ if(+rw.dataset.a<=t) rowEl=rw; });
+  if(rowEl){ rowEl.classList.add('cur'); rowEl.style.background='#fff9db';
+    if(!audio.paused){ var pn=$('#p-mel'), top=rowEl.offsetTop-pn.offsetTop-pn.clientHeight*0.2; if(Math.abs(pn.scrollTop-top)>40) pn.scrollTo({top:Math.max(0,top), behavior:'smooth'}); } }
+  if(idx<0) return;
+  var g=document.querySelector('#melBox .mn[data-ni="'+idx+'"] .halo');
+  if(g){ g.classList.add('on'); g.setAttribute('opacity','.85'); }
+}
+
+// ---------- live listening ----------
+var live=null;
+var CAN_TAB = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) && !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && !(navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+var ytPlayer=null, ytApi=null, ytId=null, ytTitle='';
+function ytIdFrom(u){ u=(u||'').trim(); var m=u.match(/(?:youtu\.be\/|[?&]v=|\/shorts\/|\/embed\/|\/live\/)([A-Za-z0-9_-]{11})/); if(m) return m[1]; if(/^[A-Za-z0-9_-]{11}$/.test(u)) return u; return null; }
+function loadYT(){
+  if(ytApi) return ytApi;
+  ytApi=new Promise(function(ok,bad){
+    if(window.YT && window.YT.Player){ ok(); return; }
+    var prev=window.onYouTubeIframeAPIReady; window.onYouTubeIframeAPIReady=function(){ if(prev) try{ prev(); }catch(e){} ok(); };
+    var sc=document.createElement('script'); sc.src='https://www.youtube.com/iframe_api'; sc.onerror=function(){ ytApi=null; bad(new Error('youtube')); };
+    document.head.appendChild(sc);
+    setTimeout(function(){ if(!(window.YT && window.YT.Player)){ ytApi=null; bad(new Error('youtube timeout')); } }, 15000);
+  });
+  return ytApi;
+}
+$('#ytPaste').onclick=function(){
+  if(navigator.clipboard && navigator.clipboard.readText){ navigator.clipboard.readText().then(function(t){ $('#ytUrl').value=(t||'').trim(); }).catch(function(){ $('#ytUrl').focus(); }); }
+  else $('#ytUrl').focus();
+};
+$('#ytUrl').addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); $('#ytGo').click(); } });
+$('#ytGo').onclick=function(){
+  errBox('#homeErr','');
+  var id=ytIdFrom($('#ytUrl').value);
+  if(!id){ errBox('#homeErr', LG('Δεν βλέπω σύνδεσμο του YouTube στο κουτί. Πήγαινε στο τραγούδι στο YouTube, πάτα «Κοινοποίηση» → «Αντιγραφή» και μετά εδώ πάτα «📋 Επικόλληση».','I don’t see a YouTube link in the box. Go to the song on YouTube, press «Share» → «Copy» and then press «📋 Paste» here.')); $('#ytUrl').focus(); return; }
+  if(!CAN_TAB){ phoneHelp(); return; }
+  if(location.protocol.indexOf('http')!==0){ errBox('#homeErr', LG('Το YouTube δουλεύει όταν ανοίγεις το πρόγραμμα από τη σελίδα του στο ίντερνετ: ','YouTube works when you open the program from its web page: ')+'<a href="https://chords-4all.pages.dev/" target="_blank" rel="noopener"><b>chords-4all.pages.dev</b></a>'); return; }
+  ytId=id; ytTitle='';
+  errBox('#listenErr',''); $('#tabHelp').classList.add('hidden'); $('#micHelp').classList.add('hidden'); $('#live').classList.add('hidden');
+  $('#ytBox').classList.remove('hidden'); $('#ytAsk').classList.remove('hidden');
+  show('listen');
+  makePlayer(id);
+  startLive('yt');                       // Chrome asks for this tab's sound – must happen inside the click
+};
+function makePlayer(id){
+  loadYT().then(function(){
+    if(ytPlayer){ try{ ytPlayer.destroy(); }catch(e){} ytPlayer=null; }
+    document.querySelector('.ytwrap').innerHTML='<div id="ytPlayer"></div>';
+    ytPlayer=new window.YT.Player('ytPlayer',{ videoId:id, playerVars:{rel:0, playsinline:1, modestbranding:1, fs:0}, events:{
+      onReady:function(){ try{ ytTitle=(ytPlayer.getVideoData()||{}).title||''; }catch(e){} if(live && live.kind==='yt' && !live.started) ytStart(); },
+      onStateChange:function(e){ if(e.data===0 && live && live.kind==='yt') stopLive(true); },
+      onError:function(e){ ytBlocked(e && e.data); }
+    }});
+  }).catch(function(){ ytBlocked(-1); });
+}
+function ytStart(){
+  if(!live || live.kind!=='yt' || !ytPlayer || !ytPlayer.playVideo) return;
+  live.started=true;
+  try{ ytPlayer.seekTo(0,true); ytPlayer.playVideo(); }catch(e){}
+}
+function ytBlocked(code){
+  if(live && live.kind==='yt') stopLive(false);
+  try{ if(ytPlayer) ytPlayer.stopVideo(); }catch(e){}
+  $('#ytBox').classList.add('hidden'); $('#live').classList.add('hidden');
+  $('#tabHelp').classList.remove('hidden');
+  show('listen');
+}
+$('#ytOpen').onclick=function(){ if(ytId) window.open('https://www.youtube.com/watch?v='+ytId,'_blank'); };
+function phoneHelp(){
+    errBox('#homeErr','');
+    $('#homeErr').innerHTML=LG('<div class="warn"><b>Στο κινητό δεν μπορώ να ακούσω απευθείας το YouTube</b> (δεν το επιτρέπει το τηλέφωνο). Δύο εύκολοι τρόποι:<ol class="steps" style="margin:10px 0 0;font-size:1rem"><li>Παίξε το τραγούδι σε <b>άλλη συσκευή</b> (υπολογιστή, τηλεόραση, ηχείο) και εδώ πάτα το πράσινο <b>«Από το μικρόφωνο»</b>. Κράτα το κινητό κοντά στο ηχείο.</li><li>Αν έχεις το τραγούδι <b>αποθηκευμένο</b> στο κινητό (στα Αρχεία), πάτα το μπλε <b>«Από αρχείο»</b>. Βγάζει τα πιο ακριβή αποτελέσματα.</li></ol></div>','<div class="warn"><b>On a phone I cannot listen to YouTube directly</b> (the phone does not allow it). Two easy ways:<ol class="steps" style="margin:10px 0 0;font-size:1rem"><li>Play the song on <b>another device</b> (computer, TV, speaker) and here press the green <b>«From the microphone»</b>. Keep the phone near the speaker.</li><li>If you have the song <b>saved</b> on the phone (in Files), press the blue <b>«From a file»</b>. It gives the most accurate results.</li></ol></div>');
+    $('#homeErr').scrollIntoView({behavior:'smooth', block:'center'});
+}
+$('#goMic').onclick=function(){ openListen('mic'); };
+function openListen(kind){
+  errBox('#listenErr',''); $('#ytBox').classList.add('hidden');
+  $('#tabHelp').classList.toggle('hidden', kind!=='tab');
+  $('#micHelp').classList.toggle('hidden', kind!=='mic');
+  $('#live').classList.add('hidden');
+  show('listen');
+}
+$('#startTab').onclick=function(){ startLive('tab'); };
+$('#startMic').onclick=function(){ startLive('mic'); };
+function startLive(kind){
+  errBox('#listenErr','');
+  var ctx=new (window.AudioContext||window.webkitAudioContext)();   // created inside the click
+  var md=navigator.mediaDevices;
+  if(!md || (kind!=='mic' && !md.getDisplayMedia) || (kind==='mic' && !md.getUserMedia)){
+    errBox('#listenErr', kind==='mic' ? LG('Δεν μπορώ να ανοίξω το μικρόφωνο σε αυτόν τον φυλλομετρητή. Στο iPhone άνοιξέ με από το Safari, στο Android από το Chrome.','I cannot open the microphone in this browser. On iPhone open me in Safari, on Android in Chrome.') : LG('Αυτός ο φυλλομετρητής δεν το υποστηρίζει. Χρησιμοποίησε το Google Chrome στον υπολογιστή.','This browser does not support it. Use Google Chrome on a computer.')); try{ ctx.close(); }catch(e){} return;
+  }
+  var ac={echoCancellation:false,noiseSuppression:false,autoGainControl:false};
+  var p = kind==='yt'
+    ? md.getDisplayMedia({video:{displaySurface:'browser'}, audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false,suppressLocalAudioPlayback:false}, preferCurrentTab:true, selfBrowserSurface:'include', surfaceSwitching:'exclude', systemAudio:'exclude', monitorTypeSurfaces:'exclude'})
+    : kind==='tab'
+    ? md.getDisplayMedia({video:true, audio:ac, preferCurrentTab:false, selfBrowserSurface:'exclude', systemAudio:'include'})
+    : md.getUserMedia({audio:ac});
+  p.then(function(stream){
+    if(!stream.getAudioTracks().length){
+      stream.getTracks().forEach(function(t){ t.stop(); });
+      errBox('#listenErr', kind==='yt' ? LG('Δεν ήρθε ήχος. Γύρνα στην <b>Αρχή</b>, ξαναπάτα «Βγάλε τις συγχορδίες» και στο παράθυρο του Chrome <b>τσέκαρε το «Κοινή χρήση ήχου καρτέλας»</b> πριν πατήσεις «Να επιτρέπεται».','No sound came through. Go back <b>Home</b>, press «Find the chords» again and in Chrome’s window <b>tick «Also share tab audio»</b> before pressing «Allow».') : LG('Δεν ήρθε ήχος από την καρτέλα. Ξαναπάτα «Ξεκίνα να ακούς», διάλεξε <b>«Καρτέλα Chrome»</b> και <b>άνοιξε τον διακόπτη για τον ήχο της καρτέλας</b> πριν πατήσεις «Κοινή χρήση».','No sound came from the tab. Press «Start listening» again, choose <b>«Chrome Tab»</b> and <b>turn on the switch for the tab’s audio</b> before pressing «Share».'));
+      ctx.close(); return;
+    }
+    ctx.resume();
+    var src=ctx.createMediaStreamSource(new MediaStream(stream.getAudioTracks()));
+    var proc=ctx.createScriptProcessor(4096,2,1), mute=ctx.createGain(); mute.gain.value=0;
+    src.connect(proc); proc.connect(mute); mute.connect(ctx.destination);
+    var dec=ctx.sampleRate>30000?2:1, lsr=ctx.sampleRate/dec;
+    live={ctx:ctx, stream:stream, proc:proc, kind:kind, sr:lsr, nat:ctx.sampleRate, chunks:[], len:0, stL:[], stR:[], stLen:0, la:new CE.LiveAnalyzer(lsr, state.level!=='full'), hist:[], cur:null, t0:Date.now(), heard:false, maxLen:lsr*60*12};
+    proc.onaudioprocess=function(e){
+      if(!live) return;
+      var ib=e.inputBuffer, L=ib.getChannelData(0), R=ib.numberOfChannels>1?ib.getChannelData(1):L;
+      var n=Math.floor(L.length/dec), out=new Float32Array(n), ss=0;
+      for(var i=0;i<n;i++){ var s=0; for(var j=0;j<dec;j++) s+=L[i*dec+j]+R[i*dec+j]; out[i]=s/(2*dec); ss+=out[i]*out[i]; }
+      if(live.len<live.maxLen){ live.chunks.push(out); live.len+=n; }
+      if(live.stLen<live.nat*60*10){ live.stL.push(new Float32Array(L)); live.stR.push(new Float32Array(R)); live.stLen+=L.length; }
+      var rms=Math.sqrt(ss/n); $('#meter').style.width=Math.min(100,rms*400)+'%';
+      if(rms>0.004) live.heard=true;
+      live.la.push(out);
+      showLive(live.la.step());
+    };
+    stream.getTracks().forEach(function(t){ t.onended=function(){ if(live) stopLive(true); }; });
+    $('#tabHelp').classList.add('hidden'); $('#micHelp').classList.add('hidden'); $('#live').classList.remove('hidden');
+    if(kind==='yt'){ $('#ytAsk').classList.add('hidden'); live.t0=Date.now(); ytStart(); }
+    $('#liveHist').innerHTML=''; $('#liveKey').textContent='—';
+    $('#liveChord').style.background=colorOf(null); $('#liveChord').style.color='#fff'; $('#liveChord').innerHTML='<div class="nm">…</div><div class="gr">'+LG('Περιμένω μουσική','Waiting for music')+'</div>'; $('#liveDiag').innerHTML='';
+    live.timer=setInterval(function(){
+      if(!live) return; var sec=(Date.now()-live.t0)/1000; $('#liveTime').textContent=fmt(sec);
+      $('#silentWarn').classList.toggle('hidden', live.heard || sec<6);
+      if(live.len>=live.maxLen) stopLive(true);
+    },500);
+  }).catch(function(e){
+    try{ ctx.close(); }catch(x){}
+    var n=e&&e.name;
+    if(kind==='yt'){ try{ if(ytPlayer) ytPlayer.stopVideo(); }catch(x){} $('#ytAsk').classList.add('hidden'); }
+    if(n==='NotAllowedError' && kind==='yt') errBox('#listenErr', LG('Δεν δόθηκε άδεια. Γύρνα στην <b>Αρχή</b> και ξαναπάτα «Βγάλε τις συγχορδίες» — στο παράθυρο του Chrome πάτα το μπλε κουμπί <b>«Να επιτρέπεται»</b>.','Permission was not given. Go back <b>Home</b> and press «Find the chords» again — in Chrome’s window press the blue <b>«Allow»</b> button.'));
+    else if(n==='NotAllowedError') errBox('#listenErr', kind==='mic' ? LG('Ο Chrome δεν έδωσε άδεια για το μικρόφωνο. Πάτα το εικονίδιο 🔒 πάνω αριστερά στη γραμμή διευθύνσεων και επίτρεψε το «Μικρόφωνο». Σε Mac μπορεί να χρειαστεί και: Ρυθμίσεις Συστήματος → Ασφάλεια & Απόρρητο → Μικρόφωνο → Google Chrome. Στο κινητό: Ρυθμίσεις → Safari (ή Chrome) → Μικρόφωνο → Επιτρέπεται, και ξαναπάτα «Ξεκίνα να ακούς».','The browser did not allow the microphone. Click the 🔒 icon at the top left of the address bar and allow «Microphone». On a Mac you may also need: System Settings → Privacy & Security → Microphone → Google Chrome. On a phone: Settings → Safari (or Chrome) → Microphone → Allow, then press «Start listening» again.') : LG('Ακυρώθηκε η επιλογή καρτέλας. Πάτα ξανά «Ξεκίνα να ακούς» όταν είσαι έτοιμος.','Tab selection was cancelled. Press «Start listening» again when you are ready.'));
+    else errBox('#listenErr',LG('Δεν μπόρεσα να ξεκινήσω να ακούω (','I could not start listening (')+esc(e&&e.message||e)+').');
+  });
+}
+function showLive(r){
+  if(!live || !r) return;
+  if(r.key && live.len>live.sr*8) $('#liveKey').textContent=CE.keyName(r.key, r.flats);
+  var ch=r.chord; if(!ch) return;
+  if(live.cur && CE.sameChord(live.cur, ch)) return;
+  live.cur=ch;
+  var nm=CE.chordName(ch, r.flats);
+  $('#liveChord').style.background=colorOf(ch, r.flats); $('#liveChord').style.color=inkOf(ch, r.flats);
+  $('#liveChord').innerHTML='<div class="nm">'+esc(nm)+'</div><div class="gr">'+esc(CE.chordNameGreek(ch, r.flats))+'</div>';
+  $('#liveDiag').innerHTML=diagramSVG(ch,230);
+  live.hist.push({n:nm, c:ch, f:r.flats}); if(live.hist.length>12) live.hist.shift();
+  $('#liveHist').innerHTML=live.hist.map(function(h,i){ var last=i===live.hist.length-1; return '<div class="tile'+(last?' cur':'')+'" style="background:'+colorOf(h.c,h.f)+';color:'+inkOf(h.c,h.f)+';opacity:'+(last?1:0.55+0.4*(i+1)/live.hist.length)+'"><div class="n">'+esc(h.n)+'</div></div>'; }).join('');
+}
+$('#stopBtn').onclick=function(){ stopLive(true); };
+function stopLive(analyze){
+  var L=live; if(!L) return; live=null;
+  clearInterval(L.timer);
+  try{ L.proc.disconnect(); }catch(e){}
+  L.stream.getTracks().forEach(function(t){ t.onended=null; t.stop(); });
+  try{ L.ctx.close(); }catch(e){}
+  if(L.kind==='yt'){ try{ if(ytPlayer) ytPlayer.pauseVideo(); }catch(e){} }
+  if(!analyze) return;
+  if(L.len < L.sr*5 || !L.heard){ show('home'); errBox('#homeErr', L.heard ? LG('Η ηχογράφηση ήταν πολύ μικρή (κάτω από 5 δευτερόλεπτα).','The recording was too short (under 5 seconds).') : LG('Δεν άκουσα ήχο. Αν ήταν από το YouTube, θυμήσου να ανοίξεις τον διακόπτη για τον ήχο της καρτέλας.','I heard no sound. If it was from YouTube, remember to turn on the switch for the tab’s audio.')); return; }
+  var d=new Date(), title=(L.kind==='yt' && ytTitle) ? ytTitle : (L.kind!=='mic'?LG('Από YouTube','From YouTube'):LG('Από μικρόφωνο','From microphone'))+' — '+d.toLocaleDateString(LG('el-GR','en-GB'))+' '+d.toLocaleTimeString(LG('el-GR','en-GB'),{hour:'2-digit',minute:'2-digit'});
+  show('working'); setProgress(0,LG('Ετοιμάζω τον ήχο…','Preparing the sound…'));
+  stereoFromLive(L).then(function(o){
+    if(state.audioURL) URL.revokeObjectURL(state.audioURL);
+    state.stereo44=o.st44;
+    state.audioURL=URL.createObjectURL(o.st44 ? wavStereo(o.st44, 44100) : wavBlob(o.mono, 22050));
+    runAnalysis(o.mono, 22050, title, false);
+  }).catch(function(){
+    // old way (mono, no voice separation)
+    var sig=new Float32Array(L.len), q=0; L.chunks.forEach(function(c){ sig.set(c,q); q+=c.length; });
+    state.stereo44=null;
+    if(state.audioURL) URL.revokeObjectURL(state.audioURL);
+    state.audioURL=URL.createObjectURL(wavBlob(sig, L.sr));
+    runAnalysis(sig, L.sr, title, false);
+  });
+}
+// the recorded sound -> mono 22050 Hz (chords) + stereo 44100 Hz (voice separation)
+function stereoFromLive(L){
+  if(!L.stLen) return Promise.reject(new Error('no stereo'));
+  var n=L.stLen, a=new Float32Array(n), b=new Float32Array(n), o=0;
+  L.stL.forEach(function(c,i){ a.set(c,o); b.set(L.stR[i],o); o+=c.length; });
+  var st=0, thr=0.003; while(st<n-L.nat && Math.abs(a[st])+Math.abs(b[st])<thr) st++;
+  st=Math.max(0, st-Math.round(L.nat*0.2)); if(st>0){ a=a.subarray(st); b=b.subarray(st); n=a.length; }
+  var OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext, tmp=new OAC(2, Math.max(1,n), L.nat), ab=tmp.createBuffer(2, n, L.nat);
+  ab.getChannelData(0).set(a); ab.getChannelData(1).set(b);
+  return toStereo44(ab).then(function(s44){ return toMono22k(ab).then(function(m){ return {st44:s44, mono:m}; }); });
+}
+function wavStereo(st, sr){
+  var n=st[0].length, buf=new ArrayBuffer(44+n*4), v=new DataView(buf), mx=0, i;
+  function ws(o,s){ for(var k=0;k<s.length;k++) v.setUint8(o+k,s.charCodeAt(k)); }
+  for(i=0;i<n;i++){ mx=Math.max(mx, Math.abs(st[0][i]), Math.abs(st[1][i])); }
+  var g=mx>0?0.95/mx:1;
+  ws(0,'RIFF'); v.setUint32(4,36+n*4,true); ws(8,'WAVE'); ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,2,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*4,true); v.setUint16(32,4,true); v.setUint16(34,16,true); ws(36,'data'); v.setUint32(40,n*4,true);
+  for(i=0;i<n;i++){ v.setInt16(44+i*4, Math.max(-1,Math.min(1,st[0][i]*g))*32767, true); v.setInt16(46+i*4, Math.max(-1,Math.min(1,st[1][i]*g))*32767, true); }
+  return new Blob([buf],{type:'audio/wav'});
+}
+function wavBlob(sig, sr){
+  var n=sig.length, buf=new ArrayBuffer(44+n*2), v=new DataView(buf);
+  function ws(o,s){ for(var i=0;i<s.length;i++) v.setUint8(o+i,s.charCodeAt(i)); }
+  var mx=0; for(var i=0;i<n;i++){ var a=Math.abs(sig[i]); if(a>mx) mx=a; }
+  var g=mx>0?0.95/mx:1;
+  ws(0,'RIFF'); v.setUint32(4,36+n*2,true); ws(8,'WAVE'); ws(12,'fmt '); v.setUint32(16,16,true); v.setUint16(20,1,true); v.setUint16(22,1,true);
+  v.setUint32(24,sr,true); v.setUint32(28,sr*2,true); v.setUint16(32,2,true); v.setUint16(34,16,true); ws(36,'data'); v.setUint32(40,n*2,true);
+  for(i=0;i<n;i++){ var s=Math.max(-1,Math.min(1,sig[i]*g)); v.setInt16(44+i*2, s*32767, true); }
+  return new Blob([buf],{type:'audio/wav'});
+}
+// keyboard: space = play/pause on results
+document.addEventListener('keydown',function(e){
+  if(lyrMode==='sync' && (e.key==='Enter' || e.code==='ArrowDown')){ e.preventDefault(); syncTap(); return; }
+  if(lyrMode==='sync' && (e.key==='Backspace' || e.code==='ArrowUp')){ e.preventDefault(); syncBack(); return; }
+  if(e.target.tagName==='TEXTAREA') return;
+  if(e.code==='Space' && !$('#results').classList.contains('hidden') && e.target.tagName!=='INPUT'){ e.preventDefault(); playPause(); } });
+
+// installable app (works when served from the web, not from a local file)
+if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
+  navigator.serviceWorker.register('sw.js', {updateViaCache:'none'}).then(function(reg){ try{ reg.update(); }catch(e){} }).catch(function(){});
+}
+// make sure a phone that saved the app does not keep showing an old version:
+// put the newest page into the app's saved copy, so the next opening is up to date
+if('caches' in window && location.protocol.indexOf('http')===0){
+  window.addEventListener('load', function(){
+    var url=location.href.split('#')[0].split('?')[0];
+    fetch(url, {cache:'no-store'}).then(function(r){
+      if(!r || !r.ok || r.redirected || r.type!=='basic') return;
+      return caches.keys().then(function(keys){
+        return Promise.all(keys.map(function(k){
+          return caches.open(k).then(function(c){
+            return Promise.all([url, './', 'index.html', location.pathname].map(function(u){
+              return c.match(u).then(function(m){ if(m) return c.put(u, r.clone()); });
+            }));
+          });
+        }));
+      });
+    }).catch(function(){});
+  });
+}
+})();
+</script>
+<!-- Υπογραφή / Signature: Christos S Magides — 13-10-2026 -->
+<script src="https://cdn.jsdelivr.net/gh/Christos1354/ypografi@main/ypografi.js" defer></script>
+</body>
+</html>
