@@ -155,6 +155,8 @@ textarea{width:100%;min-height:260px;font:inherit;font-size:1rem;padding:12px;bo
 .aibar{height:22px;background:#efe5d4;border-radius:11px;overflow:hidden;margin:14px 0}
 .aibar div{height:100%;width:0;background:linear-gradient(90deg,#7a2e8e,#d9480f);transition:width .2s}
 .credits{font-size:.72rem;color:var(--soft);margin:18px 4px 0;line-height:1.4}
+.neckwrap{background:#fffaf0;border:2px solid var(--line);border-radius:18px;padding:6px;margin:0 0 12px;position:sticky;top:0;z-index:2}
+.neckwrap svg{display:block;width:100%;height:auto}
 @media (max-width:900px){ .work{grid-template-columns:1fr} .leftcol{position:static} .panel{max-height:none} }
 @media print{ .work{display:block} .panel{display:block!important;max-height:none;overflow:visible} .lline.cur{background:none;box-shadow:none} }
 @media (max-width:700px){ .now{grid-template-columns:1fr} .nowchord .nm{font-size:4rem} }
@@ -202,7 +204,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </head>
 <body>
 <header>
-  <h1 data-en="🎸 Chords <small>Give me a song — I find the guitar chords for you · <b>Version 26/10/2026 08:00</b></small>">🎸 Συγχορδίες <small>Βάλε ένα τραγούδι — σου βγάζω τις συγχορδίες για την κιθάρα · <b>Έκδοση 26/10/2026 08:00</b></small></h1>
+  <h1 data-en="🎸 Chords <small>Give me a song — I find the guitar chords for you · <b>Version 26/10/2026 11:00</b></small>">🎸 Συγχορδίες <small>Βάλε ένα τραγούδι — σου βγάζω τις συγχορδίες για την κιθάρα · <b>Έκδοση 26/10/2026 11:00</b></small></h1>
   <button class="hbtn" id="fsDown" title="Μικρότερα γράμματα" data-en-title="Smaller letters">A−</button>
   <button class="hbtn" id="fsUp" title="Μεγαλύτερα γράμματα" data-en-title="Bigger letters">A+</button>
   <button class="hbtn" id="homeBtn" data-en="🏠 Home">🏠 Αρχή</button>
@@ -339,6 +341,16 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       <input type="range" id="seek" min="0" max="1000" value="0">
       <div class="time" id="timeLbl">0:00 / 0:00</div>
       <div class="seg" id="speedSeg" title="Ταχύτητα" data-en-title="Speed"><button data-s="1" class="on">100%</button><button data-s="0.85">85%</button><button data-s="0.7">70%</button><button data-s="0.5">50%</button></div>
+    </div>
+    <div class="row hidden" id="stemRow" style="margin-top:10px">
+      <span class="lbl" style="font-weight:700" data-en="🎧 Listen to:">🎧 Άκου:</span>
+      <div class="seg" id="stemSeg"><button data-k="mix" class="on" data-en="The whole song">Όλο το τραγούδι</button><button data-k="voice" data-en="🎤 Only the voice">🎤 Μόνο φωνή</button><button data-k="inst" data-en="🎸 Without the voice">🎸 Χωρίς φωνή</button></div>
+      <span id="stemMsg" class="muted" style="font-size:.85rem"></span>
+    </div>
+    <div class="row hidden" id="srcRow" style="margin-top:10px">
+      <span class="lbl" style="font-weight:700" data-en="🎼 Find the chords from:">🎼 Συγχορδίες από:</span>
+      <div class="seg" id="srcSeg"><button data-k="mix" class="on" data-en="The whole song">Όλο το τραγούδι</button><button data-k="inst" data-en="🎸 Only the instruments">🎸 Μόνο τα όργανα</button></div>
+      <span id="srcMsg" class="muted" style="font-size:.85rem"></span>
     </div>
     <div id="noAudio" class="muted hidden" style="font-size:.85rem" data-en="The sound is not kept in «My songs» — you only see chords and lyrics. To play along, load the song again.">Ο ήχος δεν κρατιέται στα «Τραγούδια μου» — βλέπεις μόνο συγχορδίες και στίχους. Για να παίξεις μαζί, ξαναβάλε το τραγούδι.</div>
     <div class="row" style="margin-top:10px">
@@ -1780,7 +1792,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     var L = stereo[0], R = stereo[1] || stereo[0], len = L.length;
     var nF = Math.floor(len / HOP) + 1, fft = makeFFT(N), win = new Float64Array(N), i;
     for (i = 0; i < N; i++) win[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N);
-    var out = new Float32Array(len + N), wsum = new Float32Array(len + N);
+    var outV = [new Float32Array(len), new Float32Array(len)], outI = [new Float32Array(len), new Float32Array(len)], wsum = new Float32Array(len);
     var act = new Float32Array(nF), tot = new Float32Array(nF);
     var k0 = Math.floor(150 * N / SR), k1 = Math.floor(5000 * N / SR);
     var nChunks = Math.ceil(nF / CH), c = 0;
@@ -1804,34 +1816,35 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
       var feeds = { x: new root.ort.Tensor('float32', input, [2, 1, CH, BINS]) };
       var V;
       return sessV.run(feeds).then(function (r) { V = r.y.data; return sessA.run(feeds); }).then(function (r) {
-        var A = r.y.data, re2 = new Float64Array(N), im2 = new Float64Array(N);
+        var A = r.y.data, vr = new Float64Array(N), vi = new Float64Array(N), ir = new Float64Array(N), ii = new Float64Array(N);
         for (var f = f0; f < f1; f++) {
-          re2.fill(0); im2.fill(0);
-          var ve = 0, te = 0;
+          var ve = 0, te = 0, st = f * HOP - N / 2;
           for (var ch = 0; ch < 2; ch++) {
-            var sp = spec[ch * n + (f - f0)], o = (ch * CH + (f - f0)) * BINS;
-            for (var k = 0; k < BINS; k++) {
-              var v = V[o + k], a = A[o + k], m = (v * v + 1e-10) / (v * v + a * a + 2e-10);
-              var mr = sp[0][k] * m, mi = sp[1][k] * m;
-              re2[k] += mr / 2; im2[k] += mi / 2;
-              if (k >= k0 && k < k1) { ve += mr * mr + mi * mi; te += sp[0][k] * sp[0][k] + sp[1][k] * sp[1][k]; }
+            var sp = spec[ch * n + (f - f0)], o = (ch * CH + (f - f0)) * BINS, k;
+            vr.fill(0); vi.fill(0);
+            for (k = 0; k <= N / 2; k++) {
+              var m = 0;
+              if (k < BINS) { var v = V[o + k], a = A[o + k]; m = (v * v + 1e-10) / (v * v + a * a + 2e-10); }
+              vr[k] = sp[0][k] * m; vi[k] = sp[1][k] * m;
+              ir[k] = sp[0][k] - vr[k]; ii[k] = sp[1][k] - vi[k];
+              if (k >= k0 && k < k1) { ve += vr[k] * vr[k] + vi[k] * vi[k]; te += sp[0][k] * sp[0][k] + sp[1][k] * sp[1][k]; }
             }
+            for (k = 1; k < N / 2; k++) { vr[N - k] = vr[k]; vi[N - k] = -vi[k]; ir[N - k] = ir[k]; ii[N - k] = -ii[k]; }
+            fft(vr, vi, true); fft(ir, ii, true);
+            var ov = outV[ch], oi = outI[ch];
+            for (var j = 0; j < N; j++) { var p = st + j; if (p < 0 || p >= len) continue; ov[p] += vr[j] / N * win[j]; oi[p] += ir[j] / N * win[j]; if (ch === 0) wsum[p] += win[j] * win[j]; }
           }
           act[f] = ve; tot[f] = te;
-          // inverse STFT (mono voice), conjugate-symmetric spectrum
-          for (k = 1; k < N / 2; k++) { re2[N - k] = re2[k]; im2[N - k] = -im2[k]; }
-          fft(re2, im2, true);
-          var st = f * HOP - N / 2;
-          for (var j = 0; j < N; j++) { var p = st + j; if (p < 0 || p >= len) continue; out[p] += re2[j] / N * win[j]; wsum[p] += win[j] * win[j]; }
         }
         c++;
         if (onProgress) onProgress(c / nChunks);
         if (c < nChunks) return yieldFn().then(step);
-        for (i = 0; i < len; i++) if (wsum[i] > 1e-6) out[i] /= wsum[i];
-        // voice at 22050 Hz
-        var half = new Float32Array(len >> 1);
-        for (i = 0; i < half.length; i++) half[i] = 0.25 * (out[2 * i - 1] || 0) + 0.5 * out[2 * i] + 0.25 * (out[2 * i + 1] || 0);
-        // voice presence per frame: share of the voice in the 150–5000 Hz band, relative to the song's loud level
+        for (var q2 = 0; q2 < 2; q2++) for (i = 0; i < len; i++) if (wsum[i] > 1e-6) { outV[q2][i] /= wsum[i]; outI[q2][i] /= wsum[i]; }
+        function half(st2) {   // stereo 44100 -> mono 22050
+          var h = new Float32Array(len >> 1), a = st2[0], b2 = st2[1];
+          for (var i = 0; i < h.length; i++) { var j = 2 * i; h[i] = 0.125 * ((a[j - 1] || 0) + (b2[j - 1] || 0)) + 0.25 * (a[j] + b2[j]) + 0.125 * ((a[j + 1] || 0) + (b2[j + 1] || 0)); }
+          return h;
+        }
         var ratio = new Float32Array(nF), srt = [];
         for (f = 0; f < nF; f++) { ratio[f] = act[f] / (tot[f] + 1e-9); srt.push(act[f]); }
         srt.sort(function (a, b) { return a - b; });
@@ -1841,7 +1854,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
         var sm = new Float32Array(nF), Wn = 4;
         for (f = 0; f < nF; f++) { var s = 0, cnt = 0; for (var q = f - Wn; q <= f + Wn; q++) if (q >= 0 && q < nF) { s += pres[q]; cnt++; } sm[f] = s / cnt; }
         return {
-          voice: half, sr: 22050,
+          voice: half(outV), inst: half(outI), sr: 22050, voiceSt: outV, instSt: outI,
           presence: sm, fps: SR / HOP,
           activity: function (a, b) {
             var fa = Math.max(0, Math.floor(a * SR / HOP)), fb = Math.min(nF - 1, Math.max(fa, Math.ceil(b * SR / HOP))), s = 0;
@@ -2058,7 +2071,7 @@ function hideToast(){ $('#toast').classList.add('hidden'); }
 function saveHist(res, title){
   var h=load('ak-hist', []), old=null;
   h=h.filter(function(x){ if(x.title===title){ old=old||x; return false; } return true; });
-  var it={title:title, date:Date.now(), levels:res.levels, key:res.key, flats:res.flats, duration:res.duration, bpm:res.bpm, tuning:res.tuning, beats:res.beats};
+  var it={title:title, date:Date.now(), levels:res.levels, levelsMix:res.levelsMix, levelsInst:res.levelsInst, chordSrc:res.chordSrc, key:res.key, flats:res.flats, duration:res.duration, bpm:res.bpm, tuning:res.tuning, beats:res.beats};
   if(res.melody) it.melody=res.melody;
   h.unshift(it);
   if(h.length>30) h.length=30;
@@ -2149,7 +2162,7 @@ function manualResample(ab, sr){
 function setProgress(fr,msg){ $('#workBar').style.width=Math.round(fr*100)+'%'; $('#workPct').textContent=Math.round(fr*100)+'%'; if(msg) $('#workMsg').textContent=msg; }
 function runAnalysis(signal, sr, title, keepAudio){
   show('working'); setProgress(0,LG('Ακούω προσεκτικά το τραγούδι…','Listening carefully to the song…'));
-  state.signal=signal; state.sr=sr; state.title=title; state.voice=null;
+  state.signal=signal; state.sr=sr; state.title=title; state.voice=null; state.sep=null; sepJob=null;
   var MSG={beats:LG('Βρίσκω τον ρυθμό του τραγουδιού…','Finding the song’s beat…'), listen:LG('Ακούω τις νότες…','Listening to the notes…'), model:LG('Η τεχνητή νοημοσύνη αναγνωρίζει τις συγχορδίες…','The artificial intelligence is recognising the chords…')};
   var old=function(){ return CE.analyzeSong(signal, {sr:sr, level:state.level, onProgress:function(p){ setProgress(0.03+0.97*p, p>0.85?LG('Βρίσκω πότε αλλάζουν οι συγχορδίες…','Finding when the chords change…'):null); }}); };
   var job = (sr===22050) ? loadScript('btc-model.js').then(function(){
@@ -2167,6 +2180,8 @@ var audio=new Audio(); audio.preservesPitch=true; audio.webkitPreservesPitch=tru
 function openResult(res, url, fromHist){
   state.res=res; state.fromHistory=fromHist; state.capo=0; state.trans=0;
   if(fromHist){ state.signal=null; state.stereo44=null; state.voice=null; }
+  if(!fromHist || true){ Object.keys(stemURL).forEach(function(k){ try{ URL.revokeObjectURL(stemURL[k]); }catch(e){} }); stemURL={}; stemCur='mix'; }
+  if(fromHist && res.levelsMix && res.chordSrc==='inst' && res.levelsInst) res.levels=res.levelsInst;
   alignTried={};
   if(!fromHist) res.title=state.title;
   applyLevel(); melView.from=null; melView.to=null; melBusy=false;
@@ -2179,7 +2194,7 @@ function openResult(res, url, fromHist){
   lyrMode='view';
   $('#capoMsg').textContent='';
   $('#playBtn').textContent='▶';
-  show('results'); renderAll(); paintMode();
+  show('results'); renderAll(); paintMode(); paintStems(); melSrc='mix';
 }
 function updateNote(){
   var res=state.res;
@@ -2367,15 +2382,83 @@ function buildRows(ly){
   });
   return rows;
 }
+// ---------- the song split in two: voice / instruments ----------
+var sepJob=null;
+function canSep(){ return !!state.stereo44 && location.protocol.indexOf('http')===0 && !!window.Promise; }
+function getSep(onP){
+  if(state.sep) return Promise.resolve(state.sep);
+  if(!canSep()) return Promise.resolve(null);
+  if(sepJob) return sepJob;
+  sepJob=loadScript('ort.wasm.min.js').then(function(){ return window.VoiceSep.load(); })
+    .then(function(){ return window.VoiceSep.separate(state.stereo44, function(p){ if(onP) onP(p); sepProg(p); }); })
+    .then(function(v){ state.sep=v; sepJob=null; return v; })
+    .catch(function(e){ sepJob=null; if(window.console) console.warn('separation failed', e); return null; });
+  return sepJob;
+}
+var sepListeners=[];
+function sepProg(p){ sepListeners.forEach(function(f){ try{ f(p); }catch(e){} }); }
+var stemURL={}, stemCur='mix';
+function paintStems(){
+  var ok=canSep() && !!audio.src && !state.fromHistory;
+  $('#stemRow').classList.toggle('hidden', !ok); $('#srcRow').classList.toggle('hidden', !ok);
+  document.querySelectorAll('#stemSeg button').forEach(function(b){ b.classList.toggle('on', b.dataset.k===stemCur); });
+  var src=(state.res && state.res.chordSrc)||'mix';
+  document.querySelectorAll('#srcSeg button').forEach(function(b){ b.classList.toggle('on', b.dataset.k===src); });
+}
+function setStem(k){
+  if(k===stemCur) return;
+  var go=function(){
+    var url = k==='mix' ? state.audioURL : stemURL[k];
+    if(!url) return;
+    var t=audio.currentTime, playing=!audio.paused, rate=audio.playbackRate;
+    audio.src=url; audio.playbackRate=rate;
+    audio.addEventListener('loadedmetadata', function once(){ audio.removeEventListener('loadedmetadata', once); audio.currentTime=t; if(playing) audio.play(); }, false);
+    stemCur=k; paintStems(); $('#stemMsg').textContent='';
+  };
+  if(k==='mix' || stemURL[k]) { go(); return; }
+  $('#stemMsg').textContent=LG('Ξεχωρίζω τη φωνή από τα όργανα… 0%','Separating the voice from the instruments… 0%');
+  var lis=function(p){ $('#stemMsg').textContent=LG('Ξεχωρίζω τη φωνή από τα όργανα… ','Separating the voice from the instruments… ')+Math.round(p*100)+'%'; };
+  sepListeners.push(lis);
+  getSep().then(function(v){
+    sepListeners=sepListeners.filter(function(f){ return f!==lis; });
+    if(!v){ $('#stemMsg').textContent=LG('Δεν μπόρεσα να το ξεχωρίσω.','I could not separate it.'); return; }
+    if(!stemURL.voice){ stemURL.voice=URL.createObjectURL(wavStereo(v.voiceSt, 44100)); stemURL.inst=URL.createObjectURL(wavStereo(v.instSt, 44100)); }
+    go();
+  });
+}
+document.querySelectorAll('#stemSeg button').forEach(function(b){ b.onclick=function(){ setStem(b.dataset.k); }; });
+function setChordSrc(k){
+  var r=state.res; if(!r) return;
+  var cur=r.chordSrc||'mix'; if(k===cur) return;
+  if(!r.levelsMix) r.levelsMix=r.levels;
+  var apply=function(){
+    r.levels = k==='inst' ? r.levelsInst : r.levelsMix; r.chordSrc=k;
+    applyLevel(); updateNote(); renderAll(); paintMode(); paintStems();
+    var h=load('ak-hist',[]); h.forEach(function(x){ if(x.title===r.title){ x.levels=r.levels; x.levelsMix=r.levelsMix; x.levelsInst=r.levelsInst; x.chordSrc=k; } }); store('ak-hist',h);
+  };
+  if(k==='mix' || r.levelsInst){ apply(); $('#srcMsg').textContent=''; return; }
+  $('#srcMsg').textContent=LG('Ξεχωρίζω τα όργανα… 0%','Separating the instruments… 0%');
+  var lis=function(p){ $('#srcMsg').textContent=LG('Ξεχωρίζω τα όργανα… ','Separating the instruments… ')+Math.round(p*100)+'%'; };
+  sepListeners.push(lis);
+  getSep().then(function(v){
+    sepListeners=sepListeners.filter(function(f){ return f!==lis; });
+    if(!v){ $('#srcMsg').textContent=LG('Δεν μπόρεσα να ξεχωρίσω τα όργανα.','I could not separate the instruments.'); return; }
+    $('#srcMsg').textContent=LG('Η τεχνητή νοημοσύνη ακούει μόνο τα όργανα…','The AI is listening to the instruments only…');
+    return loadScript('btc-model.js').then(function(){ return window.ChordAI.analyze(v.inst, {level:state.level, onProgress:function(p){ $('#srcMsg').textContent=LG('Η τεχνητή νοημοσύνη ακούει μόνο τα όργανα… ','The AI is listening to the instruments only… ')+Math.round(p*100)+'%'; }}); })
+      .then(function(res2){ r.levelsInst=res2.levels; $('#srcMsg').textContent=''; apply(); });
+  }).catch(function(){ $('#srcMsg').textContent=LG('Κάτι πήγε στραβά.','Something went wrong.'); });
+}
+document.querySelectorAll('#srcSeg button').forEach(function(b){ b.onclick=function(){ setChordSrc(b.dataset.k); }; });
+
 // ---------- automatic alignment of the lyrics with the voice ----------
 var alignBusy=false, alignTried={};
 function canAlign(){ return !!state.signal; }
 function getVoice(onP){
   if(state.voice) return Promise.resolve(state.voice);
-  if(!state.stereo44 || location.protocol.indexOf('http')!==0) return Promise.resolve(null);
-  return loadScript('ort.wasm.min.js').then(function(){ return window.VoiceSep.load(); })
-    .then(function(){ return window.VoiceSep.separate(state.stereo44, onP); })
+  if(!canSep()) return Promise.resolve(null);
+  return getSep(onP)
     .then(function(v){
+      if(!v) return null;
       // no clear voice found (instrumental, or the separation failed): do not trust it
       var pr=Array.prototype.slice.call(v.presence).sort(function(a,b){return a-b;});
       var p90=pr[Math.floor(pr.length*0.9)]||0;
@@ -2539,22 +2622,24 @@ var SH_STEP=[0,0,1,1,2,3,3,4,4,5,5,6], SH_ACC=[0,1,0,1,0,0,1,0,1,0,1,0];
 var FL_STEP=[0,1,1,2,2,3,4,4,5,5,6,6], FL_ACC=[0,-1,0,-1,0,0,-1,0,-1,0,-1,0];
 function spell(m, flats){ var pc=((m%12)+12)%12, oct=Math.floor(m/12)-1; return {step:(flats?FL_STEP:SH_STEP)[pc], acc:(flats?FL_ACC:SH_ACC)[pc], oct:oct}; }
 function noteNameGr(m, flats){ var sp=spell(m,flats); return STEP_GR[sp.step]+(sp.acc>0?'♯':sp.acc<0?'♭':''); }
+var melSrc='mix', MELKEY={mix:'melody', inst:'melodyInst', voice:'melodyVoice'};
+function curMel(){ var r=state.res; return r ? r[MELKEY[melSrc]] : null; }
 function ensureMelody(){
-  var r=state.res;
-  if(r.melody || melBusy) return;
+  var r=state.res, key=MELKEY[melSrc];
+  if(r[key] || melBusy===key) return;
   if(!state.signal){ return; }
-  melBusy=true;
-  var sig=state.signal, sr=state.sr;
-  CE.analyzeMelody(sig, {sr:sr, tuning:r.tuning||0, onProgress:function(p){ var b=$('#melProg'); if(b) b.style.width=Math.round(p*100)+'%'; }})
+  melBusy=key;
+  var src = melSrc==='mix' ? Promise.resolve({sig:state.signal}) : getSep(function(p){ var b=$('#melProg'); if(b) b.style.width=Math.round(p*50)+'%'; }).then(function(v){ if(!v) throw new Error(LG('δεν μπόρεσα να ξεχωρίσω τη φωνή από τα όργανα','I could not separate voice and instruments')); return {sig: melSrc==='voice'?v.voice:v.inst, half:true}; });
+  src.then(function(o){ return CE.analyzeMelody(o.sig, {sr:22050, tuning:r.tuning||0, onProgress:function(p){ var b=$('#melProg'); if(b) b.style.width=Math.round((o.half?50+50*p:100*p))+'%'; }}); })
   .then(function(m){
-    melBusy=false; r.melody={notes:m.notes.map(function(n){ return {s:+n.s.toFixed(3), e:+n.e.toFixed(3), m:n.m, c:+n.c.toFixed(2)}; })};
-    var h=load('ak-hist',[]); h.forEach(function(x){ if(x.title===r.title) x.melody=r.melody; }); store('ak-hist',h); renderHist();
-    if(state.res===r) renderMelody();
+    melBusy=false; r[key]={notes:m.notes.map(function(n){ return {s:+n.s.toFixed(3), e:+n.e.toFixed(3), m:n.m, c:+n.c.toFixed(2)}; })};
+    var h=load('ak-hist',[]); h.forEach(function(x){ if(x.title===r.title) x[key]=r[key]; }); store('ak-hist',h); renderHist();
+    if(state.res===r && MELKEY[melSrc]===key) renderMelody();
   }).catch(function(e){ melBusy=false; $('#melBox').innerHTML='<div class="err">'+LG('Δεν μπόρεσα να βγάλω τις νότες: ','I could not find the notes: ')+esc(e&&e.message||e)+'</div>'; });
 }
 // choose the octave that fits the guitar best (sounding E2=40 … E5=76 ≈ 12th fret on the high string)
 function guitarNotes(){
-  var r=state.res, ns=r.melody.notes.map(function(n){ return {s:n.s,e:n.e,m:n.m+state.trans,c:n.c}; });
+  var r=state.res, ns=curMel().notes.map(function(n){ return {s:n.s,e:n.e,m:n.m+state.trans,c:n.c}; });
   var best=0, bs=-1e9, ms=ns.map(function(n){return n.m;}).sort(function(a,b){return a-b;}), med=ms.length?ms[ms.length>>1]:60;
   [0,-12,12,-24].forEach(function(k){ var c=0; ns.forEach(function(n){ if(n.m+k>=40+state.capo && n.m+k<=76+state.capo) c++; }); var sc=c-0.02*ns.length*Math.abs(med+k-60)/12; if(sc>bs){ bs=sc; best=k; } });
   ns.forEach(function(n){ n.m+=best; });
@@ -2618,76 +2703,104 @@ function noteGlyph(x, y, col, k, dot, up){
   if(dot) g+='<circle cx="'+(x+(k==='w'?17:16))+'" cy="'+(y-3)+'" r="3" fill="#222"/>';
   return g;
 }
+// ---------- the guitar neck ----------
+var NECK_FRETS=15, STR_GR=LG(['Μι','Σι','Σολ','Ρε','Λα','Μι'],['E','B','G','D','A','E']);
+function fretX(f, x0, x1){ var L=(x1-x0)/(1-Math.pow(2,-NECK_FRETS/12)); return x0+L*(1-Math.pow(2,-f/12)); }
+function noteX(f, x0, x1){ return f===0 ? x0-22 : (fretX(f-1,x0,x1)+fretX(f,x0,x1))/2; }
+function neckSVG(cur, nexts, fl){
+  var W=980, H=330, x0=104, x1=W-20, y0=44, y1=H-66, sp=(y1-y0)/5, s='<svg viewBox="0 0 '+W+' '+H+'" class="neck">';
+  s+='<rect x="'+x0+'" y="'+(y0-14)+'" width="'+(x1-x0)+'" height="'+(y1-y0+28)+'" rx="6" fill="#8a5a2b"/>';
+  s+='<rect x="'+x0+'" y="'+(y0-14)+'" width="'+(x1-x0)+'" height="'+(y1-y0+28)+'" rx="6" fill="url(#wood)" opacity=".35"/>';
+  s+='<defs><linearGradient id="wood" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient></defs>';
+  [3,5,7,9,15].forEach(function(f){ var x=noteX(f,x0,x1); s+='<circle cx="'+x+'" cy="'+((y0+y1)/2)+'" r="9" fill="#f4e7cf" opacity=".9"/>'; });
+  var x12=noteX(12,x0,x1); s+='<circle cx="'+x12+'" cy="'+(y0+sp*1.5)+'" r="9" fill="#f4e7cf"/><circle cx="'+x12+'" cy="'+(y0+sp*3.5)+'" r="9" fill="#f4e7cf"/>';
+  for(var f=1; f<=NECK_FRETS; f++){ var x=fretX(f,x0,x1); s+='<line x1="'+x+'" y1="'+(y0-14)+'" x2="'+x+'" y2="'+(y1+14)+'" stroke="#d9d9d9" stroke-width="3"/>'; s+='<text x="'+noteX(f,x0,x1)+'" y="'+(H-20)+'" font-size="20" font-weight="700" text-anchor="middle" fill="#6b5d52">'+f+'</text>'; }
+  s+='<rect x="'+(x0-6)+'" y="'+(y0-14)+'" width="10" height="'+(y1-y0+28)+'" fill="#f8f4ea"/>';
+  for(var i=0;i<6;i++){ var y=y0+i*sp; s+='<line x1="'+(x0-40)+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="#e9e3d6" stroke-width="'+(1.2+i*0.55)+'"/>'; s+='<text x="'+(x0-50)+'" y="'+(y+8)+'" font-size="22" font-weight="800" text-anchor="end" fill="#555">'+STR_GR[i]+'</text>'; }
+  if(state.capo) s+='<rect x="'+(fretX(state.capo,x0,x1)-12)+'" y="'+(y0-18)+'" width="14" height="'+(y1-y0+36)+'" rx="5" fill="#333" opacity=".85"/>';
+  function dot(n, big, label){
+    if(!n || !n.tab) return '';
+    var fr=n.tab.f+state.capo, x=noteX(fr,x0,x1), y=y0+n.tab.si*sp, sp2=spell(n.m+12,fl), col=STEP_COL[sp2.step], ink=NOTE_INK[sp2.step], nm=noteNameGr(n.m, fl);
+    if(big) return '<circle cx="'+x+'" cy="'+y+'" r="27" fill="'+col+'" stroke="#111" stroke-width="4"/><text x="'+x+'" y="'+(y+8)+'" font-size="'+(nm.length>2?17:21)+'" font-weight="900" text-anchor="middle" fill="'+ink+'">'+esc(nm)+'</text>';
+    return '<circle cx="'+x+'" cy="'+y+'" r="17" fill="'+col+'" opacity=".55" stroke="#111" stroke-width="1.5" stroke-dasharray="4 3"/><text x="'+x+'" y="'+(y+7)+'" font-size="18" font-weight="900" text-anchor="middle" fill="#111">'+label+'</text>';
+  }
+  (nexts||[]).slice().reverse().forEach(function(n,i,arr){ s+=dot(n,false,String(arr.length-i)); });
+  s+=dot(cur,true);
+  return s+'</svg>';
+}
 function renderMelody(){
   var box=$('#melBox'), r=state.res; if(!box || !r) return;
-  if(!r.melody){
-    if(!state.signal){ box.innerHTML='<div class="warn">'+LG('Για να βγάλω τις νότες χρειάζομαι τον ήχο. Ξαναβάλε το τραγούδι (από αρχείο ή YouTube) και άνοιξε πάλι αυτή την καρτέλα.','To find the notes I need the sound. Load the song again (from a file or YouTube) and open this tab again.')+'</div>'; return; }
-    box.innerHTML='<div style="text-align:center;padding:30px 10px"><div style="font-size:2.6rem">🎼</div><h2>'+LG('Ακούω τη μελωδία νότα-νότα…','Listening to the melody note by note…')+'</h2><div class="bar"><div id="melProg"></div></div><div class="muted" style="font-size:.85rem">'+LG('Βρίσκω το όργανο ή τη φωνή που ακούγεται πιο δυνατά: το σόλο της κιθάρας ή του μπουζουκιού, ή τη φωνή του τραγουδιστή.','I find the instrument or voice that sounds loudest: the guitar or bouzouki solo, or the singer’s voice.')+'</div></div>';
-    ensureMelody(); return;
+  var canPart = canSep() && !state.fromHistory;
+  var srcBar = '<div class="mbar noprint"><span style="font-weight:700">'+LG('Νότες από:','Notes from:')+'</span><div class="seg" id="melSrcSeg">'+
+    ['mix','inst','voice'].map(function(k){ var lbl={mix:LG('Όλο το τραγούδι','The whole song'), inst:LG('🎸 Μόνο τα όργανα','🎸 Only the instruments'), voice:LG('🎤 Μόνο τη φωνή','🎤 Only the voice')}[k];
+      var dis = k!=='mix' && !canPart && !r[MELKEY[k]];
+      return '<button data-k="'+k+'"'+(k===melSrc?' class="on"':'')+(dis?' disabled style="opacity:.4"':'')+'>'+lbl+'</button>'; }).join('')+'</div></div>';
+  var mel=curMel();
+  if(!mel){
+    if(!state.signal){ box.innerHTML=srcBar+'<div class="warn">'+LG('Για να βγάλω τις νότες χρειάζομαι τον ήχο. Ξαναβάλε το τραγούδι (από αρχείο ή YouTube) και άνοιξε πάλι αυτή την καρτέλα.','To find the notes I need the sound. Load the song again (from a file or YouTube) and open this tab again.')+'</div>'; bindMelSrc(); return; }
+    box.innerHTML=srcBar+'<div style="text-align:center;padding:30px 10px"><div style="font-size:2.6rem">🎸</div><h2>'+LG('Ακούω τη μελωδία νότα-νότα…','Listening to the melody note by note…')+'</h2><div class="bar"><div id="melProg"></div></div><div class="muted" style="font-size:.85rem">'+(melSrc==='mix'?LG('Βρίσκω το όργανο ή τη φωνή που ακούγεται πιο δυνατά.','I find the instrument or voice that sounds loudest.'):melSrc==='inst'?LG('Πρώτα βγάζω τη φωνή από τη μέση, για να ακούσω καθαρά τα όργανα (το σόλο).','First I take the voice out, to hear the instruments (the solo) clearly.'):LG('Πρώτα ξεχωρίζω τη φωνή, για να ακούσω μόνο τη μελωδία του τραγουδιστή.','First I separate the voice, to hear only the singer’s melody.'))+'</div></div>';
+    bindMelSrc(); ensureMelody(); return;
   }
   var all=guitarNotes(), fl=flatsFor(state.trans);
   var from=melView.from, to=melView.to;
   var notes=all.filter(function(n){ return (from===null||n.e>from) && (to===null||n.s<to); });
   melCache=notes;
-  var html='<div class="mbar noprint">'+
+  var html=srcBar+'<div class="neckwrap" id="neckBox"></div>'+
+    '<div class="mbar noprint">'+
     '<button class="mid" id="melFrom">'+LG('📍 Αρχή του σόλο εδώ','📍 Solo starts here')+'</button>'+
     '<button class="mid" id="melTo">'+LG('📍 Τέλος του σόλο εδώ','📍 Solo ends here')+'</button>'+
     (from!==null||to!==null?'<button class="mid" id="melAll">'+LG('↺ Όλο το τραγούδι','↺ Whole song')+'</button>':'')+
     '<span class="muted" style="font-size:.85rem">'+(from!==null||to!==null?LG('Δείχνω από','Showing from')+' <b>'+fmt(from||0)+'</b> '+LG('έως','to')+' <b>'+fmt(to===null?r.duration:to)+'</b>':LG('Δείχνω όλο το τραγούδι','Showing the whole song'))+'</span></div>'+
     '<details class="noprint" style="margin-bottom:8px;font-size:.85rem"><summary style="cursor:pointer;font-weight:700">'+LG('❓ Πώς διαβάζεται','❓ How to read it')+'</summary>'+
-    '<p style="margin:6px 0">'+LG('Κάθε <b>χρωματιστό σημάδι</b> είναι μια νότα. Όσο πιο <b>ψηλά</b> στις 5 γραμμές, τόσο πιο ψιλή η νότα. Το <b>σχήμα</b> της δείχνει <b>πόσους χρόνους κρατάει</b>, όπως στο πεντάγραμμο (δες τα σημάδια πιο κάτω). Οι αχνές κάθετες γραμμές είναι οι χτύποι του ρυθμού. Από κάτω γράφει το <b>όνομα</b> (Ντο, Ρε, Μι…) και πιο κάτω στις 6 γραμμές της κιθάρας το <b>τάστο</b>: η πάνω γραμμή είναι η λεπτή χορδή (Μι), η κάτω η χοντρή. 0 = ανοιχτή χορδή.','Each <b>coloured mark</b> is a note. The <b>higher</b> on the 5 lines, the higher the note. Its <b>shape</b> shows <b>how many beats it lasts</b>, as on the staff (see the marks below). The faint vertical lines are the beats of the rhythm. Below is the <b>name</b> (C, D, E…) and further down, on the 6 guitar lines, the <b>fret</b>: the top line is the thin string (E), the bottom the thick one. 0 = open string.')+'</p>'+
-    '<p style="margin:6px 0">'+LG('Πάτα πάνω σε μια νότα για να την <b>ακούσεις</b>. Πάτα στη σειρά για να πάει το τραγούδι εκεί. Βάλε ταχύτητα 50% για να τη μάθεις αργά.','Tap a note to <b>hear</b> it. Tap the row to move the song there. Set speed to 50% to learn it slowly.')+'</p>'+
-    '<p style="margin:6px 0" class="muted">'+LG('Όταν δεν παίζει σόλο, γράφει τη μελωδία της φωνής, που κι αυτή παίζεται στην κιθάρα. Τα αχνά σημάδια είναι νότες για τις οποίες δεν είμαι σίγουρος.','When there is no solo, it writes the vocal melody, which can also be played on guitar. Faint marks are notes I am not sure about.')+'</p></details>'+
-    '<div class="legend">'+STEP_GR.map(function(g,i){ return '<span style="background:'+STEP_COL[i]+';color:'+NOTE_INK[i]+'">'+g+'</span>'; }).join('')+'</div>'+
-    '<div class="durleg">'+DURS.map(function(d){ return '<span><svg viewBox="0 0 44 60" width="34" height="46">'+noteGlyph(18, d.k==='w'?32:44, '#555', d.k, d.dot, true)+'</svg><span><b>'+d.nm+'</b><br>'+d.txt+'</span></span>'; }).join('')+'</div>';
-  if(!notes.length){ box.innerHTML=html+'<div class="warn">'+LG('Δεν βρήκα νότες σε αυτό το κομμάτι.','I found no notes in this piece.')+'</div>'; bindMel(); return; }
-  // rows of two bars (8 beats)
+    '<p style="margin:6px 0">'+LG('<b>Πάνω</b> είναι το μπράτσο της κιθάρας, όπως το βλέπεις όταν την κρατάς: πάνω η λεπτή χορδή (Μι), κάτω η χοντρή. Οι αριθμοί από κάτω είναι τα τάστα. Η <b>μεγάλη χρωματιστή μπίλια</b> δείχνει πού πατάς τώρα· οι αχνές με το <b>1</b> και το <b>2</b> είναι οι επόμενες νότες.','<b>At the top</b> is the guitar neck, as you see it when you hold the guitar: the thin string (E) on top, the thick one at the bottom. The numbers below are the frets. The <b>big coloured ball</b> shows where you press now; the faint ones with <b>1</b> and <b>2</b> are the next notes.')+'</p>'+
+    '<p style="margin:6px 0">'+LG('<b>Από κάτω</b> είναι όλο το σόλο, γραμμή-γραμμή: οι 6 γραμμές είναι οι 6 χορδές (με την ίδια σειρά) και ο αριθμός μέσα σε κάθε χρωματιστό κουτάκι είναι το <b>τάστο</b> (0 = ανοιχτή χορδή). Όσο <b>πιο μακρύ</b> το κουτάκι, τόσο <b>περισσότερο κρατάει</b> η νότα. Οι αχνές κάθετες γραμμές είναι οι χτύποι του ρυθμού.','<b>Below</b> is the whole solo, line by line: the 6 lines are the 6 strings (same order) and the number inside each coloured box is the <b>fret</b> (0 = open string). The <b>longer</b> the box, the <b>longer</b> the note lasts. The faint vertical lines are the beats.')+'</p>'+
+    '<p style="margin:6px 0">'+LG('Πάτα σε μια νότα για να την <b>ακούσεις</b> και να τη δεις στο μπράτσο. Πάτα στη γραμμή για να πάει το τραγούδι εκεί. Βάλε ταχύτητα 50% για να τη μάθεις αργά. Τα αχνά κουτάκια είναι νότες για τις οποίες δεν είμαι σίγουρος.','Tap a note to <b>hear</b> it and see it on the neck. Tap the line to move the song there. Set the speed to 50% to learn it slowly. Faint boxes are notes I am not sure about.')+'</p></details>'+
+    '<div class="legend">'+STEP_GR.map(function(g,i){ return '<span style="background:'+STEP_COL[i]+';color:'+NOTE_INK[i]+'">'+g+'</span>'; }).join('')+'</div>';
+  if(!notes.length){ box.innerHTML=html+'<div class="warn">'+LG('Δεν βρήκα νότες σε αυτό το κομμάτι.','I found no notes in this piece.')+'</div>'; bindMel(); bindMelSrc(); return; }
   var spb = r.bpm ? 60/r.bpm : 0.5, rowDur = Math.max(2.4, Math.min(4.2, 4*spb));
   var t0 = from!==null ? from : Math.max(0, Math.floor(notes[0].s/rowDur)*rowDur);
-  if(from!==null) t0=from;
   var tEnd = to!==null ? to : notes[notes.length-1].e;
   var rows=[]; for(var t=t0; t<tEnd; t+=rowDur) rows.push([t, t+rowDur]);
-  var W=((box.clientWidth||innerWidth)<560)?420:640, LS=12, top=46, bottom=top+4*LS, tabTop=bottom+92, TS=13, H=tabTop+5*TS+16;
-  var beatList = (r.beats||[]);
-  rows.forEach(function(rw, ri){
-    var a=rw[0], b=rw[1], X=function(tt){ return 66+(W-80)*(tt-a)/(b-a); };
+  var W=((box.clientWidth||innerWidth)<560)?440:680, top=30, TS=24, H=top+5*TS+26, LX=46;
+  var beatList=(r.beats||[]);
+  rows.forEach(function(rw){
+    var a=rw[0], b=rw[1], X=function(tt){ return LX+(W-LX-8)*(tt-a)/(b-a); };
     var svg='<svg viewBox="0 0 '+W+' '+H+'">';
-    // beat grid
-    beatList.forEach(function(bt,bi){ if(bt>=a && bt<b) svg+='<line x1="'+X(bt)+'" y1="'+(top-30)+'" x2="'+X(bt)+'" y2="'+(tabTop+5*TS)+'" stroke="#e9dfcf" stroke-width="1.2"/>'; });
-    for(var l=0;l<5;l++) svg+='<line x1="10" y1="'+(top+l*LS)+'" x2="'+W+'" y2="'+(top+l*LS)+'" stroke="#555" stroke-width="1.3"/>';
-    svg+='<text x="12" y="'+(bottom+8)+'" font-size="'+(LS*5.6)+'" fill="#333" font-family="serif">𝄞</text>';
-    for(l=0;l<6;l++) svg+='<line x1="10" y1="'+(tabTop+l*TS)+'" x2="'+W+'" y2="'+(tabTop+l*TS)+'" stroke="#aaa" stroke-width="1"/>';
-    svg+='<text x="20" y="'+(tabTop+2.9*TS)+'" font-size="15" font-weight="800" fill="#888">TAB</text>';
-    notes.forEach(function(n, ni){
-      if(n.s<a-0.001 || n.s>=b) return;
-      var w=spell(n.m+12, fl), dn=w.oct*7+w.step, y=bottom-(dn-30)*LS/2, x=X(n.s), xe=Math.min(W-4, X(Math.min(n.e,b)));
-      var col=STEP_COL[w.step], op=n.c<0.35?0.38:1, id=' data-ni="'+notes.indexOf(n)+'"';
-      svg+='<g class="mn"'+id+' opacity="'+op+'" style="cursor:pointer">';
-      // ledger lines
-      for(var ld=28; ld>=dn; ld-=2) svg+='<line x1="'+(x-12)+'" y1="'+(bottom-(ld-30)*LS/2)+'" x2="'+(x+12)+'" y2="'+(bottom-(ld-30)*LS/2)+'" stroke="#555" stroke-width="1.3"/>';
-      for(ld=40; ld<=dn; ld+=2) svg+='<line x1="'+(x-12)+'" y1="'+(bottom-(ld-30)*LS/2)+'" x2="'+(x+12)+'" y2="'+(bottom-(ld-30)*LS/2)+'" stroke="#555" stroke-width="1.3"/>';
-      var dd=durOf((n.e-n.s)/spb);
-      svg+='<circle class="halo" cx="'+x+'" cy="'+y+'" r="16" fill="#ffd43b" opacity="0"/>';
-      svg+=noteGlyph(x, y, col, dd.k, dd.dot, dn<34);
-      if(w.acc) svg+='<text x="'+(x-23)+'" y="'+(y+6)+'" font-size="18" font-weight="700" fill="#222">'+(w.acc>0?'♯':'♭')+'</text>';
-      var nm=noteNameGr(n.m, fl), nw=12+nm.length*10, ny=bottom+44+(ni%2)*24;
-      svg+='<rect x="'+(x-nw/2)+'" y="'+(ny-16)+'" width="'+nw+'" height="22" rx="7" fill="'+col+'" stroke="rgba(0,0,0,.3)"/>';
-      svg+='<text x="'+x+'" y="'+ny+'" font-size="16" font-weight="800" text-anchor="middle" fill="'+NOTE_INK[w.step]+'">'+esc(nm)+'</text>';
-      if(n.tab) svg+='<rect x="'+(x-10)+'" y="'+(tabTop+n.tab.si*TS-8)+'" width="20" height="16" fill="#fff"/><text x="'+x+'" y="'+(tabTop+n.tab.si*TS+6)+'" font-size="17" font-weight="800" text-anchor="middle" fill="#222">'+n.tab.f+'</text>';
+    beatList.forEach(function(bt){ if(bt>=a && bt<b) svg+='<line x1="'+X(bt)+'" y1="'+(top-16)+'" x2="'+X(bt)+'" y2="'+(top+5*TS+12)+'" stroke="#e9dfcf" stroke-width="1.5"/>'; });
+    for(var l=0;l<6;l++){ svg+='<line x1="'+LX+'" y1="'+(top+l*TS)+'" x2="'+W+'" y2="'+(top+l*TS)+'" stroke="#9a8f80" stroke-width="'+(1+l*0.35)+'"/><text x="'+(LX-8)+'" y="'+(top+l*TS+6)+'" font-size="15" font-weight="800" text-anchor="end" fill="#777">'+STR_GR[l]+'</text>'; }
+    notes.forEach(function(n){
+      if(n.s<a-0.001 || n.s>=b || !n.tab) return;
+      var sp2=spell(n.m+12, fl), col=STEP_COL[sp2.step], ink=NOTE_INK[sp2.step], x=X(n.s), xe=Math.min(W-2, X(Math.min(n.e,b))), y=top+n.tab.si*TS;
+      var wdt=Math.max(30, xe-x), op=n.c<0.35?0.4:1, nm=noteNameGr(n.m, fl);
+      svg+='<g class="mn" data-ni="'+notes.indexOf(n)+'" opacity="'+op+'" style="cursor:pointer">';
+      svg+='<rect class="pill" x="'+(x-15)+'" y="'+(y-12)+'" width="'+wdt+'" height="24" rx="12" fill="'+col+'" stroke="#222" stroke-width="1.3"/>';
+      svg+='<text x="'+x+'" y="'+(y+7)+'" font-size="18" font-weight="900" text-anchor="middle" fill="'+ink+'">'+n.tab.f+'</text>';
+      if(wdt>64) svg+='<text x="'+(x+16)+'" y="'+(y+6)+'" font-size="13" font-weight="700" fill="'+ink+'" opacity=".85">'+esc(nm)+'</text>';
       svg+='</g>';
     });
     svg+='</svg>';
     html+='<div class="melrow" data-a="'+a+'"><span class="tm">'+fmt(a)+'</span>'+svg+'</div>';
   });
-  if(state.capo) html='<div class="info" style="font-size:.9rem;margin-bottom:6px">'+LG('Τα τάστα είναι μετρημένα <b>από το καποτάστο</b> (καποτάστο στο '+state.capo+'ο).','Frets are counted <b>from the capo</b> (capo on fret '+state.capo+').')+'</div>'+html;
-  box.innerHTML=html; bindMel(); lastNote=-2; followMelody(true);
+  if(state.capo) html=html.replace('<div class="neckwrap"', '<div class="info" style="font-size:.9rem;margin-bottom:6px">'+LG('Τα τάστα στα κουτάκια είναι μετρημένα <b>από το καποτάστο</b> (καποτάστο στο '+state.capo+'ο).','Frets in the boxes are counted <b>from the capo</b> (capo on fret '+state.capo+').')+'</div><div class="neckwrap"');
+  box.innerHTML=html; bindMel(); bindMelSrc(); lastNote=-2; showNeck(0, true); followMelody(true);
+}
+var neckIdx=-1;
+function showNeck(i, quiet){
+  var nb=$('#neckBox'); if(!nb || !melCache) return;
+  if(i<0) i=0; neckIdx=i;
+  nb.innerHTML=neckSVG(melCache[i], [melCache[i+1], melCache[i+2]].filter(Boolean), flatsFor(state.trans));
+  document.querySelectorAll('#melBox .pill.on').forEach(function(e){ e.classList.remove('on'); e.setAttribute('stroke-width','1.3'); e.setAttribute('stroke','#222'); });
+  var p=document.querySelector('#melBox .mn[data-ni="'+i+'"] .pill'); if(p){ p.classList.add('on'); p.setAttribute('stroke-width','4'); p.setAttribute('stroke','#000'); }
+}
+function bindMelSrc(){
+  document.querySelectorAll('#melSrcSeg button').forEach(function(b){ b.onclick=function(){ if(b.disabled) return; melSrc=b.dataset.k; melView.from=null; melView.to=null; renderMelody(); }; });
 }
 function bindMel(){
   var f=$('#melFrom'), t=$('#melTo'), al=$('#melAll');
   if(f) f.onclick=function(){ melView.from=audio.src?audio.currentTime:null; if(melView.to!==null && melView.to<=melView.from) melView.to=null; renderMelody(); };
   if(t) t.onclick=function(){ melView.to=audio.src?audio.currentTime:null; if(melView.from!==null && melView.to<=melView.from) melView.from=null; renderMelody(); };
   if(al) al.onclick=function(){ melView.from=null; melView.to=null; renderMelody(); };
-  document.querySelectorAll('#melBox .mn').forEach(function(g){ g.onclick=function(e){ e.stopPropagation(); var n=melCache[+g.dataset.ni]; if(n) pluck(n.m); }; });
+  document.querySelectorAll('#melBox .mn').forEach(function(g){ g.onclick=function(e){ e.stopPropagation(); var n=melCache[+g.dataset.ni]; if(n){ pluck(n.m); showNeck(+g.dataset.ni); } }; });
   document.querySelectorAll('#melBox .melrow').forEach(function(rw){ rw.onclick=function(){ if(audio.src){ audio.currentTime=+rw.dataset.a; if(audio.paused) playPause(); } }; });
 }
 var pctx=null;
@@ -2706,7 +2819,6 @@ function followMelody(force){
   for(var i=0;i<melCache.length;i++){ if(melCache[i].s<=t+0.02) idx=i; else break; }
   if(idx>=0 && t>melCache[idx].e+0.15) idx=-1;
   if(idx===lastNote && !force) return; lastNote=idx;
-  document.querySelectorAll('#melBox .halo.on').forEach(function(e){ e.classList.remove('on'); e.setAttribute('opacity','0'); });
   document.querySelectorAll('#melBox .melrow.cur').forEach(function(e){ e.classList.remove('cur'); e.style.background=''; });
   // current row follows the playback even between notes
   var rowsEl=document.querySelectorAll('#melBox .melrow'), rowEl=null;
@@ -2714,8 +2826,7 @@ function followMelody(force){
   if(rowEl){ rowEl.classList.add('cur'); rowEl.style.background='#fff9db';
     if(!audio.paused){ var pn=$('#p-mel'), top=rowEl.offsetTop-pn.offsetTop-pn.clientHeight*0.2; if(Math.abs(pn.scrollTop-top)>40) pn.scrollTo({top:Math.max(0,top), behavior:'smooth'}); } }
   if(idx<0) return;
-  var g=document.querySelector('#melBox .mn[data-ni="'+idx+'"] .halo');
-  if(g){ g.classList.add('on'); g.setAttribute('opacity','.85'); }
+  showNeck(idx);
 }
 
 // ---------- live listening ----------
