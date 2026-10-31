@@ -157,6 +157,43 @@ textarea{width:100%;min-height:260px;font:inherit;font-size:1rem;padding:12px;bo
 .credits{font-size:.72rem;color:var(--soft);margin:18px 4px 0;line-height:1.4}
 .neckwrap{background:#fffaf0;border:2px solid var(--line);border-radius:18px;padding:6px;margin:0 0 12px;position:sticky;top:0;z-index:2}
 .neckwrap svg{display:block;width:100%;height:auto}
+#p-sheet .sheet{gap:5px}
+#p-sheet .tile{min-width:0;padding:2px 6px;border-radius:7px;border-width:2px}
+#p-sheet .tile .n{font-size:.72rem;line-height:1.15}
+#p-sheet .tile .t{font-size:.45rem}
+#p-sheet .tile.cur{transform:scale(1.15)}
+.tabs{align-items:center}
+.tabplay{margin-left:auto;display:flex;align-items:center;gap:8px;font-weight:700;font-variant-numeric:tabular-nums}
+.tabplay button{width:54px;height:54px;border-radius:50%;background:var(--accent);color:#fff;font-size:1.5rem;padding:0}
+@media (min-width:901px){
+  body.inres header{padding:6px 18px}
+  body.inres header h1{font-size:1.25rem}
+  body.inres header h1 small{display:none}
+  body.inres .hbtn{padding:6px 12px;font-size:.8rem}
+  body.inres main{padding-top:10px;padding-bottom:10px}
+  #results .card.tight{padding:8px 14px;margin-bottom:8px}
+  #results #resTitle{font-size:1.15rem}
+  #results .info{font-size:.85rem}
+  #results .mid{padding:7px 11px;font-size:.78rem}
+  #results .play{width:50px;height:50px;font-size:1.3rem}
+  #results .seg button{padding:7px 11px;font-size:.8rem}
+  #results .ctl{padding:4px 8px}
+  #results .ctl .lbl{font-size:.78rem}
+  #results .pm{width:36px;height:36px;font-size:1.15rem}
+  #results .ctl .v{font-size:1rem}
+  #results .row{gap:8px}
+  #results .row[style*="margin-top:10px"]{margin-top:6px!important}
+  #stemRow,#srcRow{display:inline-flex!important;margin-right:14px}
+  #stemRow.hidden,#srcRow.hidden{display:none!important}
+  #results .lbl{font-size:.8rem}
+  #results .tabs button{padding:7px 12px;font-size:.82rem}
+  .tabplay button{width:44px;height:44px;font-size:1.2rem}
+  #results .leftcol{padding:10px}
+  #results .leftcol .nowchord{min-height:110px;padding:10px 14px}
+  #results .leftcol .nowchord .nm{font-size:3rem}
+  #results .nextbox{font-size:.9rem}
+  #results .panel{overflow-y:auto}
+}
 @media (max-width:900px){ .work{grid-template-columns:1fr} .leftcol{position:static} .panel{max-height:none} }
 @media print{ .work{display:block} .panel{display:block!important;max-height:none;overflow:visible} .lline.cur{background:none;box-shadow:none} }
 @media (max-width:700px){ .now{grid-template-columns:1fr} .nowchord .nm{font-size:4rem} }
@@ -204,7 +241,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </head>
 <body>
 <header>
-  <h1 data-en="🎸 Chords <small>Give me a song — I find the guitar chords for you · <b>Version 26/10/2026 11:00</b></small>">🎸 Συγχορδίες <small>Βάλε ένα τραγούδι — σου βγάζω τις συγχορδίες για την κιθάρα · <b>Έκδοση 26/10/2026 11:00</b></small></h1>
+  <h1 data-en="🎸 Chords <small>Give me a song — I find the guitar chords for you · <b>Version 26/10/2026 14:45</b></small>">🎸 Συγχορδίες <small>Βάλε ένα τραγούδι — σου βγάζω τις συγχορδίες για την κιθάρα · <b>Έκδοση 26/10/2026 14:45</b></small></h1>
   <button class="hbtn" id="fsDown" title="Μικρότερα γράμματα" data-en-title="Smaller letters">A−</button>
   <button class="hbtn" id="fsUp" title="Μεγαλύτερα γράμματα" data-en-title="Bigger letters">A+</button>
   <button class="hbtn" id="homeBtn" data-en="🏠 Home">🏠 Αρχή</button>
@@ -252,6 +289,13 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     </details>
   </div>
   <div id="toast" class="toast hidden"></div>
+  <div class="card tight hidden" id="offCard">
+    <div class="row" style="justify-content:space-between">
+      <div id="offTxt" style="flex:1;min-width:240px"></div>
+      <button class="mid" id="offBtn" data-en="⬇️ Download everything">⬇️ Κατέβασέ τα όλα</button>
+    </div>
+    <div class="aibar hidden" id="offBar"><div></div></div>
+  </div>
   <p class="credits" data-en="The chords are found by artificial intelligence: the BTC model (Park et al., 2019) and the Spleeter voice separation (Deezer). Everything runs on your own computer — the song is not sent anywhere.">Τις συγχορδίες τις βρίσκει τεχνητή νοημοσύνη: το μοντέλο BTC (Park κ.ά., 2019) και ο διαχωρισμός φωνής Spleeter (Deezer). Όλα γίνονται μέσα στον δικό σου υπολογιστή — το τραγούδι δεν στέλνεται πουθενά.</p>
 </section>
 
@@ -374,6 +418,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
         <button data-t="sheet" data-en="🎵 Chords">🎵 Συγχορδίες</button>
         <button data-t="diags" data-en="✋ Fingers">✋ Δάχτυλα</button>
         <button data-t="mel" data-en="🎼 Solo notes">🎼 Νότες σόλο</button>
+        <span class="tabplay"><button id="tabPlay" title="Παίξε / Παύση" data-en-title="Play / Pause">▶</button><span id="tabTime">0:00</span></span>
       </div>
       <div class="panel" id="p-lyr"><div id="lyrBox"></div></div>
       <div class="panel hidden" id="p-sheet">
@@ -1398,7 +1443,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   // ---------- labels ----------
   var QUAL = ['min', 'maj', 'dim', 'aug', 'min6', 'maj6', 'min7', 'minmaj7', 'maj7', '7', 'dim7', 'hdim7', 'sus2', 'sus4'];
   // BTC quality -> our chord types (shapes we can draw) and major/minor family
-  var TO_TYPE = { min: 'min', maj: 'maj', dim: 'dim', aug: 'aug', min6: 'min', maj6: 'maj', min7: 'm7', minmaj7: 'min', maj7: 'maj7', '7': '7', dim7: 'dim', hdim7: 'dim', sus2: 'sus2', sus4: 'sus4' };
+  var TO_TYPE = { min: 'min', maj: 'maj', dim: 'dim', aug: 'aug', min6: 'm6', maj6: '6', min7: 'm7', minmaj7: 'mM7', maj7: 'maj7', '7': '7', dim7: 'dim7', hdim7: 'm7b5', sus2: 'sus2', sus4: 'sus4' };
   var FAMILY = { min: 1, dim: 1, min6: 1, min7: 1, minmaj7: 1, dim7: 1, hdim7: 1 };
   function softmax(lg) {
     var mx = -Infinity, i, p = new Float64Array(lg.length), s = 0;
@@ -1432,7 +1477,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   'use strict';
   var CE = root.ChordEngine, BTC = root.BTC;
   var EPS = 1e-4;
-  var P = { stayBeat: 0.55, stayBar: 0.5, primBonus: 0.6, minShare: 0.035 };
+  var P = { stayBeat: 0.55, stayBar: 0.5, primBonus: 0.6, minShare: 0.035, stayHalf: 0.4, extBoost: 2.0, fullSplit: 2 };
+  var EXT = { '7': 1, maj7: 1, m7: 1, '6': 1, m6: 1, dim7: 1, m7b5: 1, mM7: 1, sus2: 1, sus4: 1, aug: 1, dim: 1 };
 
   // beat grid -> list of [startTime, endTime]
   function beatGrid(beats, dur) {
@@ -1489,7 +1535,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   (function () {
     for (var r = 0; r < 12; r++) { MM_LABELS.push({ root: r, type: 'maj' }); MM_LABELS.push({ root: r, type: 'min' }); }
     MM_LABELS.push(null);
-    var types = ['maj', 'min', '7', 'maj7', 'm7', 'dim', 'aug', 'sus4', 'sus2'];
+    var types = ['maj', 'min', '7', 'maj7', 'm7', '6', 'm6', 'dim', 'dim7', 'm7b5', 'mM7', 'aug', 'sus4', 'sus2'];
     for (r = 0; r < 12; r++) types.forEach(function (t) { FULL_LABELS.push({ root: r, type: t }); FULL_KEYS.push(r + ':' + t); });
     FULL_LABELS.push(null); FULL_KEYS.push('N');
   })();
@@ -1503,9 +1549,14 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
     var pathS = viterbi(emS, MM_LABELS.length, P.stayBeat);
     var simple = toSegments(beats, pathS, MM_LABELS);
     // full vocabulary on beats
-    var emF = blockScores(lp.full, FULL_KEYS, beats, function (p, k) { return p[k] || 0; });
-    var pathF = viterbi(emF, FULL_LABELS.length, P.stayBeat);
-    var full = toSegments(beats, pathF, FULL_LABELS);
+    // full: finer grid (half beats) and colour chords (7, maj7, 6 …) given a fair chance
+    var halves = [];
+    beats.forEach(function (b) { var n = P.fullSplit, d = (b[1] - b[0]) / n; for (var q = 0; q < n; q++) halves.push([b[0] + q * d, b[0] + (q + 1) * d]); });
+    var emF = blockScores(lp.full, FULL_KEYS, halves, function (p, k) {
+      var v = p[k] || 0; if (EXT[k.split(':')[1]]) v *= P.extBoost; return v;
+    });
+    var pathF = viterbi(emF, FULL_LABELS.length, P.stayHalf);
+    var full = toSegments(halves, pathF, FULL_LABELS);
     // basic: bars
     var basic = basicLevel(lp.mm, beats, pathS, simple, key);
     return { full: full, simple: simple, basic: basic, beatsUsed: beats, pathS: pathS, mm: lp.mm };
@@ -1884,7 +1935,7 @@ if(window.KLANG==='en'){
   b.onclick=function(){ try{ localStorage.setItem('ak-lang', window.KLANG==='en'?'el':'en'); }catch(e){} location.reload(); }; })();
 var CE = window.ChordEngine;
 var $ = function(s){ return document.querySelector(s); };
-function show(id){ ['home','listen','working','results'].forEach(function(s){ $('#'+s).classList.toggle('hidden', s!==id); }); var lb=$('#langBtn'); if(lb) lb.classList.toggle('hidden', id!=='home'); window.scrollTo(0,0); }
+function show(id){ ['home','listen','working','results'].forEach(function(s){ $('#'+s).classList.toggle('hidden', s!==id); }); document.body.classList.toggle('inres', id==='results'); if(id==='results') setTimeout(fitScreen, 0); var lb=$('#langBtn'); if(lb) lb.classList.toggle('hidden', id!=='home'); window.scrollTo(0,0); }
 function fmt(t){ t=Math.max(0,t||0); var m=Math.floor(t/60), s=Math.floor(t%60); return m+':'+(s<10?'0':'')+s; }
 function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function store(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
@@ -1968,6 +2019,19 @@ function diagramSVG(ch, w){
   return s+'</svg>';
 }
 var EASY={}; Object.keys(OPEN).forEach(function(k){ EASY[k]=1; });
+(function(){
+  var T=CE.TYPES;
+  if(!T['6']) T['6']={iv:[0,4,7,9], w:[1,1,1,1], suf:'6', gr:LG('6','6'), pen:0.05};
+  if(!T.m6) T.m6={iv:[0,3,7,9], w:[1,1,1,1], suf:'m6', gr:LG('μινόρε 6','minor 6'), pen:0.05};
+  if(!T.dim7) T.dim7={iv:[0,3,6,9], w:[1,1,1,1], suf:'dim7', gr:LG('ελαττωμένη 7','diminished 7'), pen:0.05};
+  if(!T.m7b5) T.m7b5={iv:[0,3,6,10], w:[1,1,1,1], suf:'m7♭5', gr:LG('μισο-ελαττωμένη','half-diminished'), pen:0.05};
+  if(!T.mM7) T.mM7={iv:[0,3,7,11], w:[1,1,1,1], suf:'m(maj7)', gr:LG('μινόρε maj7','minor maj7'), pen:0.05};
+  MOV.E.s['6']=[0,2,2,1,2,0]; MOV.A.s['6']=[X,0,2,2,2,2];
+  MOV.E.s.m6=[0,2,2,0,2,0];  MOV.A.s.m6=[X,0,2,2,1,2];
+  MOV.A.s.dim7=[X,0,1,-1,1,-1];
+  MOV.A.s.m7b5=[X,0,1,0,1,X]; MOV.E.s.m7b5=[0,X,0,0,-1,X];
+  MOV.A.s.mM7=[X,0,2,1,1,0];
+})();
 
 // ---------- naming with capo/transpose ----------
 function flatsFor(shift){
@@ -2010,11 +2074,11 @@ function renderHist(){
     var b=document.createElement('button');
     var segsH = it.levels ? (it.levels.basic || it.levels.simple || it.levels.full) : it.segments;
     var chs=[]; segsH.forEach(function(s){ var n=CE.chordName(s.chord, it.flats); if(s.chord && chs.indexOf(n)<0 && chs.length<8) chs.push(n); });
-    b.innerHTML='🎵 <b>'+esc(it.title)+'</b> <span class="muted" style="font-size:.85rem">— '+esc(chs.join(' '))+' — '+new Date(it.date).toLocaleDateString('el-GR')+'</span>';
+    b.innerHTML=(it.audio?'🔊':'🎵')+' <b>'+esc(it.title)+'</b> <span class="muted" style="font-size:.85rem">— '+esc(chs.join(' '))+' — '+new Date(it.date).toLocaleDateString('el-GR')+'</span>';
     b.onclick=function(){
       var fresh=load('ak-hist',[]).filter(function(x){ return x.title===it.title; })[0]; if(fresh) it=fresh;
       if(!it.levels){ it.levels={}; it.levels[it.simple===false?'full':'simple']=it.segments; }
-      openResult(it, null, true);
+      openSaved(it);
     };
     var row=document.createElement('div'); row.className='hrow';
     var d=document.createElement('button'); d.className='delbtn'; d.textContent='🗑'; d.title=LG('Σβήσε αυτό το τραγούδι','Delete this song');
@@ -2022,6 +2086,24 @@ function renderHist(){
     row.appendChild(b); row.appendChild(d); el.appendChild(row);
   });
   renderTrash();
+}
+function openSaved(it){
+  errBox('#homeErr','');
+  getAudio(it.title).then(function(bl){
+    if(!bl){ openResult(it, null, true); return; }
+    show('working'); setProgress(0.1, LG('Ανοίγω το τραγούδι…','Opening the song…'));
+    var ctx; try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
+    return readBuf(bl).then(function(buf){ return decodeAny(ctx, buf); }).then(function(ab){
+      try{ ctx.close(); }catch(e){}
+      setProgress(0.5, LG('Ετοιμάζω τον ήχο…','Preparing the sound…'));
+      return toStereo44(ab).then(function(st){ return toMono22k(ab).then(function(m){ return {st:st, m:m}; }); });
+    }).then(function(o){
+      if(state.audioURL) URL.revokeObjectURL(state.audioURL);
+      state.audioURL=URL.createObjectURL(bl);
+      state.signal=o.m; state.sr=22050; state.stereo44=o.st; state.voice=null; state.sep=null; sepJob=null; state.title=it.title;
+      openResult(it, state.audioURL, false);
+    });
+  }).catch(function(e){ openResult(it, null, true); });
 }
 function deleteSong(title){
   var h=load('ak-hist',[]), tr=load('ak-trash',[]), L=load('ak-lyr',{}), gone=null;
@@ -2058,7 +2140,11 @@ function renderTrash(){
   });
 }
 $('#trashEmpty').onclick=function(){
-  if(confirm(LG('Να σβηστούν για πάντα όλα τα τραγούδια του κάδου; Αυτό δεν γυρίζει πίσω.','Delete all songs in the bin for good? This cannot be undone.'))){ store('ak-trash',[]); renderTrash(); }
+  if(confirm(LG('Να σβηστούν για πάντα όλα τα τραγούδια του κάδου; Αυτό δεν γυρίζει πίσω.','Delete all songs in the bin for good? This cannot be undone.'))){
+    var keep={}; load('ak-hist',[]).forEach(function(x){ keep[x.title]=1; });
+    load('ak-trash',[]).forEach(function(x){ if(!keep[x.title]) delAudio(x.title); });
+    store('ak-trash',[]); renderTrash();
+  }
 };
 var toastTimer=null;
 function showToast(msg, undo){
@@ -2091,6 +2177,7 @@ $('#fileIn').onchange=function(){
   var file=this.files[0]; if(!file) return;
   var ctx; try{ ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){}
   show('working'); setProgress(0,LG('Ανοίγω το τραγούδι…','Opening the song…'));
+  state.pendingBlob=Promise.resolve(file);
   readBuf(file).then(function(buf){ return decodeAny(ctx, buf); }).then(function(ab){
     try{ ctx.close(); }catch(e){}
     setProgress(0.02,LG('Ετοιμάζω τον ήχο…','Preparing the sound…'));
@@ -2142,6 +2229,26 @@ function toStereo44(ab){
     }).catch(function(){ return null; });
   }catch(e){ return Promise.resolve(null); }
 }
+// ---------- the songs' sound is kept on this computer (IndexedDB) ----------
+var IDB=null;
+function idb(){
+  if(IDB) return IDB;
+  IDB=new Promise(function(ok,bad){
+    if(!window.indexedDB){ bad(new Error('no db')); return; }
+    var r=indexedDB.open('akordes',1);
+    r.onupgradeneeded=function(){ r.result.createObjectStore('audio'); };
+    r.onsuccess=function(){ ok(r.result); }; r.onerror=function(){ bad(r.error); };
+  });
+  IDB.catch(function(){ IDB=null; });
+  return IDB;
+}
+function idbDo(mode, fn){ return idb().then(function(d){ return new Promise(function(ok,bad){ var tx=d.transaction('audio',mode), st=tx.objectStore('audio'), res; var rq=fn(st); if(rq) rq.onsuccess=function(){ res=rq.result; }; tx.oncomplete=function(){ ok(res); }; tx.onerror=function(){ bad(tx.error); }; }); }); }
+function putAudio(k,blob){ return idbDo('readwrite', function(st){ return st.put(blob,k); }); }
+function getAudio(k){ return idbDo('readonly', function(st){ return st.get(k); }).catch(function(){ return null; }); }
+function delAudio(k){ return idbDo('readwrite', function(st){ return st.delete(k); }).catch(function(){}); }
+function moveAudio(a,b){ return getAudio(a).then(function(bl){ if(!bl) return; return putAudio(b,bl).then(function(){ return delAudio(a); }); }); }
+try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}
+function markAudio(title){ var h=load('ak-hist',[]); h.forEach(function(x){ if(x.title===title) x.audio=true; }); store('ak-hist',h); renderHist(); }
 function loadScript(src){
   return new Promise(function(ok,bad){
     if(document.querySelector('script[data-ld="'+src+'"]')){ var w=setInterval(function(){ if(document.querySelector('script[data-ld="'+src+'"]').dataset.ok){ clearInterval(w); ok(); } },100); return; }
@@ -2171,6 +2278,8 @@ function runAnalysis(signal, sr, title, keepAudio){
     }).catch(function(e){ if(window.console) console.warn('AI chords failed, using the old method', e); return old(); }) : old();
   job.then(function(res){
     saveHist(res, title); renderHist();
+    var pb=state.pendingBlob; state.pendingBlob=null;
+    if(pb) Promise.resolve(pb).then(function(bl){ if(bl && bl.size) return putAudio(title, bl).then(function(){ markAudio(title); }); }).catch(function(){});
     openResult(res, state.audioURL, false);
   }).catch(function(e){ show('home'); errBox('#homeErr',LG('Κάτι πήγε στραβά στην ανάλυση: ','Something went wrong in the analysis: ')+esc(e&&e.message||e)); });
 }
@@ -2194,7 +2303,7 @@ function openResult(res, url, fromHist){
   lyrMode='view';
   $('#capoMsg').textContent='';
   $('#playBtn').textContent='▶';
-  show('results'); renderAll(); paintMode(); paintStems(); melSrc='mix';
+  show('results'); renderAll(); paintMode(); paintStems(); fitScreen(); melSrc='mix'; paintPlay(); var tt=$('#tabTime'); if(tt) tt.textContent='0:00';
 }
 function updateNote(){
   var res=state.res;
@@ -2256,14 +2365,17 @@ function tick(){
     updateNow(false);
     var d=audio.duration||state.res.duration||1;
     $('#seek').value=Math.round(1000*audio.currentTime/d);
-    $('#timeLbl').textContent=fmt(audio.currentTime)+' / '+fmt(d);
+    $('#timeLbl').textContent=fmt(audio.currentTime)+' / '+fmt(d); var tt=$('#tabTime'); if(tt) tt.textContent=fmt(audio.currentTime);
     var i=segAt(audio.currentTime), sg=state.res.segments, cd=$('#cd');
     if(cd && i>=0){ var left=sg[i].end-audio.currentTime; cd.textContent= left<4 ? '('+LG('σε ','in ')+Math.ceil(left/ (audio.playbackRate||1))+'″)' : ''; }
   }
   requestAnimationFrame(tick);
 }
 requestAnimationFrame(tick);
-function playPause(){ if(!audio.src) return; if(audio.paused){ audio.play(); $('#playBtn').textContent='⏸'; } else { audio.pause(); $('#playBtn').textContent='▶'; } }
+function playPause(){ if(!audio.src) return; if(audio.paused){ audio.play(); } else { audio.pause(); } }
+function paintPlay(){ var on=!audio.paused; $('#playBtn').textContent=on?'⏸':'▶'; var t=$('#tabPlay'); if(t){ t.textContent=on?'⏸':'▶'; t.parentNode.style.visibility=audio.src?'visible':'hidden'; } }
+audio.addEventListener('play', paintPlay); audio.addEventListener('pause', paintPlay); audio.addEventListener('emptied', paintPlay);
+$('#tabPlay').onclick=function(){ playPause(); };
 $('#playBtn').onclick=playPause;
 audio.onended=function(){ $('#playBtn').textContent='▶'; if(lyrMode==='sync') syncFinish(); };
 audio.onloadedmetadata=function(){ $('#timeLbl').textContent='0:00 / '+fmt(audio.duration); };
@@ -2307,8 +2419,8 @@ $('#homeBtn').onclick=function(){ if(live) stopLive(false); try{ if(ytPlayer) yt
 
 // ---------- tabs ----------
 var curTab='lyr';
-function setTab(t){ curTab=t; document.querySelectorAll('#tabs button').forEach(function(b){ b.classList.toggle('on', b.dataset.t===t); }); ['lyr','sheet','diags','mel'].forEach(function(x){ $('#p-'+x).classList.toggle('hidden', x!==t); }); lastLine=-2; lastNote=-2; if(t==='mel') renderMelody(); }
-document.querySelectorAll('#tabs button').forEach(function(b){ b.onclick=function(){ setTab(b.dataset.t); }; });
+function setTab(t){ curTab=t; document.querySelectorAll('#tabs button[data-t]').forEach(function(b){ b.classList.toggle('on', b.dataset.t===t); }); ['lyr','sheet','diags','mel'].forEach(function(x){ $('#p-'+x).classList.toggle('hidden', x!==t); }); lastLine=-2; lastNote=-2; if(t==='mel') renderMelody(); }
+document.querySelectorAll('#tabs button[data-t]').forEach(function(b){ b.onclick=function(){ setTab(b.dataset.t); }; });
 
 // ---------- rename ----------
 $('#renameBtn').onclick=function(){
@@ -2317,6 +2429,7 @@ $('#renameBtn').onclick=function(){
   r.title=nw; state.title=nw; $('#resTitle').textContent='🎵 '+nw;
   var h=load('ak-hist',[]); h.forEach(function(x){ if(x.title===old) x.title=nw; }); store('ak-hist',h);
   var L=load('ak-lyr',{}); if(L[old]){ L[nw]=L[old]; delete L[old]; store('ak-lyr',L); }
+  moveAudio(old, nw);
   renderHist();
 };
 
@@ -2829,6 +2942,43 @@ function followMelody(force){
   showNeck(idx);
 }
 
+// ---------- the results page fits the screen (no scrolling on a computer) ----------
+function fitScreen(){
+  if(!document.body.classList.contains('inres')) return;
+  var wide=window.innerWidth>900, pans=document.querySelectorAll('#results .panel'), lc=$('#results .leftcol');
+  if(!wide){ pans.forEach(function(p){ p.style.maxHeight=''; p.style.height=''; }); if(lc) lc.style.maxHeight=''; return; }
+  var rc=$('#results .rightcol'); if(!rc) return;
+  var top=rc.getBoundingClientRect().top+window.scrollY, tabsH=$('#tabs').offsetHeight;
+  var h=Math.max(260, window.innerHeight-top-tabsH-56);
+  pans.forEach(function(p){ p.style.maxHeight=h+'px'; p.style.height=h+'px'; });
+  if(lc){ lc.style.maxHeight=(h+tabsH+10)+'px'; lc.style.overflowY='auto'; }
+}
+window.addEventListener('resize', fitScreen);
+
+// ---------- use without internet ----------
+var BIG=['btc-model.js','ort.wasm.min.js','ort-wasm-simd-threaded.mjs','ort-wasm-simd-threaded.wasm','vocals.fp16.onnx','accompaniment.fp16.onnx'];
+function offlineState(){
+  var card=$('#offCard'); if(!card) return;
+  if(!('caches' in window) || location.protocol.indexOf('http')!==0){ card.classList.add('hidden'); return; }
+  caches.open('akordes-big').then(function(c){ return Promise.all(BIG.map(function(u){ return c.match(new URL(u, location.href).href); })); }).then(function(ms){
+    var have=ms.filter(Boolean).length; card.classList.remove('hidden');
+    if(have===BIG.length){ $('#offTxt').innerHTML=LG('✅ <b>Έτοιμο και χωρίς ίντερνετ.</b> Αρχεία, μικρόφωνο, στίχοι, νότες και τα αποθηκευμένα τραγούδια δουλεύουν χωρίς σύνδεση (το YouTube θέλει ίντερνετ).','✅ <b>Ready without internet.</b> Files, microphone, lyrics, notes and saved songs work offline (YouTube needs internet).'); $('#offBtn').classList.add('hidden'); }
+    else { $('#offTxt').innerHTML=LG('📶 Για να δουλεύει το πρόγραμμα <b>και χωρίς ίντερνετ</b>, κατέβασε μία φορά τα αρχεία της τεχνητής νοημοσύνης (περίπου 60 MB).','📶 To use the program <b>without internet</b>, download the AI files once (about 60 MB).'); $('#offBtn').classList.remove('hidden'); }
+  }).catch(function(){ card.classList.add('hidden'); });
+}
+$('#offBtn').onclick=function(){
+  var btn=this; btn.disabled=true; $('#offBar').classList.remove('hidden'); var done=0;
+  caches.open('akordes-big').then(function(c){
+    return BIG.reduce(function(p,u){ return p.then(function(){
+      var url=new URL(u, location.href).href;
+      return c.match(url).then(function(m){ if(m) return; return fetch(url,{cache:'reload'}).then(function(r){ if(!r.ok) throw new Error(u); return c.put(url, r); }); })
+        .then(function(){ done++; $('#offBar div').style.width=Math.round(100*done/BIG.length)+'%'; });
+    }); }, Promise.resolve());
+  }).then(function(){ btn.disabled=false; $('#offBar').classList.add('hidden'); offlineState(); })
+    .catch(function(){ btn.disabled=false; $('#offTxt').innerHTML=LG('Δεν τελείωσε το κατέβασμα. Έλεγξε το ίντερνετ και ξαναπάτα.','The download did not finish. Check the internet and press again.'); });
+};
+offlineState();
+
 // ---------- live listening ----------
 var live=null;
 var CAN_TAB = !!(navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia) && !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && !(navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
@@ -2942,6 +3092,15 @@ function startLive(kind){
     stream.getTracks().forEach(function(t){ t.onended=function(){ if(live) stopLive(true); }; });
     $('#tabHelp').classList.add('hidden'); $('#micHelp').classList.add('hidden'); $('#live').classList.remove('hidden');
     if(kind==='yt'){ $('#ytAsk').classList.add('hidden'); live.t0=Date.now(); ytStart(); }
+    try{
+      if(window.MediaRecorder){
+        var mts=['audio/webm;codecs=opus','audio/webm','audio/mp4'].filter(function(t){ return MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t); });
+        var Lv=live; Lv.recChunks=[];
+        Lv.rec=new MediaRecorder(new MediaStream(stream.getAudioTracks()), mts.length?{mimeType:mts[0], audioBitsPerSecond:160000}:{});
+        Lv.rec.ondataavailable=function(e){ if(e.data && e.data.size) Lv.recChunks.push(e.data); };
+        Lv.rec.start(1000);
+      }
+    }catch(e){ if(live) live.rec=null; }
     $('#liveHist').innerHTML=''; $('#liveKey').textContent='—';
     $('#liveChord').style.background=colorOf(null); $('#liveChord').style.color='#fff'; $('#liveChord').innerHTML='<div class="nm">…</div><div class="gr">'+LG('Περιμένω μουσική','Waiting for music')+'</div>'; $('#liveDiag').innerHTML='';
     live.timer=setInterval(function(){
@@ -2975,6 +3134,10 @@ $('#stopBtn').onclick=function(){ stopLive(true); };
 function stopLive(analyze){
   var L=live; if(!L) return; live=null;
   clearInterval(L.timer);
+  state.pendingBlob=null;
+  if(L.rec && L.rec.state!=='inactive'){
+    state.pendingBlob=new Promise(function(ok){ L.rec.onstop=function(){ ok(new Blob(L.recChunks, {type:L.rec.mimeType||'audio/webm'})); }; try{ L.rec.stop(); }catch(e){ ok(null); } setTimeout(function(){ ok(null); }, 5000); });
+  }
   try{ L.proc.disconnect(); }catch(e){}
   L.stream.getTracks().forEach(function(t){ t.onended=null; t.stop(); });
   try{ L.ctx.close(); }catch(e){}
@@ -3002,8 +3165,7 @@ function stereoFromLive(L){
   if(!L.stLen) return Promise.reject(new Error('no stereo'));
   var n=L.stLen, a=new Float32Array(n), b=new Float32Array(n), o=0;
   L.stL.forEach(function(c,i){ a.set(c,o); b.set(L.stR[i],o); o+=c.length; });
-  var st=0, thr=0.003; while(st<n-L.nat && Math.abs(a[st])+Math.abs(b[st])<thr) st++;
-  st=Math.max(0, st-Math.round(L.nat*0.2)); if(st>0){ a=a.subarray(st); b=b.subarray(st); n=a.length; }
+
   var OAC=window.OfflineAudioContext||window.webkitOfflineAudioContext, tmp=new OAC(2, Math.max(1,n), L.nat), ab=tmp.createBuffer(2, n, L.nat);
   ab.getChannelData(0).set(a); ab.getChannelData(1).set(b);
   return toStereo44(ab).then(function(s44){ return toMono22k(ab).then(function(m){ return {st44:s44, mono:m}; }); });
