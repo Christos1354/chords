@@ -194,6 +194,9 @@ textarea{width:100%;min-height:260px;font:inherit;font-size:1rem;padding:12px;bo
   #results .nextbox{font-size:.9rem}
   #results .panel{overflow-y:auto}
 }
+.syncctl{margin-left:auto;display:flex;align-items:center;gap:4px;font-size:.75rem;font-weight:700;color:var(--soft)}
+.syncctl button{background:#efe5d4;padding:6px 8px;font-size:.85rem;border-radius:10px}
+.syncctl+.tabplay{margin-left:8px}
 @media (max-width:900px){ .work{grid-template-columns:1fr} .leftcol{position:static} .panel{max-height:none} }
 @media print{ .work{display:block} .panel{display:block!important;max-height:none;overflow:visible} .lline.cur{background:none;box-shadow:none} }
 @media (max-width:700px){ .now{grid-template-columns:1fr} .nowchord .nm{font-size:4rem} }
@@ -241,7 +244,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 </head>
 <body>
 <header>
-  <h1 data-en="🎸 Chords <small>Give me a song — I find the guitar chords for you · <b>Version 26/10/2026 14:45</b></small>">🎸 Συγχορδίες <small>Βάλε ένα τραγούδι — σου βγάζω τις συγχορδίες για την κιθάρα · <b>Έκδοση 26/10/2026 14:45</b></small></h1>
+  <h1 data-en="🎸 Chords <small>Give me a song — I find the guitar chords for you · <b>Version 31/10/2026 13:00</b></small>">🎸 Συγχορδίες <small>Βάλε ένα τραγούδι — σου βγάζω τις συγχορδίες για την κιθάρα · <b>Έκδοση 31/10/2026 13:00</b></small></h1>
   <button class="hbtn" id="fsDown" title="Μικρότερα γράμματα" data-en-title="Smaller letters">A−</button>
   <button class="hbtn" id="fsUp" title="Μεγαλύτερα γράμματα" data-en-title="Bigger letters">A+</button>
   <button class="hbtn" id="homeBtn" data-en="🏠 Home">🏠 Αρχή</button>
@@ -418,7 +421,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
         <button data-t="sheet" data-en="🎵 Chords">🎵 Συγχορδίες</button>
         <button data-t="diags" data-en="✋ Fingers">✋ Δάχτυλα</button>
         <button data-t="mel" data-en="🎼 Solo notes">🎼 Νότες σόλο</button>
-        <span class="tabplay"><button id="tabPlay" title="Παίξε / Παύση" data-en-title="Play / Pause">▶</button><span id="tabTime">0:00</span></span>
+        <span class="syncctl" title="Αν οι συγχορδίες αλλάζουν αργά ή νωρίς σε σχέση με τη μουσική, διόρθωσέ το εδώ"><button id="syncM" title="Νωρίτερα">⏪</button><span id="syncV">0.0</span><button id="syncP" title="Αργότερα">⏩</button></span><span class="tabplay"><button id="tabPlay" title="Παίξε / Παύση" data-en-title="Play / Pause">▶</button><span id="tabTime">0:00</span></span>
       </div>
       <div class="panel" id="p-lyr"><div id="lyrBox"></div></div>
       <div class="panel hidden" id="p-sheet">
@@ -2051,10 +2054,13 @@ function paintMode(){
     if(b.parentNode.id==='modeSeg2'){ b.disabled=!!miss; b.style.opacity=miss?.4:1; b.title=miss?LG('Αυτό το παλιό τραγούδι έχει μόνο ένα είδος. Ξαναβάλε το τραγούδι για να τα έχεις όλα.','This older song has only one kind. Load the song again to have them all.'):''; }
   });
 }
+var MINOR_T={min:1,m7:1,m6:1,dim:1,dim7:1,m7b5:1,mM7:1};
+function cleanSegs(sg){ var out=[]; (sg||[]).forEach(function(x){ var ch=x.chord?{root:x.chord.root, type:MINOR_T[x.chord.type]?'min':'maj'}:null, l=out[out.length-1];
+  if(l && CE.sameChord(l.chord,ch)) l.end=x.end; else out.push({start:x.start,end:x.end,chord:ch}); }); if(sg && sg.barLength) out.barLength=sg.barLength; return out; }
 function applyLevel(){
   var r=state.res; if(!r || !r.levels) return;
   var lv = r.levels[state.level] ? state.level : Object.keys(r.levels)[0];
-  r.segments = r.levels[lv]; r.level = lv;
+  r.segments = lv==='full' ? r.levels[lv] : cleanSegs(r.levels[lv]); r.level = lv;
 }
 function setMode(level){
   if(level===state.level) return;
@@ -2341,7 +2347,7 @@ function segAt(t){ var sg=state.res.segments; for(var i=0;i<sg.length;i++) if(t>
 function updateNow(force){
   if(!state.res) return;
   followLyrics(force); followMelody(force);
-  var t=audio.src?audio.currentTime:0, i=segAt(t);
+  var t=audio.src?nowT():0, i=segAt(t);
   if(i===lastIdx && !force) return; lastIdx=i;
   var sg=state.res.segments, s=sg[i], box=$('#nowChord');
   if(!audio.src){ // history view: show first chord
@@ -2360,14 +2366,18 @@ function updateNow(force){
   var tl=document.querySelector('.tile[data-i="'+i+'"]'); if(tl && audio.src && !audio.paused){ tl.classList.add('cur'); var r=tl.getBoundingClientRect(); if(r.top<0||r.bottom>innerHeight){} }
   if(tl && audio.src) tl.classList.add('cur');
 }
+// what is shown runs slightly ahead of the sound, so you see the change in time (adjustable)
+var syncAdj=load('ak-sync', 0);
+function nowT(){ return audio.currentTime + 0.12 + syncAdj; }
+function paintSync(){ var v=$('#syncV'); if(v) v.textContent=(syncAdj>0?'+':'')+syncAdj.toFixed(1); }
 function tick(){
   if(audio.src && !audio.paused){
     updateNow(false);
     var d=audio.duration||state.res.duration||1;
     $('#seek').value=Math.round(1000*audio.currentTime/d);
     $('#timeLbl').textContent=fmt(audio.currentTime)+' / '+fmt(d); var tt=$('#tabTime'); if(tt) tt.textContent=fmt(audio.currentTime);
-    var i=segAt(audio.currentTime), sg=state.res.segments, cd=$('#cd');
-    if(cd && i>=0){ var left=sg[i].end-audio.currentTime; cd.textContent= left<4 ? '('+LG('σε ','in ')+Math.ceil(left/ (audio.playbackRate||1))+'″)' : ''; }
+    var i=segAt(nowT()), sg=state.res.segments, cd=$('#cd');
+    if(cd && i>=0){ var left=sg[i].end-nowT(); cd.textContent= left<4 ? '('+LG('σε ','in ')+Math.ceil(left/ (audio.playbackRate||1))+'″)' : ''; }
   }
   requestAnimationFrame(tick);
 }
@@ -2376,6 +2386,9 @@ function playPause(){ if(!audio.src) return; if(audio.paused){ audio.play(); } e
 function paintPlay(){ var on=!audio.paused; $('#playBtn').textContent=on?'⏸':'▶'; var t=$('#tabPlay'); if(t){ t.textContent=on?'⏸':'▶'; t.parentNode.style.visibility=audio.src?'visible':'hidden'; } }
 audio.addEventListener('play', paintPlay); audio.addEventListener('pause', paintPlay); audio.addEventListener('emptied', paintPlay);
 $('#tabPlay').onclick=function(){ playPause(); };
+$('#syncM').onclick=function(){ syncAdj=Math.round((syncAdj+0.1)*10)/10; store('ak-sync',syncAdj); paintSync(); updateNow(true); };
+$('#syncP').onclick=function(){ syncAdj=Math.round((syncAdj-0.1)*10)/10; store('ak-sync',syncAdj); paintSync(); updateNow(true); };
+paintSync();
 $('#playBtn').onclick=playPause;
 audio.onended=function(){ $('#playBtn').textContent='▶'; if(lyrMode==='sync') syncFinish(); };
 audio.onloadedmetadata=function(){ $('#timeLbl').textContent='0:00 / '+fmt(audio.duration); };
@@ -2472,8 +2485,9 @@ function buildRows(ly){
       var pos;
       if(W && wtimes){
         // the word that is sung when the chord changes (or the first one right after)
-        var best=-1, bd=1e9;
-        for(var w=0;w<W.length;w++){ var wtm=wtimes[w]; if(wtm==null) continue; var d=wtm-sg.start; var cost=d>=-0.3 ? Math.abs(d) : 2+Math.abs(d); if(cost<bd){ bd=cost; best=w; } }
+        // the last word that has started by the change; if the next word starts right after it, that one
+        var best=-1;
+        for(var w=0;w<W.length;w++){ var wtm=wtimes[w]; if(wtm==null) continue; if(wtm<=sg.start+0.12) best=w; else { if(best<0 || wtm-sg.start<0.3) best=w; break; } }
         pos = best<0 ? len : W[best].pos;
         if(best>=0 && wtimes[best]<sg.start-0.3 && best===W.length-1) pos=len;
       } else {
@@ -2657,8 +2671,8 @@ function renderLyrics(){
 function followLyrics(force){
   if(curTab!=='lyr' || lyrMode!=='view') return;
   var ly=getLyr(); if(!ly || !ly.times || !audio.src) return;
-  var t=audio.currentTime, li=-1;
-  for(var i=0;i<ly.times.length;i++) if(ly.times[i]!=null && t>=ly.times[i]-0.25) li=i;
+  var t=nowT(), li=-1;
+  for(var i=0;i<ly.times.length;i++) if(ly.times[i]!=null && t>=ly.times[i]-0.15) li=i;
   if(li===lastLine && !force) return; lastLine=li;
   var box=$('#lyrBox'); box.querySelectorAll('.lline.cur').forEach(function(e){ e.classList.remove('cur'); });
   var el=box.querySelector('.lline[data-li="'+li+'"]'); if(!el) return;
@@ -2819,9 +2833,9 @@ function noteGlyph(x, y, col, k, dot, up){
 // ---------- the guitar neck ----------
 var NECK_FRETS=15, STR_GR=LG(['Μι','Σι','Σολ','Ρε','Λα','Μι'],['E','B','G','D','A','E']);
 function fretX(f, x0, x1){ var L=(x1-x0)/(1-Math.pow(2,-NECK_FRETS/12)); return x0+L*(1-Math.pow(2,-f/12)); }
-function noteX(f, x0, x1){ return f===0 ? x0-22 : (fretX(f-1,x0,x1)+fretX(f,x0,x1))/2; }
+function noteX(f, x0, x1){ return f===0 ? x0-32 : (fretX(f-1,x0,x1)+fretX(f,x0,x1))/2; }
 function neckSVG(cur, nexts, fl){
-  var W=980, H=330, x0=104, x1=W-20, y0=44, y1=H-66, sp=(y1-y0)/5, s='<svg viewBox="0 0 '+W+' '+H+'" class="neck">';
+  var W=980, H=330, x0=130, x1=W-20, y0=44, y1=H-66, sp=(y1-y0)/5, s='<svg viewBox="0 0 '+W+' '+H+'" class="neck">';
   s+='<rect x="'+x0+'" y="'+(y0-14)+'" width="'+(x1-x0)+'" height="'+(y1-y0+28)+'" rx="6" fill="#8a5a2b"/>';
   s+='<rect x="'+x0+'" y="'+(y0-14)+'" width="'+(x1-x0)+'" height="'+(y1-y0+28)+'" rx="6" fill="url(#wood)" opacity=".35"/>';
   s+='<defs><linearGradient id="wood" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient></defs>';
@@ -2829,7 +2843,7 @@ function neckSVG(cur, nexts, fl){
   var x12=noteX(12,x0,x1); s+='<circle cx="'+x12+'" cy="'+(y0+sp*1.5)+'" r="9" fill="#f4e7cf"/><circle cx="'+x12+'" cy="'+(y0+sp*3.5)+'" r="9" fill="#f4e7cf"/>';
   for(var f=1; f<=NECK_FRETS; f++){ var x=fretX(f,x0,x1); s+='<line x1="'+x+'" y1="'+(y0-14)+'" x2="'+x+'" y2="'+(y1+14)+'" stroke="#d9d9d9" stroke-width="3"/>'; s+='<text x="'+noteX(f,x0,x1)+'" y="'+(H-20)+'" font-size="20" font-weight="700" text-anchor="middle" fill="#6b5d52">'+f+'</text>'; }
   s+='<rect x="'+(x0-6)+'" y="'+(y0-14)+'" width="10" height="'+(y1-y0+28)+'" fill="#f8f4ea"/>';
-  for(var i=0;i<6;i++){ var y=y0+i*sp; s+='<line x1="'+(x0-40)+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="#e9e3d6" stroke-width="'+(1.2+i*0.55)+'"/>'; s+='<text x="'+(x0-50)+'" y="'+(y+8)+'" font-size="22" font-weight="800" text-anchor="end" fill="#555">'+STR_GR[i]+'</text>'; }
+  for(var i=0;i<6;i++){ var y=y0+i*sp; s+='<line x1="'+(x0-40)+'" y1="'+y+'" x2="'+x1+'" y2="'+y+'" stroke="#e9e3d6" stroke-width="'+(1.2+i*0.55)+'"/>'; s+='<text x="'+(x0-72)+'" y="'+(y+8)+'" font-size="22" font-weight="800" text-anchor="end" fill="#555">'+STR_GR[i]+'</text>'; }
   if(state.capo) s+='<rect x="'+(fretX(state.capo,x0,x1)-12)+'" y="'+(y0-18)+'" width="14" height="'+(y1-y0+36)+'" rx="5" fill="#333" opacity=".85"/>';
   function dot(n, big, label){
     if(!n || !n.tab) return '';
@@ -2866,7 +2880,7 @@ function renderMelody(){
     '<span class="muted" style="font-size:.85rem">'+(from!==null||to!==null?LG('Δείχνω από','Showing from')+' <b>'+fmt(from||0)+'</b> '+LG('έως','to')+' <b>'+fmt(to===null?r.duration:to)+'</b>':LG('Δείχνω όλο το τραγούδι','Showing the whole song'))+'</span></div>'+
     '<details class="noprint" style="margin-bottom:8px;font-size:.85rem"><summary style="cursor:pointer;font-weight:700">'+LG('❓ Πώς διαβάζεται','❓ How to read it')+'</summary>'+
     '<p style="margin:6px 0">'+LG('<b>Πάνω</b> είναι το μπράτσο της κιθάρας, όπως το βλέπεις όταν την κρατάς: πάνω η λεπτή χορδή (Μι), κάτω η χοντρή. Οι αριθμοί από κάτω είναι τα τάστα. Η <b>μεγάλη χρωματιστή μπίλια</b> δείχνει πού πατάς τώρα· οι αχνές με το <b>1</b> και το <b>2</b> είναι οι επόμενες νότες.','<b>At the top</b> is the guitar neck, as you see it when you hold the guitar: the thin string (E) on top, the thick one at the bottom. The numbers below are the frets. The <b>big coloured ball</b> shows where you press now; the faint ones with <b>1</b> and <b>2</b> are the next notes.')+'</p>'+
-    '<p style="margin:6px 0">'+LG('<b>Από κάτω</b> είναι όλο το σόλο, γραμμή-γραμμή: οι 6 γραμμές είναι οι 6 χορδές (με την ίδια σειρά) και ο αριθμός μέσα σε κάθε χρωματιστό κουτάκι είναι το <b>τάστο</b> (0 = ανοιχτή χορδή). Όσο <b>πιο μακρύ</b> το κουτάκι, τόσο <b>περισσότερο κρατάει</b> η νότα. Οι αχνές κάθετες γραμμές είναι οι χτύποι του ρυθμού.','<b>Below</b> is the whole solo, line by line: the 6 lines are the 6 strings (same order) and the number inside each coloured box is the <b>fret</b> (0 = open string). The <b>longer</b> the box, the <b>longer</b> the note lasts. The faint vertical lines are the beats.')+'</p>'+
+    '<p style="margin:6px 0">'+LG('<b>Από κάτω</b> είναι όλο το σόλο, γραμμή-γραμμή: πάνω το <b>πεντάγραμμο</b> με το όνομα κάτω από κάθε νότα, και πιο κάτω οι 6 γραμμές είναι οι 6 χορδές (με την ίδια σειρά) και ο αριθμός μέσα σε κάθε χρωματιστό κουτάκι είναι το <b>τάστο</b> (0 = ανοιχτή χορδή). Όσο <b>πιο μακρύ</b> το κουτάκι, τόσο <b>περισσότερο κρατάει</b> η νότα. Οι αχνές κάθετες γραμμές είναι οι χτύποι του ρυθμού.','<b>Below</b> is the whole solo, line by line: the 6 lines are the 6 strings (same order) and the number inside each coloured box is the <b>fret</b> (0 = open string). The <b>longer</b> the box, the <b>longer</b> the note lasts. The faint vertical lines are the beats.')+'</p>'+
     '<p style="margin:6px 0">'+LG('Πάτα σε μια νότα για να την <b>ακούσεις</b> και να τη δεις στο μπράτσο. Πάτα στη γραμμή για να πάει το τραγούδι εκεί. Βάλε ταχύτητα 50% για να τη μάθεις αργά. Τα αχνά κουτάκια είναι νότες για τις οποίες δεν είμαι σίγουρος.','Tap a note to <b>hear</b> it and see it on the neck. Tap the line to move the song there. Set the speed to 50% to learn it slowly. Faint boxes are notes I am not sure about.')+'</p></details>'+
     '<div class="legend">'+STEP_GR.map(function(g,i){ return '<span style="background:'+STEP_COL[i]+';color:'+NOTE_INK[i]+'">'+g+'</span>'; }).join('')+'</div>';
   if(!notes.length){ box.innerHTML=html+'<div class="warn">'+LG('Δεν βρήκα νότες σε αυτό το κομμάτι.','I found no notes in this piece.')+'</div>'; bindMel(); bindMelSrc(); return; }
@@ -2874,21 +2888,32 @@ function renderMelody(){
   var t0 = from!==null ? from : Math.max(0, Math.floor(notes[0].s/rowDur)*rowDur);
   var tEnd = to!==null ? to : notes[notes.length-1].e;
   var rows=[]; for(var t=t0; t<tEnd; t+=rowDur) rows.push([t, t+rowDur]);
-  var W=((box.clientWidth||innerWidth)<560)?440:680, top=30, TS=24, H=top+5*TS+26, LX=46;
+  var W=((box.clientWidth||innerWidth)<560)?460:720, LX=56, LS=11, sTop=44, sBot=sTop+4*LS, top=sBot+88, TS=22, H=top+5*TS+22;
   var beatList=(r.beats||[]);
   rows.forEach(function(rw){
-    var a=rw[0], b=rw[1], X=function(tt){ return LX+(W-LX-8)*(tt-a)/(b-a); };
+    var a=rw[0], b=rw[1], X=function(tt){ return LX+14+(W-LX-26)*(tt-a)/(b-a); };
     var svg='<svg viewBox="0 0 '+W+' '+H+'">';
-    beatList.forEach(function(bt){ if(bt>=a && bt<b) svg+='<line x1="'+X(bt)+'" y1="'+(top-16)+'" x2="'+X(bt)+'" y2="'+(top+5*TS+12)+'" stroke="#e9dfcf" stroke-width="1.5"/>'; });
-    for(var l=0;l<6;l++){ svg+='<line x1="'+LX+'" y1="'+(top+l*TS)+'" x2="'+W+'" y2="'+(top+l*TS)+'" stroke="#9a8f80" stroke-width="'+(1+l*0.35)+'"/><text x="'+(LX-8)+'" y="'+(top+l*TS+6)+'" font-size="15" font-weight="800" text-anchor="end" fill="#777">'+STR_GR[l]+'</text>'; }
-    notes.forEach(function(n){
+    beatList.forEach(function(bt){ if(bt>=a && bt<b) svg+='<line x1="'+X(bt)+'" y1="'+(sTop-30)+'" x2="'+X(bt)+'" y2="'+(top+5*TS+10)+'" stroke="#eee3d0" stroke-width="1.5"/>'; });
+    // staff (πεντάγραμμο)
+    for(var l=0;l<5;l++) svg+='<line x1="8" y1="'+(sTop+l*LS)+'" x2="'+W+'" y2="'+(sTop+l*LS)+'" stroke="#555" stroke-width="1.2"/>';
+    svg+='<text x="10" y="'+(sBot+9)+'" font-size="'+(LS*5.4)+'" fill="#333" font-family="serif">𝄞</text>';
+    // TAB: the 6 strings
+    for(l=0;l<6;l++){ svg+='<line x1="'+LX+'" y1="'+(top+l*TS)+'" x2="'+W+'" y2="'+(top+l*TS)+'" stroke="#9a8f80" stroke-width="'+(1+l*0.35)+'"/><text x="'+(LX-8)+'" y="'+(top+l*TS+6)+'" font-size="14" font-weight="800" text-anchor="end" fill="#777">'+STR_GR[l]+'</text>'; }
+    var spb=r.bpm?60/r.bpm:0.5;
+    notes.forEach(function(n, ni){
       if(n.s<a-0.001 || n.s>=b || !n.tab) return;
       var sp2=spell(n.m+12, fl), col=STEP_COL[sp2.step], ink=NOTE_INK[sp2.step], x=X(n.s), xe=Math.min(W-2, X(Math.min(n.e,b))), y=top+n.tab.si*TS;
-      var wdt=Math.max(30, xe-x), op=n.c<0.35?0.4:1, nm=noteNameGr(n.m, fl);
+      var wdt=Math.max(28, xe-x+14), op=n.c<0.35?0.4:1, nm=noteNameGr(n.m, fl);
+      var dn=sp2.oct*7+sp2.step, sy=sBot-(dn-30)*LS/2, dd=durOf((n.e-n.s)/spb);
       svg+='<g class="mn" data-ni="'+notes.indexOf(n)+'" opacity="'+op+'" style="cursor:pointer">';
-      svg+='<rect class="pill" x="'+(x-15)+'" y="'+(y-12)+'" width="'+wdt+'" height="24" rx="12" fill="'+col+'" stroke="#222" stroke-width="1.3"/>';
-      svg+='<text x="'+x+'" y="'+(y+7)+'" font-size="18" font-weight="900" text-anchor="middle" fill="'+ink+'">'+n.tab.f+'</text>';
-      if(wdt>64) svg+='<text x="'+(x+16)+'" y="'+(y+6)+'" font-size="13" font-weight="700" fill="'+ink+'" opacity=".85">'+esc(nm)+'</text>';
+      for(var ld=28; ld>=dn; ld-=2) svg+='<line x1="'+(x-11)+'" y1="'+(sBot-(ld-30)*LS/2)+'" x2="'+(x+11)+'" y2="'+(sBot-(ld-30)*LS/2)+'" stroke="#555" stroke-width="1.2"/>';
+      for(ld=40; ld<=dn; ld+=2) svg+='<line x1="'+(x-11)+'" y1="'+(sBot-(ld-30)*LS/2)+'" x2="'+(x+11)+'" y2="'+(sBot-(ld-30)*LS/2)+'" stroke="#555" stroke-width="1.2"/>';
+      svg+='<g transform="translate('+x+' '+sy+') scale(.85) translate('+(-x)+' '+(-sy)+')">'+noteGlyph(x, sy, col, dd.k, dd.dot, dn<34)+'</g>';
+      if(sp2.acc) svg+='<text x="'+(x-20)+'" y="'+(sy+5)+'" font-size="16" font-weight="700" fill="#222">'+(sp2.acc>0?'♯':'♭')+'</text>';
+      var nw=10+nm.length*9, ny=sBot+52+(ni%2)*20;
+      svg+='<rect x="'+(x-nw/2)+'" y="'+(ny-14)+'" width="'+nw+'" height="19" rx="6" fill="'+col+'"/><text x="'+x+'" y="'+ny+'" font-size="14" font-weight="800" text-anchor="middle" fill="'+ink+'">'+esc(nm)+'</text>';
+      svg+='<rect class="pill" x="'+(x-14)+'" y="'+(y-11)+'" width="'+wdt+'" height="22" rx="11" fill="'+col+'" stroke="#222" stroke-width="1.3"/>';
+      svg+='<text x="'+x+'" y="'+(y+6)+'" font-size="16" font-weight="900" text-anchor="middle" fill="'+ink+'">'+n.tab.f+'</text>';
       svg+='</g>';
     });
     svg+='</svg>';
@@ -2928,7 +2953,7 @@ function pluck(m){
 }
 function followMelody(force){
   if(curTab!=='mel' || !melCache || !audio.src) return;
-  var t=audio.currentTime, idx=-1;
+  var t=nowT(), idx=-1;
   for(var i=0;i<melCache.length;i++){ if(melCache[i].s<=t+0.02) idx=i; else break; }
   if(idx>=0 && t>melCache[idx].e+0.15) idx=-1;
   if(idx===lastNote && !force) return; lastNote=idx;
